@@ -25,7 +25,7 @@ const loadHomepage = async (req, res) => {
             res.status(500).send("Server error");
         }
     }
-    // to avoid the partial this method is better ig
+    // to avoid the partial respose this method is better ig
 };
 
 
