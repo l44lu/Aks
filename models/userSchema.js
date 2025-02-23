@@ -2,7 +2,11 @@ const mongoose = require("mongoose");
 const {Schema}=mongoose;
 
 const userSchema = new Schema({
-    name :{
+    name1 :{
+        type:String,
+        require:true
+    },
+    name2 :{
         type:String,
         require:true
     },
