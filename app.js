@@ -3,10 +3,21 @@ const app = express();
 const env = require("dotenv").config();
 const db = require("./config/db");
 const path = require("path");
+const session = require("express-session")
 const userRouter = require("./routes/userRouter")
 db()
 
 app.use(express.json());
+app.use(session({
+    secret:process.env.SESSION_SECRET,
+    resave:false,
+    saveUninitialized:true,
+    cookie:{
+        secure:false,
+        httpOnly:true,
+        maxAge:72*60*60*1000
+    }
+}))
 app.use(express.urlencoded({extended:true}));
 
 
