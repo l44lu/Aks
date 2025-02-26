@@ -53,6 +53,13 @@
             margin-bottom: 20px;
         }
 
+        .social-btn {
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            margin-top: 10px;
+        }
+
         input {
             width: 100%;
             padding: 12px;
@@ -76,6 +83,7 @@
             cursor: pointer;
             margin-top: 10px;
             border-radius: 5px;
+            padding-top: 25px;
             font-size: 1rem;
             transition: all 0.3s ease-in-out;
         }
@@ -83,6 +91,12 @@
         .btn:hover {
             background: #357ab8;
             transform: translateY(-3px);
+        }
+        .google-btn img {
+            width: 250px; 
+            padding-top: -15px;
+            margin-right: 10px; 
+            margin-top: 10px;
         }
 
         .google-btn {
@@ -95,7 +109,13 @@
             border-radius: 5px;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
-            margin-top: 10px;
+            margin-top: 18px;
+            width: 100%; 
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            color: black;
+            height: 80px;
         }
 
         .google-btn:hover {
@@ -186,12 +206,12 @@
                     <div id="error5" class="error-message"></div>
                 </div>
                 <button class="btn">Sign Up</button>
+                <div class="social-btn">
+                    <a href="/auth/google" class="google-btn">
+                        <img src="/img/google-logo.png" alt="Google">
+                    </a>
+                </div>
             </form>
-            <p>or</p>
-            <div class="google-btn">
-                <img src="google-logo.png" width="20" alt="Google">
-                <span>Continue with Google</span>
-            </div>
             <p>Already have an account? <a href="#">Sign in</a></p>
         </div>
 
@@ -219,7 +239,7 @@
         function nameValidateCheking(e){
 
             const nameval= nameid.value;
-            const namepattern = /^[A_Za-z\s]+$/;
+            const namepattern = /^[A-Za-z\s]+$/;
             if(nameval.trim()===""){
                 error1.style.display="block";
                 error1.innerHTML="Please enter the a valid Name";
@@ -302,8 +322,12 @@
                 if(error1.innerHTML || error2.innerHTML || error3.innerHTML || error4.innerHTML || error5.innerHTML){
 
                     e.preventDefault();
+                    return;
                     
                 }
+                const submitButton = document.querySelector(".btn");
+                submitButton.disabled = true;
+                submitButton.innerText = "Signing Up...";
 
                 
 

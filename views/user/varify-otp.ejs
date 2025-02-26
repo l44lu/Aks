@@ -109,7 +109,7 @@
                 <div id="otpTimer" class="otp-timer">
                     <span id="timerValue">60</span>
                 </div>
-                <button type="button" class="btn btn-secondary">Resend OTP</button>
+                <button type="button" class="btn btn-secondary" onclick="resendOTP()">Resend OTP</button>
             </div>
         </form>
         <div class="text-muted text-center pt-25">
@@ -140,23 +140,26 @@
     }
     startTimer();
 
-    function validateOTPForm(){
-        const otpInput=document.getElementById("otp").value;
+    document.getElementById("otpForm").addEventListener("submit", function(event) {
+        event.preventDefault(); 
+        
+        const otpInput = document.getElementById("otp").value;
+        
         $.ajax({
             type: "POST",
             url: "/varify-otp",
-            contentType: "application/json",  // ✅ Ensures JSON format
-            data: JSON.stringify({ otp: otpInput }),  // ✅ Sends JSON data
-            success: function (response) {
+            contentType: "application/json",
+            data: JSON.stringify({ otp: otpInput }),
+            success: function(response) {
                 if (response.success) {
                     Swal.fire({
-                    icon: "success",
-                    title: "OTP Verified Successfully",
-                    showConfirmButton: false,
-                    timer: 1500,
+                        icon: "success",
+                        title: "OTP Verified Successfully",
+                        showConfirmButton: false,
+                        timer: 1500,
                     }).then(() => {
                         window.location.href = response.redirectUrl;
-                        });
+                    });
                 } else {
                     Swal.fire({
                         icon: "error",
@@ -165,15 +168,52 @@
                     });
                 }
             },
-            error: function () {
+            error: function(xhr) {
+                let errorMessage = "Please try again";
+                if (xhr.responseJSON && xhr.responseJSON.message) {
+                    errorMessage = xhr.responseJSON.message;
+                }
+                
                 Swal.fire({
-                icon: "error",
-                title: "Invalid OTP",
-                text: "Please try again"
+                    icon: "error",
+                    title: "Invalid OTP",
+                    text: errorMessage
                 });
             }
         });
+    });
+
+    function resendOTP(){
+        clearInterval(timerInterval);
+        timer = 60;
+        document.getElementById("otp").disabled=false;
+        document.getElementById("timerValue").classList.remove("expired");
+        document.getElementById("timerValue").textContent = timer;
+        startTimer();
+        $.ajax({
+            type:"POST",
+            url:"resend-otp",
+            success:function (response){
+                if(response.success){
+                    Swal.fire({
+                        icon:"success",
+                        title:"OTP Resend Successfully",
+                        showConfirmButton:false,
+                        timer:1500,
+                    })
+
+                }else{
+                    Swal.fire({
+                        icon:"error",
+                        title:"Error",
+                        text:"An error occured while resending OTP. Please try again"
+                    })
+                }
+            }
+        })
+        return false;
     }
+
 
 </script>
 </body>

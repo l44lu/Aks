@@ -27,7 +27,7 @@ const userSchema = new Schema({
 
     googleId : {
         type : String ,
-        unique : true,
+        unique:true
 
     },
 
@@ -55,10 +55,10 @@ const userSchema = new Schema({
 
     
 
-    // wallet : {
-    //     type : Schema.Types.ObjectId ,
+    wallet : {
+        type : Schema.Types.ObjectId ,
         
-    // } ,
+    } ,
 
     wallet: {
         type: Number, 

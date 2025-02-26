@@ -1,0 +1,352 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Men Fashion Dashboard</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
+    <style>
+        /* General Styles */
+        body {
+            background-color: #1c1c1c;
+            font-family: 'Arial', sans-serif;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Header Styling */
+        .content-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid #444;
+        }
+
+        .content-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 30px;
+            padding-left: 30px;
+        }
+
+        /* Search Bar */
+        .card-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 15px 0;
+            margin-left: -240px;
+        }
+
+        .input-group {
+            max-width: 500px;
+            display: flex;
+            align-items: center;
+            background: #333;
+            border-radius: 50px;
+            padding: 5px 10px;
+        }
+
+        .input-group input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+            color: #fff;
+            padding: 10px;
+        }
+
+        .input-group button {
+            background: #555;
+            color: #fff;
+            border-radius: 50px;
+            padding: 8px 20px;
+            border: none;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .input-group button:hover {
+            background: #777;
+        }
+
+        /* Table Styles */
+        .table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+
+        .table th, .table td {
+            padding: 15px;
+            padding-left: 237px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        .table th {
+            background-color: #222;
+            color: #fff;
+        }
+
+        .table tbody tr:hover {
+            background-color: #333;
+        }
+
+        /* Action Buttons */
+        .btn {
+            padding: 6px 15px;
+            font-size: 14px;
+            border-radius: 4px;
+            transition: 0.3s;
+        }
+
+        .btn-danger {
+            background-color: #dc3545;
+            border: none;
+        }
+
+        .btn-danger:hover {
+            background-color: #a71d2a;
+        }
+
+        .btn-success {
+            background-color: #28a745;
+            border: none;
+        }
+
+        .btn-success:hover {
+            background-color: #1e7e34;
+        }
+
+        .btn a {
+            text-decoration: none;
+            color: #fff;
+            display: block;
+        }
+
+        /* Pagination */
+        .pagination {
+            margin: 20px auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .pagination li {
+            list-style: none;
+            margin: 0 5px;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            background: #444;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .pagination a:hover {
+            background: #666;
+        }
+
+        body {
+            background-color: #1c1c1c;
+            font-family: 'Arial', sans-serif;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            left: 280px;
+            right: 0;
+            z-index: 1000;
+        }
+        .navbar-aside {
+            background-color: #222;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+        .menu-item a.menu-link {
+            color: #bbb;
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .menu-item a.menu-link:hover, .menu-item a.menu-link.active {
+            background-color: #555;
+            color: #fff;
+        }
+        .dropdown-menu {
+            background-color: #444;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+            position: absolute;
+            right: 0;
+            top: 50px;
+            display: none;
+            min-width: 150px;
+        }
+        .dropdown:hover .dropdown-menu {
+            display: block;
+        }
+        .dropdown-item {
+            padding: 10px 15px;
+            color: #e0e0e0;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+        .dropdown-item:hover {
+            background-color: #666;
+            color: #fff;
+        }
+        .img-xs {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+        .main-wrap {
+            margin-left: 250px;
+            transition: margin-left 0.3s;
+            padding-top: 60px;
+        }
+        .content-main {
+            padding: 35px 85px;
+            min-height: calc(100vh - 80px);
+            background-color: #1c1c1c;
+        }
+        .content-title {
+            font-size: 24px;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .logo {
+            max-width: 120px;
+            display: block;
+            padding-right: 67px;
+            margin: 4px auto -14px;
+        }
+        .btn-icon {
+            padding: 6px;
+            border-radius: 50%;
+            background: transparent;
+            cursor: pointer;
+            color: #e0e0e0;
+            transition: color 0.3s;
+        }
+        .btn-icon:hover {
+            color: #fff;
+        }
+        .aside-top {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: -22px;
+        }
+        .nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+        .nav-item {
+            position: relative;
+        }
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+        .dropdown-toggle:hover {
+            background-color: #555;
+        }
+        .dropdown-toggle img {
+            margin-right: 10px;
+        }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #444;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+            z-index: 1000;
+        }
+        .dropdown-menu a {
+            color: #e0e0e0;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+        .dropdown-menu a:hover {
+            background-color: #666;
+            color: #fff;
+        }
+    </style>
+</head>
+<body>
+    <aside class="navbar-aside">
+        <div class="aside-top">
+            <a href="#" class="brand-wrap">
+                <img src="/img/footer-logo.png" class="logo" alt="Men Fashion Dashboard">
+            </a>
+        </div>
+        <nav>
+            <ul class="menu-aside">
+                <li class="menu-item"><a class="menu-link active" href="/admin">Dashboard</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/users">Customers</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/category">Category</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/brands">Brands</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/addProducts">Add Product</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/products">Products</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/coupon">Coupon</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/banner">Banner</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/orderList">Orders</a></li>
+            </ul>
+        </nav>
+    </aside>
+    <main class="main-wrap">
+        <header class="navbar">
+            <div class="col-nav" style="margin-left: auto;">
+                <ul class="nav">
+                    <li class="dropdown nav-item">
+                        <a class="dropdown-toggle" href="#">
+                            <img class="img-xs" src="admin-logo.jpeg" alt="User">
+                            <span>User</span>
+                        </a>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item text-danger" href="/admin/logout">Logout</a>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </header>

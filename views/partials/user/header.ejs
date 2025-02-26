@@ -7,7 +7,7 @@
     <meta name="keywords" content="Male_Fashion, unica, creative, html">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Male-Fashion | Template</title>
+    <title>Aks</title>
 
     <!-- Google Font -->
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
@@ -23,6 +23,10 @@
     <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
     <link rel="stylesheet" href="css/style.css" type="text/css">
     <style>
+        .header__logo {
+            padding: 18px 0;
+            margin-left: -68px;
+        }
         .spad {
             padding-top: 100px;
             padding-bottom: 100px;
@@ -96,7 +100,7 @@
                 -ms-flex: 0 0 50%;
                 flex: 0 0 50%;
                 max-width: 50%;
-                padding-left: 100px;
+                padding-left: 20px;
             }
         }
         .sign-in-link{
@@ -142,6 +146,44 @@
                 margin-top: 50px;
                 margin-left: -90px;
             }
+        }
+
+        .dropdown{
+            position: relative;
+            display: inline-block;
+
+        }
+        .dropdown-content{
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            min-width: 160px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0,2);
+            z-index: 1000;
+            right: 0;
+        }
+        .dropdown-content a{
+            color: black;
+            padding:12px 16px;
+            text-decoration: none;
+            display: block;
+            width: 100%;
+
+        }
+
+        .dropdown-content a:hover{
+            background-color: #8f1010;
+
+
+        }
+
+        .dropdown:hover .dropdown-content{
+            display: block;
+        }
+
+        .header{
+            position: relative;
+            z-index: 500;
         }
     </style>
 </head>
@@ -212,12 +254,24 @@
                 </div>
                 <div class="col-lg-3 col-md-3">
                     <div class="header__nav__option">
-                        <a href="/login" class="sign-in-link">Log in</a>
-                        <a href="/signup" class="sign-in-link">Sign Up</a>
+                        <% if (typeof user !== 'undefined' && user) { %>  
+                            <div class="dropdown">
+                                <a href="#" class="sign-in-link"><%= user.name %></a>
+                                <div class="dropdown-content">
+                                    <a href="/userProfile">Profile</a>
+                                    <a href="/logout">Logout</a>
+                                </div>
+                            </div>
+                        <% } else { %>
+                            <a href="/login" class="sign-in-link">Log in</a>
+                            <a href="/signup" class="sign-in-link">Sign Up</a>
+                        <% } %>
+                    
                         <a href="#" class="search-switch"><img src="img/icon/search.png" alt=""></a>
                         <a href="#"><img src="img/icon/heart.png" alt=""></a>
                         <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
                     </div>
+                    
                 </div>
             </div>
             <div class="canvas__open"><i class="fa fa-bars"></i></div>
