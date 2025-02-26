@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@300;400;600;700;800;900&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="/css/bootstrap.min.css" />
+  <link rel="stylesheet" href="/css/style.css" />
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-image: url('/img/adminbg.jpg');
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed; 
+      font-family: 'Nunito Sans', sans-serif;
+      color: black; 
+      animation: fadeIn 1s ease-in-out;
+    }
+
+    .login-container {
+      width: 400px;
+      padding: 40px;
+      background: rgba(255, 255, 255, 0.5); 
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      text-align: center;
+      animation: slideUp 0.7s ease-in-out;
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .login-container:hover {
+      transform: scale(1.02);
+    }
+
+    
+    .text-center {
+      color: black;
+      font-size: 21px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+      text-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .error-message {
+      color: #ff6b6b; 
+      font-size: 0.875rem;
+      margin-top: 5px;
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: 25px;
+    }
+
+    .form-control {
+      background: rgba(255, 255, 255, 0.7);
+      border: none;
+      color: black; 
+      padding: 14px;
+      border-radius: 10px;
+      transition: all 0.3s ease-in-out;
+      font-size: 16px;
+    }
+
+    .form-control::placeholder {
+      color: rgba(0, 0, 0, 0.6); 
+    }
+
+    .form-control:focus {
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 0 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-custom {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, #303030, #000000);
+      color: rgb(131, 131, 131); 
+      font-weight: 700;
+      border-radius: 10px;
+      border: none;
+      transition: all 0.3s ease-in-out;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .btn-custom:hover {
+      background: linear-gradient(135deg, #000000, #ffffff);
+      transform: scale(1.05);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+      }
+      to {
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -5px;
+      left: -5px;
+      right: -5px;
+      bottom: -5px;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+      border-radius: 25px;
+      z-index: -1;
+      filter: blur(10px);
+      animation: glow 3s infinite alternate;
+    }
+
+    @keyframes glow {
+      0% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+      }
+      100% {
+        box-shadow: 0 0 40px rgba(255, 255, 255, 0.4);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h2 class="text-center">Admin Login</h2>
+    <% if (message) { %>
+    <div class="alert alert-danger text-center"><%= message %></div>
+    <% } %>
+    <form id="adminLoginForm" method="post" action="/admin/login">
+      <div class="form-group">
+        <label for="adminEmail" style="color: black;">Email address</label> 
+        <input
+          type="email"
+          class="form-control"
+          id="adminEmail"
+          name="email"
+          placeholder="Enter your email"
+          required
+        />
+        <div id="emailError" class="error-message"></div>
+      </div>
+      <div class="form-group">
+        <label for="adminPassword" style="color: black;">Password</label> 
+        <input
+          type="password"
+          class="form-control"
+          id="adminPassword"
+          name="password"
+          placeholder="Enter your password"
+          required
+        />
+        <div id="passwordError" class="error-message"></div>
+      </div>
+      <button type="submit" class="btn btn-custom">Log In</button>
+    </form>
+  </div>
+  
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.bundle.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const adminLoginForm = document.getElementById("adminLoginForm");
+      const emailField = document.getElementById("adminEmail");
+      const passwordField = document.getElementById("adminPassword");
+      const emailError = document.getElementById("emailError");
+      const passwordError = document.getElementById("passwordError");
+
+      adminLoginForm.addEventListener("submit", function (event) {
+        let isValid = true;
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        
+        if (!emailPattern.test(emailField.value)) {
+          emailError.textContent = "Invalid email format";
+          isValid = false;
+        } else {
+          emailError.textContent = "";
+        }
+
+        if (passwordField.value.length < 8) {
+          passwordError.textContent = "Password should contain at least 8 characters";
+          isValid = false;
+        } else {
+          passwordError.textContent = "";
+        }
+
+        if (!isValid) {
+          event.preventDefault();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
