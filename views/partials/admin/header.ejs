@@ -2,14 +2,109 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>Men Fashion Dashboard</title>
+    <title>Aks admin</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
     <style>
+        .edit-btn {
+            background-color: #4578a5; 
+            border-color: #2268a5;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .edit-btn:hover {
+            background-color: #4479a1; 
+            border-color: #356da5;
+            transform: scale(1.05);
+        }
+
+        .ash-grey-btn {
+            background-color: #6c757d; 
+            border-color: #6c757d;
+        }
+
+        .ash-grey-btn:hover {
+            background-color: #5a6268;
+            border-color: #545b62;
+        }
+
+        .col-md-3 {
+        padding: 20px;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin: 10px;
+        }
+
+        .form-label {
+        margin-bottom: 8px;
+        }
+
+        .form-control {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 10px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        box-sizing: border-box;
+        }
+
+        .d-grid {
+        margin-top: 20px;
+        }
+
+        .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: 1px solid #007bff;
+        border-radius: 5px;
+        padding: 10px 20px;
+        cursor: pointer;
+        }
+
+        .btn-primary:hover {
+        background-color: #0056b3;
+        border-color: #0056b3;
+        }
+
+        .pagination a {
+            padding: 8px 12px;
+            background: #444;
+            color: #fff;
+            border-radius: 4px;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        .pagination {
+        display: inline-block;
+        }
+
+        .pagination a,
+        .pagination .current-page {
+        display: inline-block;
+        padding: 5px 10px;
+        margin: 0 2px;
+        border: 1px solid #ddd;
+        text-decoration: none;
+        color: #333;
+        }
+
+        .pagination a:hover {
+        background-color: #f5f5f5;
+        }
+
+        .error-message {
+        color: red;
+        }
         /* General Styles */
-        body {
+        .body {
             background-color: #1c1c1c;
             font-family: 'Arial', sans-serif;
             color: #e0e0e0;
@@ -80,7 +175,7 @@
 
         .table th, .table td {
             padding: 15px;
-            padding-left: 237px;
+            padding-left: 110px;
             text-align: left;
             border-bottom: 1px solid #444;
         }
@@ -100,6 +195,7 @@
             font-size: 14px;
             border-radius: 4px;
             transition: 0.3s;
+            margin: 6px;
         }
 
         .btn-danger {

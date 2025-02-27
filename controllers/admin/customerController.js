@@ -39,13 +39,29 @@ const customerInfo = async (req, res) => {
 const customerBlocked = async (req,res)=>{
     try {
         let id = req.query.id;
-        await User.updateOne({_id:id},)
+        await User.updateOne({_id:id},{$set:{isBlocked:true}});
+        res.redirect("/admin/users");
     } catch (error) {
-        
+        res.redirect("/pageerror");
     }
-}
+};
+
+
+const customerunBlock = async(req,res)=>{
+    try {
+        let id = req.query.id;
+        await User.updateOne({_id:id},{$set:{isBlocked:false}});
+        res.redirect("/admin/users");
+    } catch (error) {
+        res.redirect("/passanger");
+    }
+};
 
 
 
 
-module.exports = { customerInfo };
+module.exports = { 
+    customerInfo,
+    customerBlocked,
+    customerunBlock,
+};
