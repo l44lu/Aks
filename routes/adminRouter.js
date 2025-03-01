@@ -4,7 +4,7 @@ const adminController = require("../controllers/admin/adminController");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
 const { userAuth, adminAuth } = require("../middlewares/auth");
-const productController = require("../controllers/admin/productcontroller");
+const productController = require("../controllers/admin/productController");
 const multer = require("multer"); 
 const path = require("path");
 
@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
 
 const uploads = multer({ storage: storage });
 
-// Routes
 router.get("/pageerror", adminController.pageerror); 
 router.get("/login", adminController.loadlogin);
 router.post("/login", adminController.login); 
@@ -54,5 +53,16 @@ router.post("/editCategory", adminAuth, categoryController.editCategory);
 
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
 router.post("/addProduct", adminAuth, uploads.array("image", 4), productController.addProducts);
+router.get("/products",adminAuth,productController.getAllProducts);
+router.post("/addProductOffer",adminAuth,productController.addProductOffer);
+router.post("/removeProductOffer", adminAuth, productController.removeProductOffer);
+router.get("/blockProduct",adminAuth,productController.blockProduct);
+router.get("/unblockProduct",adminAuth,productController.unblockProduct);
+router.get("/editProduct",adminAuth,productController.getEditProduct);
+
+
+
+
+
 
 module.exports = router;
