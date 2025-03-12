@@ -132,12 +132,13 @@
             background: rgba(255, 255, 255, 0.2);
             backdrop-filter: blur(8px);
             padding: 10px;
+            margin-top: 126px;
             border-radius: 8px;
             text-align: center;
             font-size: 0.9rem;
             color: #333;
             font-weight: bold;
-            animation: fadeIn 1.2s ease-in-out;
+            animation: fadeIn 1.2sease-in-out;
         }
 
         @media (max-width: 768px) {
@@ -165,6 +166,14 @@
                 transform: translateY(0);
             }
         }
+        .forgot-password-link{
+            color:#4a90e2;
+            text-decoration: none;
+        }
+        .forgot-password-link:hover{
+            color: #357ab8;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -181,6 +190,9 @@
                 <div class="form-group">
                     <input type="password" name="password" id="password" placeholder="Enter Password">
                     <div id="error2" class="error-message"></div>
+                </div>
+                <div class="form-group d-flex justify-content-end">
+                    <a href="/forgot-password" class="forgot-password-link ms-auto">forgot password</a>
                 </div>
 
                 <% if (message && message.length > 0) { %>

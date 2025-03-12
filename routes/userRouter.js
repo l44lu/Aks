@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
+const profileController = require("../controllers/user/profileController");
 
 
 router.get("/",userController.loadHomepage);
@@ -16,6 +17,7 @@ router.post("/login",userController.login);
 
 
 
+
 router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
 
 
@@ -23,10 +25,15 @@ router.get("/auth/google/callback", passport.authenticate("google", {
       successRedirect: "/", 
       failureRedirect: "/login" 
 }));
-
-
 router.get("/logout",userController.logout)
 
 
+
+router.get("/forgot-password",profileController.getForgotPassPage);
+router.post("/forgot-email-valid",profileController.forgotEmailValid);
+router.post("/varify-passForgot-otp",profileController.varifyForgotPassOtp);
+router.get("/reset-password",profileController.getResetPassPage);
+router.post("/resend-otp", profileController.resendOtp);
+router.post('/reset-password', profileController.resetPassword)
 
 module.exports = router;

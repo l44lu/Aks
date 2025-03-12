@@ -33,7 +33,7 @@ const login = async(req,res)=>{
                 console.log("Session after login:",req.session);
                 return res.redirect("/admin")
             }else{
-                return res.redirect("/login",{message:"Invalid password"});
+                return res.render("admin-login",{message:"Invalid password"});
             }
         }
 

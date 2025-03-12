@@ -205,6 +205,7 @@
             align-items: center;
             justify-content: center;
             overflow: hidden;
+            position: relative;
         }
         
         .image-preview img {
@@ -243,6 +244,37 @@
             justify-content: flex-end;
             gap: 15px;
             margin-top: 30px;
+        }
+        
+        .edit-preview-btn {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            background: rgba(0,0,0,0.6);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 3px 8px;
+            font-size: 12px;
+            cursor: pointer;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .image-preview:hover .edit-preview-btn {
+            opacity: 1;
+        }
+        
+        .cropper-container {
+            max-height: 300px;
+            overflow: hidden;
+        }
+        
+        .cropper-controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
         }
         
         @media (max-width: 991px) {
@@ -350,10 +382,22 @@
                                         <input class="form-control" type="file" name="image" id="input1" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 1)">
                                         <div class="image-preview">
                                             <img src="" alt="" id="imgView1">
+                                            <button type="button" class="edit-preview-btn" onclick="editImage(1)">Edit</button>
                                         </div>
                                         <div class="image-cropper" id="cropper-container1" style="display:none;">
-                                            <img src="" id="cropperImg1" alt="">
-                                            <button type="button" id="saveButton1" class="btn-sm btn-primary">Save Crop</button>
+                                            <div class="cropper-container">
+                                                <img src="" id="cropperImg1" alt="">
+                                            </div>
+                                            <div class="cropper-controls">
+                                                <button type="button" id="rotateLeftBtn1" class="btn-sm btn-primary" onclick="rotateImage(-90, 1)">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button type="button" id="rotateRightBtn1" class="btn-sm btn-primary" onclick="rotateImage(90, 1)">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button type="button" id="saveButton1" class="btn-sm btn-primary">Save Crop</button>
+                                                <button type="button" id="cancelButton1" class="btn-sm btn-primary" onclick="cancelCrop(1)">Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="image-upload">
@@ -361,10 +405,22 @@
                                         <input class="form-control" type="file" name="image" id="input2" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 2)">
                                         <div class="image-preview">
                                             <img src="" alt="" id="imgView2">
+                                            <button type="button" class="edit-preview-btn" onclick="editImage(2)">Edit</button>
                                         </div>
                                         <div class="image-cropper" id="cropper-container2" style="display:none;">
-                                            <img src="" id="cropperImg2" alt="">
-                                            <button type="button" id="saveButton2" class="btn-sm btn-primary">Save Crop</button>
+                                            <div class="cropper-container">
+                                                <img src="" id="cropperImg2" alt="">
+                                            </div>
+                                            <div class="cropper-controls">
+                                                <button type="button" id="rotateLeftBtn2" class="btn-sm btn-primary" onclick="rotateImage(-90, 2)">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button type="button" id="rotateRightBtn2" class="btn-sm btn-primary" onclick="rotateImage(90, 2)">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button type="button" id="saveButton2" class="btn-sm btn-primary">Save Crop</button>
+                                                <button type="button" id="cancelButton2" class="btn-sm btn-primary" onclick="cancelCrop(2)">Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="image-upload">
@@ -372,10 +428,22 @@
                                         <input class="form-control" type="file" name="image" id="input3" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 3)">
                                         <div class="image-preview">
                                             <img src="" alt="" id="imgView3">
+                                            <button type="button" class="edit-preview-btn" onclick="editImage(3)">Edit</button>
                                         </div>
                                         <div class="image-cropper" id="cropper-container3" style="display:none;">
-                                            <img src="" id="cropperImg3" alt="">
-                                            <button type="button" id="saveButton3" class="btn-sm btn-primary">Save Crop</button>
+                                            <div class="cropper-container">
+                                                <img src="" id="cropperImg3" alt="">
+                                            </div>
+                                            <div class="cropper-controls">
+                                                <button type="button" id="rotateLeftBtn3" class="btn-sm btn-primary" onclick="rotateImage(-90, 3)">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button type="button" id="rotateRightBtn3" class="btn-sm btn-primary" onclick="rotateImage(90, 3)">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button type="button" id="saveButton3" class="btn-sm btn-primary">Save Crop</button>
+                                                <button type="button" id="cancelButton3" class="btn-sm btn-primary" onclick="cancelCrop(3)">Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
                                     <div class="image-upload">
@@ -383,10 +451,22 @@
                                         <input class="form-control" type="file" name="image" id="input4" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 4)">
                                         <div class="image-preview">
                                             <img src="" alt="" id="imgView4">
+                                            <button type="button" class="edit-preview-btn" onclick="editImage(4)">Edit</button>
                                         </div>
                                         <div class="image-cropper" id="cropper-container4" style="display:none;">
-                                            <img src="" id="cropperImg4" alt="">
-                                            <button type="button" id="saveButton4" class="btn-sm btn-primary">Save Crop</button>
+                                            <div class="cropper-container">
+                                                <img src="" id="cropperImg4" alt="">
+                                            </div>
+                                            <div class="cropper-controls">
+                                                <button type="button" id="rotateLeftBtn4" class="btn-sm btn-primary" onclick="rotateImage(-90, 4)">
+                                                    <i class="fas fa-undo"></i>
+                                                </button>
+                                                <button type="button" id="rotateRightBtn4" class="btn-sm btn-primary" onclick="rotateImage(90, 4)">
+                                                    <i class="fas fa-redo"></i>
+                                                </button>
+                                                <button type="button" id="saveButton4" class="btn-sm btn-primary">Save Crop</button>
+                                                <button type="button" id="cancelButton4" class="btn-sm btn-primary" onclick="cancelCrop(4)">Cancel</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -409,6 +489,7 @@
 <script src="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.js"></script>
 <script>
     const cropperInstances = {};
+    const originalImages = {};
     
     function viewImage(event, index) {
         if (!event.target.files || !event.target.files[0]) return;
@@ -416,8 +497,17 @@
         const file = event.target.files[0];
         const imgView = document.getElementById(`imgView${index}`);
         
+        // Store the original file for reference
+        originalImages[index] = file;
+        
+        // Show preview
         imgView.src = URL.createObjectURL(file);
         
+        // Set up cropper
+        setupCropper(file, index);
+    }
+    
+    function setupCropper(file, index) {
         const reader = new FileReader();
         reader.onload = function() {
             const dataURL = reader.result;
@@ -433,41 +523,122 @@
                 viewMode: 1,
                 guides: true,
                 background: false,
-                autoCropArea: 1,
-                zoomable: true
+                autoCropArea: 0.8,
+                zoomable: true,
+                rotatable: true
             });
-            
-            const cropperContainer = document.getElementById(`cropper-container${index}`);
-            cropperContainer.style.display = "block";
             
             const saveButton = document.getElementById(`saveButton${index}`);
             saveButton.onclick = function() {
-                const cropper = cropperInstances[index];
-                const croppedCanvas = cropper.getCroppedCanvas();
-                
-                imgView.src = croppedCanvas.toDataURL("image/jpeg", 0.9);
-                
-                croppedCanvas.toBlob(function(blob) {
-                    const timestamp = new Date().getTime();
-                    const fileName = `cropped-img-${timestamp}-${index}.jpg`;
-                    const imgFile = new File([blob], fileName, { type: 'image/jpeg' });
-                    
-                    const dataTransfer = new DataTransfer();
-                    dataTransfer.items.add(imgFile);
-                    document.getElementById(`input${index}`).files = dataTransfer.files;
-                    
-                    cropperContainer.style.display = "none";
-                }, 'image/jpeg', 0.9);
+                saveCroppedImage(index);
             };
         };
         reader.readAsDataURL(file);
     }
     
+    function editImage(index) {
+        const imgView = document.getElementById(`imgView${index}`);
+        const cropperContainer = document.getElementById(`cropper-container${index}`);
+        
+        // If there's an image to edit
+        if (imgView.src) {
+            // If we don't have the cropper set up yet but have an image
+            if (!cropperInstances[index] && originalImages[index]) {
+                setupCropper(originalImages[index], index);
+            }
+            
+            // Show the cropper
+            cropperContainer.style.display = "block";
+        }
+    }
+    
+    function saveCroppedImage(index) {
+        const cropper = cropperInstances[index];
+        if (!cropper) return;
+        
+        const imgView = document.getElementById(`imgView${index}`);
+        const croppedCanvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+            fillColor: '#fff'
+        });
+        
+        // Update the preview image with cropped version
+        imgView.src = croppedCanvas.toDataURL("image/jpeg", 0.9);
+        
+        // Convert to blob and store it for form submission
+        croppedCanvas.toBlob(function(blob) {
+            // Create a global variable to store the blob
+            if (!window.croppedBlobs) {
+                window.croppedBlobs = {};
+            }
+            
+            window.croppedBlobs[index] = blob;
+            
+            // Hide the cropper
+            document.getElementById(`cropper-container${index}`).style.display = "none";
+        }, 'image/jpeg', 0.9);
+    }
+    
+    function cancelCrop(index) {
+        // Hide the cropper without saving changes
+        document.getElementById(`cropper-container${index}`).style.display = "none";
+    }
+    
+    function rotateImage(degree, index) {
+        const cropper = cropperInstances[index];
+        if (cropper) {
+            cropper.rotate(degree);
+        }
+    }
+    
     function validateAndSubmit() {
-        if (validateForm()) {
+    if (validateForm()) {
+        // If we have cropped images, add them to the form
+        if (window.croppedBlobs) {
+            const form = document.getElementById('productForm');
+            const formData = new FormData(form);
+            
+            // Remove the original files
+            formData.delete('image');
+            
+            // Add cropped files if available, otherwise use originals
+            for (let i = 1; i <= 4; i++) {
+                const input = document.getElementById(`input${i}`);
+                if (window.croppedBlobs[i]) {
+                    const fileName = `cropped-img-${new Date().getTime()}-${i}.jpg`;
+                    formData.append('image', window.croppedBlobs[i], fileName);
+                } else if (input.files && input.files[0]) {
+                    formData.append('image', input.files[0]);
+                }
+            }
+            
+            // Submit via fetch
+            fetch('/admin/addProduct', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (response.redirected) {
+                    window.location.href = response.url;
+                } else {
+                    return response.json();
+                }
+            })
+            .then(data => {
+                if (data && data.error) {
+                    alert(data.error);
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        } else {
+            // If no cropped images, submit normally
             document.getElementById('productForm').submit();
         }
     }
+}
     
     function validateForm() {
         clearErrorMessages();

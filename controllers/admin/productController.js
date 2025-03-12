@@ -4,6 +4,7 @@ const fs = require("fs");
 const path = require("path");
 const User = require("../../models/userSchema");
 const sharp = require("sharp");
+const mongoose = require('mongoose')
 
 const getProductAddPage = async (req, res) => {
     try {
@@ -77,26 +78,30 @@ const addProducts = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
+        
         const search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
 
-        const query = {
-            $or: [
-                { productName: { $regex: new RegExp(".*" + search + ".*", "i") } },
-            ],
-        };
-
-        const productData = await Product.find(query)
-            .limit(limit)
-            .skip((page - 1) * limit)
-            .populate("category") 
-            .exec();
+        const query = search
+            ? { productName: { $regex: new RegExp(".*" + search + ".*", "i") } }
+            : {};
 
         const count = await Product.countDocuments(query);
+        if (page > Math.ceil(count / limit)) {
+            return res.redirect("?page=1");
+        }
+
+        const productData = await Product.find(query)
+            .sort({ createdAt: -1 })
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .populate("category")
+            .exec();
+
         const category = await Category.find({ isListed: true });
 
-        if (!category) {
+        if (!category || category.length === 0) {
             return res.render("page-404");
         }
 
@@ -112,6 +117,7 @@ const getAllProducts = async (req, res) => {
         res.status(500).render("pageerror", { message: "Server error while fetching products" });
     }
 };
+
 
 
 const addProductOffer = async (req, res) => {
@@ -190,24 +196,111 @@ const unblockProduct = async(req,res)=>{
 }
 
 
-const getEditProduct = async(req,res)=>{
+const getEditProduct = async (req, res) => {
     try {
-        const id = req.query.id;
-        const product = await Product.findOne({_id:id});
-        const category = await Category.findOne({_id:id});
-        res.render("edit-product",{
-            product:product,
-            cat:category,
-        })
+        const id = req.query.id;        
+        const product = await Product.findOne({ _id: id });
+        
+        if (!product) {
+            return res.redirect('/admin/products?error=Product not found');
+        }
+        
 
+        const categories = await Category.find({});
+        
+        res.render("edit-product", {
+            product: product,
+            cat: categories,
+        });
     } catch (error) {
-        res.redirect("/pageerror");
+        console.error('Error in getEditProduct:', error);
+        res.redirect("/admin/error?message=Failed to load edit product page");
     }
-}
+};
 
 
+const editProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const data = req.body;
+
+        console.log('data of the editProduct: ', data);
+        
+
+        if (!mongoose.Types.ObjectId.isValid(id)) {
+            return res.status(400).json({ error: "Invalid product ID" });
+        }
+
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ error: "Product not found" });
+        }
+
+        const existingProduct = await Product.findOne({
+            productName: data.productName,
+            _id: { $ne: id }
+        });
+
+        if (existingProduct) {
+            return res.status(400).json({
+                error: "Product with this name already exists. Please try again with another name"
+            });
+        }
+
+        const categoryId = await Category.findOne({ name: data.category }, { _id: true })
+
+        console.log('category id: ', categoryId);
+        
 
 
+        const updateFields = {
+            productName: data.productName,
+            description: data.description,
+            category: categoryId, 
+            regularPrice: data.regularPrice,
+            salePrice: data.salePrice,
+            quantity: data.quantity,
+            color: data.color,
+        };
+
+        await Product.findByIdAndUpdate(id, updateFields, { new: true });
+
+        res.redirect("/admin/products?success=Product updated successfully");
+    } catch (error) {
+        console.error('Error in editProduct:', error);
+        res.status(500).json({ error: "Failed to update product" });
+    }
+};
+
+const deleteSingleImage = async (req, res) => {
+    try {
+        const { imageNameToServer, productIdToServer } = req.body;
+        
+        if (!imageNameToServer || !productIdToServer) {
+            return res.status(400).send({ status: false, message: "Missing image name or product ID" });
+        }
+        
+        await Product.findByIdAndUpdate(
+            productIdToServer,
+            { $pull: { productImage: imageNameToServer } },
+            { new: true }
+        );
+        
+        const imagePath = path.join(__dirname, '../public/uploads/re-image/', imageNameToServer);
+        
+        if (fs.existsSync(imagePath)) {
+            fs.unlinkSync(imagePath);
+            console.log(`Image ${imageNameToServer} deleted successfully`);
+        } else {
+            console.log(`Image ${imageNameToServer} not found in filesystem`);
+        }
+        
+        res.send({ status: true, message: "Image deleted successfully" });
+    } catch (error) {
+        console.error('Error in deleteSingleImage:', error);
+        res.status(500).send({ status: false, message: "Failed to delete image" });
+    }
+};
 
 
 
@@ -221,5 +314,7 @@ module.exports = {
     blockProduct,
     unblockProduct,
     getEditProduct,
+    editProduct,
+    deleteSingleImage,
 
 };
