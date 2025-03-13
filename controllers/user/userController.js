@@ -26,18 +26,17 @@ const loadHomepage = async (req, res) => {
         let productData = await Product.find(
             {isBlocked:false,
                 category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
-
             }
 
         )
         productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
-        productData = productData.slice(0,4);
+        productData = productData.slice(0,8);
         if(user){
             const userData = await User.findOne({_id:user});
             return res.render("home",{user:userData,product:productData});
         }else{
             return res.render("home",{product:productData});
-        }
+        }  
     } catch (error) {
         console.error("Home page not found:", error);
         if (!res.headersSent) {
@@ -59,16 +58,16 @@ const loadSignup = async (req, res) => {
 };
 
 
-const loadShopping = async (req, res) => {
-    try {
-        res.render("shop");
-    } catch (error) {
-        console.error("Shop page not found:", error);
-        if (!res.headersSent) {
-            res.status(500).send("Server error");
-        }
-    }
-};
+// const loadShopping = async (req, res) => {
+//     try {
+//         res.render("shop");
+//     } catch (error) {
+//         console.error("Shop page not found:", error);
+//         if (!res.headersSent) {
+//             res.status(500).send("Server error");
+//         }
+//     }
+// };
 
 
 function generateOtp(){
@@ -301,15 +300,74 @@ const logout = async(req,res)=>{
 }
 
 
+const loadShoppingPage = async (req, res) => {
+    try {
+        console.log("Fetching shopping page data...");
+
+        const user = req.session.user;
+        const userData = await User.findOne({ _id: user });
+
+        // Fetch categories
+        const category = await Category.find({ isListed: true });
+        const categoryIds = category.map(cat => cat._id.toString());
+
+        // Get filter parameters
+        const selectedCategory = req.query.category;
+        const minPrice = parseInt(req.query.minPrice) || 0;
+        const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : null;
+        const sort = req.query.sort || 'newest'; // Default sorting to newest
+
+        const page = parseInt(req.query.page) || 1;
+        const limit = 9;
+        const skip = (page - 1) * limit;
+
+        // Build product filter query
+        let filterQuery = {
+            isBlocked: false,
+            category: selectedCategory ? selectedCategory : { $in: categoryIds },
+            quantity: { $gt: 0 }
+        };
+
+        if (maxPrice !== null) {
+            filterQuery.salePrice = { $gte: minPrice, $lte: maxPrice };
+        } else if (minPrice > 0) {
+            filterQuery.salePrice = { $gte: minPrice };
+        }
+
+        let sortQuery = { createdOn: -1 }; // Default sorting: Newest first
+        if (sort === 'low') sortQuery = { salePrice: 1 };
+        if (sort === 'high') sortQuery = { salePrice: -1 };
+
+        const product = await Product.find(filterQuery).sort(sortQuery).skip(skip).limit(limit);
+
+        const totalProducts = await Product.countDocuments(filterQuery);
+        const totalPage = Math.ceil(totalProducts / limit);
+
+        res.render("shop", {
+            user: userData,
+            product: product,
+            category: category,
+            currentPage: page,
+            totalPage: totalPage,
+        });
+
+    } catch (error) {
+        console.error("Error loading shopping page:", error);
+        res.redirect("pageNotFound");
+    }
+};
 
 
 
 
-// Exporting Controllers
+
+
+
+
 module.exports = {
     loadHomepage,
     pageNotFound,
-    loadShopping,
+    // loadShopping,
     loadSignup,
     signup,
     varifyOtp,
@@ -317,4 +375,5 @@ module.exports = {
     loadlogin,
     login,
     logout,
+    loadShoppingPage,
 };

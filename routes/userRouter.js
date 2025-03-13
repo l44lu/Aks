@@ -3,11 +3,12 @@ const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
 const profileController = require("../controllers/user/profileController");
-
+const { userAuth, adminAuth } = require("../middlewares/auth");
+const productController = require("../controllers/user/productController");
 
 router.get("/",userController.loadHomepage);
 router.get("/pageNotFound",userController.pageNotFound)
-router.get("/shop",userController.loadShopping)
+// router.get("/shop",userController.loadShopping)
 router.get("/signup",userController.loadSignup)
 router.get("/login",userController.loadlogin)
 router.post("/signup",userController.signup);
@@ -25,6 +26,7 @@ router.get("/auth/google/callback", passport.authenticate("google", {
       successRedirect: "/", 
       failureRedirect: "/login" 
 }));
+
 router.get("/logout",userController.logout)
 
 
@@ -35,5 +37,11 @@ router.post("/varify-passForgot-otp",profileController.varifyForgotPassOtp);
 router.get("/reset-password",profileController.getResetPassPage);
 router.post("/resend-otp", profileController.resendOtp);
 router.post('/reset-password', profileController.resetPassword)
+
+
+
+router.get("/shop",userController.loadShoppingPage);
+router.get("/productDetails",productController.productDetails);
+
 
 module.exports = router;

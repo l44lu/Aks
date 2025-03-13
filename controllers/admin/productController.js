@@ -277,15 +277,25 @@ const deleteSingleImage = async (req, res) => {
         const { imageNameToServer, productIdToServer } = req.body;
         
         if (!imageNameToServer || !productIdToServer) {
-            return res.status(400).send({ status: false, message: "Missing image name or product ID" });
+            return res.status(400).send({ 
+                status: false, 
+                message: "Missing image name or product ID" 
+            });
         }
         
-        await Product.findByIdAndUpdate(
+        const updatedProduct = await Product.findByIdAndUpdate(
             productIdToServer,
             { $pull: { productImage: imageNameToServer } },
             { new: true }
         );
-        
+
+        if (!updatedProduct) {
+            return res.status(404).send({
+                status: false,
+                message: "Product not found"
+            });
+        }
+
         const imagePath = path.join(__dirname, '../public/uploads/re-image/', imageNameToServer);
         
         if (fs.existsSync(imagePath)) {
@@ -295,13 +305,18 @@ const deleteSingleImage = async (req, res) => {
             console.log(`Image ${imageNameToServer} not found in filesystem`);
         }
         
-        res.send({ status: true, message: "Image deleted successfully" });
+        res.send({ 
+            status: true, 
+            message: "Image deleted successfully" 
+        });
     } catch (error) {
         console.error('Error in deleteSingleImage:', error);
-        res.status(500).send({ status: false, message: "Failed to delete image" });
+        res.status(500).send({ 
+            status: false, 
+            message: "Failed to delete image" 
+        });
     }
 };
-
 
 
 
@@ -316,5 +331,4 @@ module.exports = {
     getEditProduct,
     editProduct,
     deleteSingleImage,
-
 };
