@@ -2,6 +2,10 @@
 <head>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Include SweetAlert2 from CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
     <style>
         :root {
             --primary-bg: #1a1a1a;
@@ -13,6 +17,8 @@
             --accent-color: #a0a0a0;
             --hover-color: #c2c2c2;
             --shadow-color: rgba(0, 0, 0, 0.6);
+            --primary-blue: #0088ff;
+            --danger-color: #ff6b6b;
         }
         
         body {
@@ -24,9 +30,9 @@
         }
         
         .dashboard-container {
-            max-width: 1318px;
+            max-width: 1200px;
             margin: 40px auto;
-            padding: 0px 50px;
+            padding: 0 30px;
         }
         
         .content-header {
@@ -49,42 +55,36 @@
             position: absolute;
             bottom: -8px;
             left: 0;
-            width: 251px;
+            width: 235px;
             height: 4px;
-            background: #717171;
+            background: #747474;
             border-radius: 2px;
-            border-top-left-radius: 2px;
-            border-top-right-radius: 2px;
-            border-bottom-right-radius: 2px;
-            border-bottom-left-radius: 2px;
         }
-
-
         
         .card {
             background: var(--card-bg);
-            border-radius: 16px;
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 10px 20px var(--shadow-color);
-            margin-bottom: 30px;
+            box-shadow: 0 8px 16px var(--shadow-color);
+            margin-bottom: 25px;
             transition: transform 0.3s, box-shadow 0.3s;
         }
         
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px var(--shadow-color);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 20px var(--shadow-color);
         }
         
         .card-header {
-            padding: 20px 25px;
+            padding: 18px 22px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
+            justify-content: space-between;
         }
         
         .card-header h4 {
-            margin: 5px;
-            margin-right: -175px;
+            margin: 0;
             font-size: 18px;
             font-weight: 600;
             color: var(--title-color);
@@ -93,12 +93,32 @@
         }
         
         .card-header h4 i {
-            margin-right: 10px;
-            color: #8d8d8d;
+            margin-right: 12px;
+            color: var(--primary-blue);
+            font-size: 16px;
         }
         
         .card-body {
-            padding: 25px;
+            padding: 22px;
+        }
+        
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 0 -12px;
+        }
+        
+        .col-md-4, .col-md-6 {
+            padding: 0 12px;
+            box-sizing: border-box;
+        }
+        
+        .col-md-4 {
+            width: 33.333%;
+        }
+        
+        .col-md-6 {
+            width: 50%;
         }
         
         .form-group {
@@ -122,84 +142,76 @@
             color: var(--text-color);
             font-size: 14px;
             transition: all 0.3s;
+            box-sizing: border-box;
         }
         
         .form-control:focus, .form-select:focus {
-            border-color: var(--accent-color);
-            box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+            border-color: var(--primary-blue);
+            box-shadow: 0 0 0 3px rgba(0, 136, 255, 0.2);
             outline: none;
         }
         
         .error-message {
-            color: #ff6b6b;
+            color: var(--danger-color);
             font-size: 12px;
             margin-top: 5px;
             display: block;
         }
         
         .btn {
-            padding: 12px 30px;
+            padding: 12px 24px;
             border-radius: 8px;
             font-weight: 600;
             font-size: 15px;
             transition: all 0.3s;
             border: none;
             cursor: pointer;
-        }
-        
-        .btn-primary {
-            background: #0088ff;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: var(--hover-color);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(108, 92, 231, 0.4);
-        }
-        
-        .image-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 20px;
-        }
-        
-        .image-upload-container {
-            background: var(--input-bg);
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            border: 2px dashed var(--border-color);
-            transition: all 0.3s;
-        }
-        
-        .image-upload-container:hover {
-            border-color: var(--accent-color);
-        }
-        
-        .image-preview {
-            width: 100%;
-            height: 120px;
-            border-radius: 8px;
-            background: #333;
-            object-fit: cover;
-            margin-bottom: 10px;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             justify-content: center;
         }
         
-        .image-preview::before {
-            content: 'Preview';
-            color: #777;
-            font-size: 14px;
+        .btn i {
+            margin-right: 8px;
+        }
+        
+        .btn-primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+        
+        .btn-danger {
+            background: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #0077e6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 136, 255, 0.4);
+        }
+        
+        .btn-sm {
+            padding: 8px 16px;
+            font-size: 13px;
+        }
+        
+        /* Image upload section improvements */
+        .section-title {
+            font-weight: 600;
+            margin-bottom: 18px;
+            color: var(--title-color);
+            font-size: 16px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
         }
         
         .thumbnails-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
             margin-top: 15px;
+            margin-bottom: 25px;
         }
         
         .thumbnail {
@@ -207,22 +219,23 @@
             border-radius: 8px;
             overflow: hidden;
             border: 1px solid var(--border-color);
+            aspect-ratio: 1;
         }
         
         .thumbnail img {
             width: 100%;
-            height: 100px;
+            height: 100%;
             object-fit: cover;
         }
         
         .remove-image-btn {
             position: absolute;
-            top: 5px;
-            right: 5px;
-            background: rgba(0, 0, 0, 0.6);
+            top: 8px;
+            right: 8px;
+            background: rgba(0, 0, 0, 0.7);
             border-radius: 50%;
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -232,26 +245,182 @@
         
         .remove-image-btn:hover {
             background: rgba(255, 0, 0, 0.8);
+            transform: scale(1.1);
         }
         
-        .section-title {
-            font-weight: 600;
-            margin-bottom: 15px;
-            color: var(--title-color);
-            font-size: 16px;
-            padding-bottom: 8px;
-            border-bottom: 1px solid var(--border-color);
+        /* Image editing section improvements */
+        #image-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .image-upload {
+            background: var(--input-bg);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+        
+        .image-upload:hover {
+            border-color: var(--primary-blue);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .image-preview {
+            width: 100%;
+            aspect-ratio: 1;
+            border-radius: 8px;
+            background: #333;
+            margin: 15px 0;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .image-preview img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .image-preview::before {
+            content: 'Preview';
+            color: #777;
+            font-size: 14px;
+            position: absolute;
+        }
+        
+        .image-preview img[src=""] + .image-preview::before {
+            display: none;
+        }
+        
+        .image-preview .edit-preview-btn,
+        .image-preview .delete-btn {
+            position: absolute;
+            bottom: 10px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .image-preview:hover .edit-preview-btn,
+        .image-preview:hover .delete-btn {
+            opacity: 1;
+        }
+        
+        .image-preview .edit-preview-btn {
+            background: var(--primary-blue);
+            color: white;
+            left: 10px;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .image-preview .delete-btn {
+            background: var(--danger-color);
+            color: white;
+            right: 10px;
+        }
+        
+        .image-cropper {
+            margin-top: 15px;
+            background: rgba(0, 0, 0, 0.85);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .cropper-container {
+            height: 70vh;
+            width: 70vw;
+            max-width: 800px;
+            background: #000;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .cropper-controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 15px;
+        }
+        
+        .cropper-controls button {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        
+        .cropper-controls button:hover {
+            background: #0077e6;
+            transform: translateY(-2px);
+        }
+        
+        .cropper-controls button:last-child {
+            background: #444;
+        }
+        
+        .cropper-controls button:last-child:hover {
+            background: #555;
+        }
+        
+        .mt-2 {
+            margin-top: 10px;
+        }
+        
+        .mt-4 {
+            margin-top: 20px;
+        }
+        
+        .px-5 {
+            padding-left: 32px;
+            padding-right: 32px;
+        }
+        
+        .text-center {
+            text-align: center;
+        }
+        
+        .mb-5 {
+            margin-bottom: 32px;
         }
         
         @media (max-width: 991px) {
-            .image-grid {
-                grid-template-columns: repeat(2, 1fr);
+            .col-md-4, .col-md-6 {
+                width: 50%;
+            }
+            
+            #image-container {
+                grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
             }
         }
         
         @media (max-width: 767px) {
             .dashboard-container {
                 margin: 20px auto;
+                padding: 0 15px;
             }
             
             .content-title {
@@ -259,16 +428,25 @@
             }
             
             .card-body {
-                padding: 20px;
+                padding: 15px;
             }
             
-            .form-group-row {
-                flex-direction: column;
+            .row {
+                margin: 0 -8px;
             }
             
-            .form-group-col {
+            .col-md-4, .col-md-6 {
                 width: 100%;
-                padding: 0;
+                padding: 0 8px;
+            }
+            
+            #image-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .cropper-container {
+                width: 90vw;
+                height: 60vh;
             }
         }
     </style>
@@ -290,7 +468,7 @@
                     <div class="col-md-6">
                         <div class="form-group">
                             <label for="product_name" class="form-label">Product Name</label>
-                            <input type="text" name="productName" value="<%=product.productName%>" class="form-control" id="product_name" placeholder="Enter product name">
+                            <input type="text" name="productName" style="width:1155px" value="<%=product.productName%>" class="form-control" id="product_name" placeholder="Enter product name">
                             <span id="productName-error" class="error-message"></span>
                         </div>
                     </div>
@@ -385,25 +563,13 @@
                 </div>
                 
                 <div class="section-title mt-4">Add New Images</div>
-                <div class="image-grid">
-                    <div class="image-upload-container">
-                        <div class="image-preview" id="imgView1"></div>
-                        <input class="form-control" type="file" name="images" id="input1" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 1)">
+                <div class="card-body">
+                    <div id="image-container" class="image-grid">
+                        <!-- Images will be added dynamically here -->
                     </div>
-                    <div class="image-upload-container">
-                        <div class="image-preview" id="imgView2"></div>
-                        <input class="form-control" type="file" name="images" id="input2" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 2)">
-                    </div>
-                    <div class="image-upload-container">
-                        <div class="image-preview" id="imgView3"></div>
-                        <input class="form-control" type="file" name="images" id="input3" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 3)">
-                    </div>
-                    <div class="image-upload-container">
-                        <div class="image-preview" id="imgView4"></div>
-                        <input class="form-control" type="file" name="images" id="input4" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, 4)">
-                    </div>
+                    <button type="button" class="btn btn-primary mt-2" id="addImageBtn">Add Image</button>
+                    <div id="images-error" class="error-message"></div>
                 </div>
-                <span id="images-error" class="error-message text-center d-block mt-3"></span>
             </div>
         </div>
         
@@ -415,179 +581,279 @@
     </form>
 </div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
-<script>
-    function validateFormAndSubmit() {
-        if (validateForm()) {
-            document.getElementById('editProductForm').submit();
-        }
-    }
-    
-    function validateForm() {
-        console.log("Validating form...");
-        clearErrorMessages();
-        
-        const name = document.getElementsByName('productName')[0].value;
-        const description = document.getElementsByName('description')[0].value;
-        const price = document.getElementsByName('regularPrice')[0].value;
-        const salePrice = document.getElementsByName('salePrice')[0].value;
-        const color = document.getElementsByName('color')[0].value;
-        const quantityInput = document.getElementsByName('quantity')[0].value;
-        
-        const existingImages = document.getElementsByName('existingImages');
-        const hasExistingImages = existingImages && existingImages.length > 0;
-        
-        const newImages = [
-            document.getElementById('input1'),
-            document.getElementById('input2'),
-            document.getElementById('input3'),
-            document.getElementById('input4')
-        ];
-        
-        const hasNewImages = newImages.some(input => input && input.files && input.files.length > 0);
-        
-        let isValid = true;
-        
-        if (name.trim() === "") {
-            displayErrorMessage('productName-error', 'Please enter a product name.');
-            isValid = false;
-
-
-    try {
-        const { imageNameToServer, productIdToServer } = req.body;
-        
-        if (!imageNameToServer || !productIdToServer) {
-            return res.status(400).send({ status: false, message: "Missing image name or product ID" });
-        }
-        
-         Product.findByIdAndUpdate(
-            productIdToServer,
-            { $pull: { productImage: imageNameToServer } },
-            { new: true }
-        );
-        
-        const imagePath = path.join(__dirname, '../public/uploads/re-image/', imageNameToServer);
-        
-        if (fs.existsSync(imagePath)) {
-            fs.unlinkSync(imagePath);
-            console.log(`Image ${imageNameToServer} deleted successfully`);
-        } else {
-            console.log(`Image ${imageNameToServer} not found in filesystem`);
-        }
-        
-        res.send({ status: true, message: "Image deleted successfully" });
-    } catch (error) {
-        console.error('Error in deleteSingleImage:', error);
-        res.status(500).send({ status: false, message: "Failed to delete image" });
-    }
-};
-
-
-        }
-        
-
-        if (description.trim() === '') {
-            displayErrorMessage('description-error', 'Please enter a product description.');
-            isValid = false;
-        }
-        
-
-        if (quantityInput.trim() === "" || isNaN(parseInt(quantityInput)) || parseInt(quantityInput) < 0) {
-            displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-            isValid = false;
-        }
-        
-
-        if (!/^\d+(\.\d{1,2})?$/.test(price) || parseFloat(price) < 0) {
-            displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-            isValid = false;
-        }
-
-        if (salePrice.trim() !== "" && (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0)) {
-            displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
-            isValid = false;
-        }
-
-        if (color.trim() === "") {
-            displayErrorMessage('color-error', 'Please enter a color.');
-            isValid = false;
-        }
-
-        if (!hasExistingImages && !hasNewImages) {
-            displayErrorMessage("images-error", 'Please select at least one image.');
-            isValid = false;
-        }
-        
-        return isValid;
-    
-
-    function displayErrorMessage(elementId, message) {
-        const errorElement = document.getElementById(elementId);
-        if (errorElement) {
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
-        }
-    }
-
-    function clearErrorMessages() {
-        const errorElements = document.getElementsByClassName('error-message');
-        Array.from(errorElements).forEach(element => {
-            element.innerText = '';
-        });
-    }
-
-    function viewImage(event, index) {
-        const input = event.target;
-        if (input.files && input.files[0]) {
-            const reader = new FileReader();
-            
-            reader.onload = function (e) {
-                const imagePreview = document.getElementById('imgView' + index);
-                imagePreview.innerHTML = '';
-                
-                const img = document.createElement('img');
-                img.src = e.target.result;
-                img.alt = "Preview";
-                img.style.maxWidth = "100%";
-                img.style.maxHeight = "100%";
-                
-                imagePreview.appendChild(img);
-            };
-            
-            reader.readAsDataURL(input.files[0]);
-        }
-    }
-    
-    function deleteSingleImage(imageName, productId) {
-    if (confirm("Are you sure you want to delete this image?")) {
-        fetch('/admin/deleteProductImage', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                imageNameToServer: imageName,
-                productIdToServer: productId
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status) {
-                const imageElement = event.target.closest('.thumbnail');
-                if (imageElement) {
-                    imageElement.remove();
-                }
-                alert("Image deleted successfully");
-            } else {
-                alert("Failed to delete image: " + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert("An error occurred while deleting the image");
-        });
-    }
-}
-</script>
-
 <%- include("../../views/partials/admin/footer") %>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+
+<script>
+    function deleteSingleImage(imageName, productId) {
+        console.log("Delete request:", imageName, productId);
+
+        Swal.fire({
+            title: "Are you sure?",
+            text: "This action cannot be undone!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#d33",
+            cancelButtonColor: "#3085d6",
+            confirmButtonText: "Yes, delete it!"
+        }).then((result) => {
+            console.log("response: ",result)
+            if (result.isConfirmed) {
+                fetch("/admin/delete-image", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        imageNameToServer: imageName,  
+                        productIdToServer: productId  
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: "The image has been removed successfully.",
+                            icon: "success",
+                            timer: 2000,
+                            showConfirmButton: false
+                        });
+
+                        // Remove the image from the UI
+                        document.querySelectorAll(".thumbnail").forEach(thumbnail => {
+                            let imgElement = thumbnail.querySelector("img");
+                            if (imgElement && imgElement.src.includes(imageName.replace('_', '_/'))) {
+                                thumbnail.remove();
+                            }
+                        });
+                    } else {
+                        Swal.fire("Failed!", "Could not delete image. Please try again.", "error");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error deleting image:", error);
+                    Swal.fire("Error!", "An unexpected error occurred.", "error");
+                });
+            }
+        });
+    }
+
+
+
+    document.addEventListener("DOMContentLoaded", function () {
+        
+        function validateFormAndSubmit() {
+            if (validateForm()) {
+                document.getElementById('editProductForm').submit();
+            }
+        }
+
+
+        
+
+        function validateForm() {
+            console.log("Validating form...");
+            clearErrorMessages();
+
+            const name = document.querySelector('[name="productName"]');
+            const description = document.querySelector('[name="description"]');
+            const price = document.querySelector('[name="regularPrice"]');
+            const salePrice = document.querySelector('[name="salePrice"]');
+            const color = document.querySelector('[name="color"]');
+            const quantity = document.querySelector('[name="quantity"]');
+
+            let isValid = true;
+
+            if (!name || name.value.trim() === "") {
+                displayErrorMessage('productName-error', 'Please enter a product name.');
+                isValid = false;
+            }
+
+            if (!description || description.value.trim() === '') {
+                displayErrorMessage('description-error', 'Please enter a product description.');
+                isValid = false;
+            }
+
+            if (!quantity || isNaN(parseInt(quantity.value)) || parseInt(quantity.value) < 0) {
+                displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
+                isValid = false;
+            }
+
+            if (!price || !/^\d+(\.\d{1,2})?$/.test(price.value) || parseFloat(price.value) < 0) {
+                displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
+                isValid = false;
+            }
+
+            if (salePrice && salePrice.value.trim() !== "" &&
+                (!/^\d+(\.\d{1,2})?$/.test(salePrice.value) || parseFloat(salePrice.value) < 0)) {
+                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+                isValid = false;
+            }
+
+            if (!color || color.value.trim() === "") {
+                displayErrorMessage('color-error', 'Please enter a color.');
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        function displayErrorMessage(elementId, message) {
+            const errorElement = document.getElementById(elementId);
+            if (errorElement) {
+                errorElement.innerText = message;
+                errorElement.style.display = "block";
+            }
+        }
+
+        function clearErrorMessages() {
+            document.querySelectorAll('.error-message').forEach(element => {
+                element.innerText = '';
+            });
+        }
+    });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let imageCount = 0;
+        const cropperInstances = {};
+    
+        document.getElementById("addImageBtn").addEventListener("click", function () {
+            if (imageCount >= 5) {
+                alert("You can add up to 5 images.");
+                return;
+            }
+    
+            imageCount++;
+            addImageUploadField(imageCount);
+        });
+    
+        function addImageUploadField(index) {
+            const container = document.getElementById("image-container");
+    
+            const imageUploadDiv = document.createElement("div");
+            imageUploadDiv.classList.add("image-upload");
+            imageUploadDiv.setAttribute("id", `image-upload-${index}`);
+            imageUploadDiv.innerHTML = `
+                <label class="form-label">Image ${index}</label>
+                <input class="form-control" type="file" name="image${index}" id="input${index}" accept="image/png, image/jpeg, image/jpg" onchange="viewImage(event, ${index})">
+                <div class="image-preview">
+                    <img src="" alt="" id="imgView${index}">
+                    <button type="button" class="edit-preview-btn" onclick="editImage(${index})">Edit</button>
+                    <button type="button" class="delete-btn btn btn-danger" onclick="deleteImage(${index})">Delete</button>
+                </div>
+                <div class="image-cropper" id="cropper-container${index}" style="display:none;">
+                    <div class="cropper-container">
+                        <img src="" id="cropperImg${index}" alt="">
+                    </div>
+                    <div class="cropper-controls">
+                        <button type="button" class="btn-sm btn-primary" onclick="rotateImage(-90, ${index})">
+                            <i class="fas fa-undo"></i>
+                        </button>
+                        <button type="button" class="btn-sm btn-primary" onclick="rotateImage(90, ${index})">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button type="button" id="saveButton${index}" class="btn-sm btn-primary">Save Crop</button>
+                        <button type="button" class="btn-sm btn-primary" onclick="cancelCrop(${index})">Cancel</button>
+                    </div>
+                </div>
+            `;
+    
+            container.appendChild(imageUploadDiv);
+        }
+    
+        window.viewImage = function (event, index) {
+            const input = event.target;
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    document.getElementById(`imgView${index}`).src = e.target.result;
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        };
+    
+        window.editImage = function (index) {
+            const input = document.getElementById(`input${index}`);
+            if (input.files && input.files[0]) {
+                setupCropper(input.files[0], index);
+                document.getElementById(`cropper-container${index}`).style.display = "block";
+            }
+        };
+    
+        function setupCropper(file, index) {
+            const reader = new FileReader();
+            reader.onload = function () {
+                const dataURL = reader.result;
+                const cropperImg = document.getElementById(`cropperImg${index}`);
+                cropperImg.src = dataURL;
+    
+                if (cropperInstances[index]) {
+                    cropperInstances[index].destroy();
+                }
+    
+                cropperInstances[index] = new Cropper(cropperImg, {
+                    aspectRatio: 1,
+                    viewMode: 1,
+                    autoCropArea: 0.8,
+                    zoomable: true,
+                    rotatable: true
+                });
+    
+                document.getElementById(`saveButton${index}`).onclick = function () {
+                    saveCroppedImage(index);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+    
+        window.cancelCrop = function (index) {
+            document.getElementById(`cropper-container${index}`).style.display = "none";
+        };
+    
+        window.rotateImage = function (degree, index) {
+            const cropper = cropperInstances[index];
+            if (cropper) {
+                cropper.rotate(degree);
+            }
+        };
+    
+        function saveCroppedImage(index) {
+            const cropper = cropperInstances[index];
+            if (!cropper) return;
+    
+            const imgView = document.getElementById(`imgView${index}`);
+            const croppedCanvas = cropper.getCroppedCanvas({
+                width: 300,
+                height: 300,
+                fillColor: '#fff'
+            });
+    
+            imgView.src = croppedCanvas.toDataURL("image/jpeg", 0.9);
+    
+            croppedCanvas.toBlob(function (blob) {
+                const fileInput = document.getElementById(`input${index}`);
+                const file = new File([blob], `cropped-image-${index}.jpg`, { type: "image/jpeg" });
+    
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+    
+                document.getElementById(`cropper-container${index}`).style.display = "none";
+            }, 'image/jpeg', 0.9);
+        }
+    
+        window.deleteImage = function (index) {
+            const imageUploadDiv = document.getElementById(`image-upload-${index}`);
+            if (imageUploadDiv) {
+                imageUploadDiv.remove();
+                delete cropperInstances[index];
+                imageCount--;
+            }
+        };
+    });
+    </script>
+

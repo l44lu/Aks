@@ -9,7 +9,7 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+
         }
 
         body {
@@ -17,86 +17,97 @@
             height: 100vh;
             justify-content: center;
             align-items: center;
-            background: #f5f5f5;
+            background: #f8f7f5;
         }
-        .error-message{
-            color: red ;
-            font-size:0.75rem;
+        
+        .error-message {
+            color: #b00020;
+            font-size: 0.75rem;
             display: none;
-
+            letter-spacing: 0.5px;
+            margin-top: 4px;
         }
+        
         .container {
             display: flex;
             width: 900px;
             background: white;
-            border-radius: 9px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 0;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
             overflow: hidden;
             align-items: center;
         }
 
-        /* Left Section - Form */
         .left {
             width: 50%;
-            padding: 30px;
+            padding: 40px;
         }
 
         h1 {
             font-size: 1.8rem;
-            margin-bottom: 10px;
-            color: #333;
+            font-family: "Nunito Sans", sans-serif;
+            margin-bottom: 15px;
+            color: #212121;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-weight: 100;
         }
 
         p {
             font-size: 0.9rem;
+            font-family: "Nunito Sans", sans-serif;
+
             color: #666;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
         }
 
         .social-btn {
             display: flex;
-            justify-content: center; /* Center horizontally */
-            align-items: center; /* Center vertically */
-            margin-top: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 20px;
         }
 
         input {
             width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            padding: 12px 15px;
+            margin: 12px 0;
+            border: 1px solid #d1d1d1;
+            border-radius: 0;
             transition: all 0.3s ease;
+            background-color: #fafafa;
+            font-size: 0.9rem;
         }
 
         input:focus {
-            border-color: #4a90e2;
-            transform: scale(1.03);
+            border-color: #212121;
+            outline: none;
+            background-color: #fff;
         }
 
         .btn {
             width: 100%;
-            background: #4a90e2;
+            background: #212121;
             color: white;
-            padding: 12px;
+            padding: 14px;
             border: none;
             cursor: pointer;
-            margin-top: 10px;
-            border-radius: 5px;
-            padding-top: 25px;
-            font-size: 1rem;
+            margin-top: 15px;
+            border-radius: 0;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             transition: all 0.3s ease-in-out;
         }
 
         .btn:hover {
-            background: #357ab8;
-            transform: translateY(-3px);
+            background: #000;
         }
+        
         .google-btn img {
-            width: 250px; 
-            padding-top: -15px;
-            margin-right: 10px; 
-            margin-top: 10px;
+            width: 20px;
+            margin-right: 10px;
         }
 
         .google-btn {
@@ -104,48 +115,47 @@
             align-items: center;
             justify-content: center;
             background: white;
-            border: 1px solid #ccc;
-            padding: 12px;
-            border-radius: 5px;
+            border: 1px solid #d1d1d1;
+            padding: 14px;
+            border-radius: 0;
             cursor: pointer;
             transition: all 0.3s ease-in-out;
-            margin-top: 18px;
+            margin-top: 20px;
             width: 100%; 
             text-decoration: none;
-            font-size: 1rem;
-            font-weight: 500;
-            color: black;
-            height: 80px;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            color: #212121;
         }
 
         .google-btn:hover {
             background: #f8f8f8;
-            transform: scale(1.02);
+            border-color: #212121;
         }
 
-        /* Right Section - Image */
         .right {
-            width: 100%;
+            width: 50%;
             height: 600px;
             background: url(/img/Group-13.png) center / cover no-repeat;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            border-radius: 9px;
-            padding-left: 8px;
-            margin-right: 24px;
+            margin-left: -21px;
         }
 
         .glass-box {
-            background: rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.8);
             backdrop-filter: blur(8px);
-            padding: 10px;
-            border-radius: 8px;
+            padding: 20px 20px;
+            border-radius: 0;
             text-align: center;
-            font-size: 0.9rem;
-            color: #333;
-            font-weight: bold;
+            font-size: 1rem;
+            margin-right: -10px;
+            color: #212121;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
             animation: fadeIn 1.2s ease-in-out;
         }
 
@@ -176,21 +186,33 @@
                 transform: translateY(0);
             }
         }
+        
+        a {
+            color: #212121;
+            text-decoration: none;
+            border-bottom: 1px solid #212121;
+            padding-bottom: 2px;
+            transition: all 0.3s ease;
+        }
+        
+        a:hover {
+            opacity: 0.7;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Left Side: Form -->
         <div class="left">
-            <h1>Sign Up</h1>
-            <p>Sign up to enjoy the features of Aks</p>
+            <h1>Create Account</h1>
+            <p>Join Aks to discover exclusive collections and personalized services</p>
             <form id="signform" method="post" action="/signup">
                 <div class="form-group">
-                    <input type="text" class="form-control" name="name" id="name" placeholder="Enter your Name">
+                    <input type="text" class="form-control" name="name" id="name" placeholder="Full Name">
                     <div id="error1" class="error-message"></div>
                 </div>
                 <div class="form-group">
-                    <input type="email" class="form-control" name="email" id="email" placeholder="Enter Your Email">
+                    <input type="email" class="form-control" name="email" id="email" placeholder="Email Address">
                     <div id="error2" class="error-message"></div>
                 </div>
                 <div class="form-group">
@@ -198,27 +220,28 @@
                     <div id="error3" class="error-message"></div>
                 </div>
                 <div class="form-group">
-                    <input type="password" class="form-control" name="password" id="password" placeholder="Enter Password">
+                    <input type="password" class="form-control" name="password" id="password" placeholder="Password">
                     <div id="error4" class="error-message"></div>
                 </div>
                 <div class="form-group">
                     <input type="password" class="form-control" name="cpassword" id="cpassword" placeholder="Confirm Password">
                     <div id="error5" class="error-message"></div>
                 </div>
-                <button class="btn">Sign Up</button>
+                <button class="btn">Register</button>
                 <div class="social-btn">
                     <a href="/auth/google" class="google-btn">
                         <img src="/img/google-logo.png" alt="Google">
+                        Continue with Google
                     </a>
                 </div>
             </form>
-            <p>Already have an account? <a href="#">Sign in</a></p>
+            <p style="margin-top: 20px; text-align: center;">Already have an account? <a href="#">Sign in</a></p>
         </div>
 
         <!-- Right Side: Image -->
         <div class="right">
             <div class="glass-box">
-                <p>Unlock Your Perfect Fit.<br>Where Style Meets Confidence.</p>
+                <p>Elegance Redefined<br>Where Style Meets Artistry</p>
             </div>
         </div>
     </div>
@@ -237,49 +260,43 @@
         const signform = document.getElementById("signform");
 
         function nameValidateCheking(e){
-
             const nameval= nameid.value;
             const namepattern = /^[A-Za-z\s]+$/;
             if(nameval.trim()===""){
                 error1.style.display="block";
-                error1.innerHTML="Please enter the a valid Name";
+                error1.innerHTML="Please enter a valid name";
             }else if(!namepattern.test(nameval)){
                 error1.style.display="block";
-                error1.innerHTML = "Name can only contain alphabets "
+                error1.innerHTML = "Name can only contain alphabets";
             }else{
                 error1.style.display="none";
                 error1.innerHTML = "";
-
             }
-
         }
 
         function emailValidateCheking(e){
-
             const emailval = emailid.value;
-            const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+            const emailPattern = /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/;
             if(!emailPattern.test(emailval)){
                 error2.style.display = "block";
-                error2.innerHTML = "The Email format is not correct"
+                error2.innerHTML = "Please enter a valid email address";
             }else{
                 error2.style.display="none";
                 error2.innerHTML="";
             }
-
         }
 
         function phoneValidateCheking(e){
             const phoneval = phoneid.value;
             if(phoneval.trim()===""){
                 error3.style.display = "block";
-                error3.innerHTML = "Please fill the Phone Number properly"
+                error3.innerHTML = "Please enter your phone number";
             }else if(phoneval.length>10 || phoneval.length<10){
                 error3.style.display = "block";
-                error3.innerHTML = "Enter 10 digits";
-
+                error3.innerHTML = "Phone number must be 10 digits";
             }else{
-                error3.style.dispaly="none";
-                error3.innerHTML=""
+                error3.style.display="none";
+                error3.innerHTML="";
             }
         }
 
@@ -290,50 +307,42 @@
             const digit = /\d/;
             if(passval.length<8){
                 error4.style.display = "block";
-                error4.innerHTML = "Password should contain atleast 8 charecters";
+                error4.innerHTML = "Password must be at least 8 characters";
             }else if(!alpha.test(passval) || !digit.test(passval)){
                 error4.style.display="block";
-                error4.innerHTML="The passwoed should contain alphabets and digits"
+                error4.innerHTML="Password must contain both letters and numbers";
             }else{
-                error4.style.dispaly="none";
+                error4.style.display="none";
                 error4.innerHTML="";
             }
             if(passval!==cpassval){
                 error5.style.display="block";
-                error5.innerHTML="The password does not match"
+                error5.innerHTML="Passwords do not match";
             }else{
                 error5.style.display="none";
                 error5.innerHTML="";
             }
         }
 
-
         document.addEventListener("DOMContentLoaded",function(){
             signform.addEventListener("submit",function(e){
-
                 nameValidateCheking();
                 emailValidateCheking();
                 phoneValidateCheking();
                 passValidateCheking();
 
                 if(!nameid || !phoneid || !emailid || !passid || !cpassid || !error1 || !error2 || !error3 || !error4 || !error5){
-                    console.error("Please fill the following information")
+                    console.error("Please fill the following information");
                 }
                 if(error1.innerHTML || error2.innerHTML || error3.innerHTML || error4.innerHTML || error5.innerHTML){
-
                     e.preventDefault();
                     return;
-                    
                 }
                 const submitButton = document.querySelector(".btn");
                 submitButton.disabled = true;
-                submitButton.innerText = "Signing Up...";
-
-                
-
-            })
-        })
-
+                submitButton.innerText = "Processing...";
+            });
+        });
     </script>
 </body>
 </html>

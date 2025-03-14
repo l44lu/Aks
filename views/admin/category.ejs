@@ -121,19 +121,19 @@
         <ul class="pagination justify-content-center">
           <% if(currentPage > 1) { %>
             <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage - 1 %>">&laquo; Previous</a>
+              <a class="page-link" href="?page=<%= currentPage - 1 %><%= search ? '&search=' + search : '' %>">&laquo; Previous</a>
             </li>
           <% } %>
     
           <% for(let i = 1; i <= totalPage; i++) { %>
             <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-              <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+              <a class="page-link" href="?page=<%= i %><%= search ? '&search=' + search : '' %>"><%= i %></a>
             </li>
           <% } %>
     
           <% if(currentPage < totalPage) { %>
             <li class="page-item">
-              <a class="page-link" href="?page=<%= currentPage + 1 %>">Next &raquo;</a>
+              <a class="page-link" href="?page=<%= currentPage + 1 %><%= search ? '&search=' + search : '' %>">Next &raquo;</a>
             </li>
           <% } %>
         </ul>

@@ -275,14 +275,17 @@ const editProduct = async (req, res) => {
 const deleteSingleImage = async (req, res) => {
     try {
         const { imageNameToServer, productIdToServer } = req.body;
+        console.log("Received request to delete image:", req.body);
         
         if (!imageNameToServer || !productIdToServer) {
-            return res.status(400).send({ 
+            console.log("Missing image name or product ID");
+            return res.status(400).json({ 
                 status: false, 
                 message: "Missing image name or product ID" 
             });
         }
-        
+
+        // Find the product and remove the image from the array
         const updatedProduct = await Product.findByIdAndUpdate(
             productIdToServer,
             { $pull: { productImage: imageNameToServer } },
@@ -290,33 +293,37 @@ const deleteSingleImage = async (req, res) => {
         );
 
         if (!updatedProduct) {
-            return res.status(404).send({
+            console.log("Product not found for ID:", productIdToServer);
+            return res.status(404).json({
                 status: false,
                 message: "Product not found"
             });
         }
 
-        const imagePath = path.join(__dirname, '../public/uploads/re-image/', imageNameToServer);
+        // Construct the image path
+        const imagePath = path.join(__dirname, '/uploads/resized_', imageNameToServer);
         
+        // Delete the image from the file system if it exists
         if (fs.existsSync(imagePath)) {
             fs.unlinkSync(imagePath);
-            console.log(`Image ${imageNameToServer} deleted successfully`);
+            console.log(`Image ${imageNameToServer} deleted successfully from filesystem`);
         } else {
             console.log(`Image ${imageNameToServer} not found in filesystem`);
         }
         
-        res.send({ 
+        res.json({ 
             status: true, 
             message: "Image deleted successfully" 
         });
     } catch (error) {
         console.error('Error in deleteSingleImage:', error);
-        res.status(500).send({ 
+        res.status(500).json({ 
             status: false, 
             message: "Failed to delete image" 
         });
     }
 };
+
 
 
 

@@ -1,10 +1,11 @@
 const User = require("../../models/userSchema");
 
 const customerInfo = async (req, res) => {
+    
     try {
         let search = req.query.search || "";
         let page = parseInt(req.query.page) || 1;
-        let limit = 3;
+        let limit = 5;
         let skip = (page - 1) * limit;
         const users = await User.find({
             isAdmin: false,

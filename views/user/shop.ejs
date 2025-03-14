@@ -227,7 +227,7 @@
   .sidebar ul {
     list-style: none;
     padding: 0;
-    margin-bottom: 50px;
+    margin-bottom: 20pxpx;
   }
 
   .sidebar ul li {
@@ -302,13 +302,12 @@
   }
 
   .product-info {
-    padding: 20px 0;
+    padding: 10px 20px;
   }
 
   .product-card h4 {
-    font-family: 'Cormorant Garamond', serif;
     font-size: 20px;
-    font-weight: 400;
+    font-weight: 350;
     margin-bottom: 8px;
     color: #000000;
   }
@@ -523,6 +522,31 @@
       font-size: 40px;
     }
   }
+  .refresh-button {
+    display: inline-block;
+    background-color: transparent;
+    color: #494949;
+    border: 2px solid #585858;
+    padding: 12px 24px;
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 75px;
+    padding: 11px;
+    transition: all 0.3sease -in-out;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    outline: none;
+}
+.refresh-button:hover {
+  border-color: #d49100;
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
 </style>
 <div class="main-container">
   <div class="search-container" id="search-popup">
@@ -576,6 +600,7 @@
             <li>No categories available</li>
           <% } %>
         </ul>
+        <button class="refresh-button" id="refreshCategories">Refresh</button> 
 
         <h3>Price Range</h3>
         <div>
@@ -584,6 +609,7 @@
           <button class="filter-button price-filter" data-min="10000" data-max="15000">₹10,000 - ₹15,000</button>
           <button class="filter-button price-filter" data-min="15000">Above ₹15,000</button>
         </div>
+        <button class="refresh-button" id="refreshPrice">Refresh</button>
       </aside>
 
       <main class="product-grid" id="product-grid">
@@ -630,7 +656,6 @@
       window.location.href = `/shop?category=${categoryId}`;
     });
   });
-
   document.querySelectorAll('.price-filter').forEach(item => {
     item.addEventListener('click', function () {
       const min = this.dataset.min;
@@ -645,6 +670,13 @@
     urlParams.set('sort', sortValue);
     window.location.search = urlParams.toString();
   });
+  document.getElementById('refreshCategories').addEventListener('click', function () {
+    window.location.href = "/shop";
+  });
+  document.getElementById('refreshPrice').addEventListener('click', function () {
+    window.location.href = "/shop";
+  });
 </script>
+
 
 <%- include("../../views/partials/user/footer") %>

@@ -8,7 +8,7 @@ const productController = require("../controllers/admin/productController");
 const multer = require("multer"); 
 const path = require("path");
 
-// Configure Multer storage directly
+
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, "../public/uploads/re-image"));
@@ -57,8 +57,8 @@ router.post("/removeProductOffer", adminAuth, productController.removeProductOff
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct); 
-router.post("/editProduct/:id", adminAuth, uploads.array("images", 4), productController.editProduct); 
-router.post('/deleteProductImage', productController.deleteSingleImage);
+router.post("/editProduct/:id", adminAuth, uploads.array("images", 4), productController.editProduct)
+router.post("/delete-image", productController.deleteSingleImage)
 
 
 

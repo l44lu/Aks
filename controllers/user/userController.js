@@ -248,40 +248,47 @@ const login = async (req,res)=>{
 }
 
 
-
-const resendOtp=async(req,res)=>{
-
+const resendOtp = async (req, res) => {
+    console.log("Resend OTP hit1")
+    console.log("session is ",req.session.user)
     try {
-        const {email}=req.session.userData;
-        if(!email){
-            return res.status(400).json({success:false,message:"Email not found"});
+        if (!req.session || !req.session.userData || !req.session.userData.email) {
+            console.log("session not found ")
+            return res.status(400).json({ success: false, message: "Session expired. Please log in again." });
         }
-
+        const { email } = req.session.userData;
+        console.log("the email fetched is :",email);
         const otp = generateOtp();
         req.session.userOtp = otp;
-        req.session.save(async(err)=>{
-            if(err){
-                console.error("session save error",err);
-                return res.status(500).json({json:false,message:"Failed to save the OTP"})
-            }
-            const emailSent = await sendVerificationEmail(email,otp);
-            if(emailSent){
-                console.log("Resnd OTP ",otp);
-                res.status(200).json({success:true,message:"OTP resend successfully"})
-                
-            }else{
-                res.status(500).json({success:false,message:"Failed to resend OTP , Please try again"})
-            }
-        })
 
-        
+        console.log("Generated OTP :",otp);
+
+        await new Promise((resolve, reject) => {
+            req.session.save((err) => {
+                if (err) {
+                    console.error("Session save error:", err);
+                    reject(res.status(500).json({ success: false, message: "Failed to save OTP" }));
+                } else {
+                    resolve();
+                }
+            });
+        });
+        const emailSent = await sendVerificationEmail(email, otp);
+
+        console.log("Email sent? :",emailSent)
+
+        if (emailSent) {
+            console.log("Resend OTP:", otp);
+            return res.status(200).json({ success: true, message: "OTP resent successfully" });
+        } else {
+            return res.status(500).json({ success: false, message: "Failed to resend OTP, please try again" });
+        }
     } catch (error) {
-
-        console.error("Error rending OTP",error);
-        res.status(500).json({success:false,message:"Internal server error , Please try again"})
-        
+        console.error("Error resending OTP:", error);
+        return res.status(500).json({ success: false, message: "Internal server error, please try again" });
     }
-}
+};
+
 
 
 const logout = async(req,res)=>{
@@ -307,21 +314,18 @@ const loadShoppingPage = async (req, res) => {
         const user = req.session.user;
         const userData = await User.findOne({ _id: user });
 
-        // Fetch categories
         const category = await Category.find({ isListed: true });
         const categoryIds = category.map(cat => cat._id.toString());
 
-        // Get filter parameters
         const selectedCategory = req.query.category;
         const minPrice = parseInt(req.query.minPrice) || 0;
         const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : null;
-        const sort = req.query.sort || 'newest'; // Default sorting to newest
+        const sort = req.query.sort || 'newest';
 
         const page = parseInt(req.query.page) || 1;
         const limit = 9;
         const skip = (page - 1) * limit;
 
-        // Build product filter query
         let filterQuery = {
             isBlocked: false,
             category: selectedCategory ? selectedCategory : { $in: categoryIds },
@@ -334,7 +338,7 @@ const loadShoppingPage = async (req, res) => {
             filterQuery.salePrice = { $gte: minPrice };
         }
 
-        let sortQuery = { createdOn: -1 }; // Default sorting: Newest first
+        let sortQuery = { createdOn: -1 }; 
         if (sort === 'low') sortQuery = { salePrice: 1 };
         if (sort === 'high') sortQuery = { salePrice: -1 };
 

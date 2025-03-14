@@ -64,8 +64,10 @@ const getForgotPassPage=async(req,res)=>{
 
 
 const forgotEmailValid = async (req, res) => {
+    
     try {
         const { email } = req.body;
+        console.log(" the given email is",email);
 
         if (!email) {
             return res.status(400).render("forgot-password", {
@@ -94,8 +96,6 @@ const forgotEmailValid = async (req, res) => {
 
         req.session.email = email;  
         req.session.userOtp = { otp, createdAt: Date.now() };
-
-        console.log("Session Data After Storing OTP:", req.session);
 
         res.render("forgot-pass-otp");
 
@@ -138,13 +138,12 @@ const resendOtp = async (req, res) => {
     try {
         console.log("Session Data Before Resending OTP:", req.session); 
 
-        // Check if userData exists at all
-        if (!req.session.userData) {
+        if (!req.session.email) {
             console.error("Error: userData not found in session!");
             return res.json({ success: false, message: "Session expired. Please restart the process." });
         }
         
-        const email = req.session.userData.email; // Access email directly
+        const email = req.session.email; 
         
         if (!email) {
             console.error("Error: Email not found in session!");

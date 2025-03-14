@@ -8,7 +8,6 @@ const productController = require("../controllers/user/productController");
 
 router.get("/",userController.loadHomepage);
 router.get("/pageNotFound",userController.pageNotFound)
-// router.get("/shop",userController.loadShopping)
 router.get("/signup",userController.loadSignup)
 router.get("/login",userController.loadlogin)
 router.post("/signup",userController.signup);
@@ -35,7 +34,7 @@ router.get("/forgot-password",profileController.getForgotPassPage);
 router.post("/forgot-email-valid",profileController.forgotEmailValid);
 router.post("/varify-passForgot-otp",profileController.varifyForgotPassOtp);
 router.get("/reset-password",profileController.getResetPassPage);
-router.post("/resend-otp", profileController.resendOtp);
+router.post("/pass-resend-otp", profileController.resendOtp);
 router.post('/reset-password', profileController.resetPassword)
 
 

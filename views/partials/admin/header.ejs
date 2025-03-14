@@ -3,12 +3,71 @@
 <head>
     <meta charset="utf-8">
     <title>Aks admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.css"/>
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
     <style>
+        .navbar-aside {
+            background-color: #222;
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            padding: 15px;
+            box-shadow: 0 0 10px rgba(255,255,255,0.1);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .menu-aside {
+            padding: 0;
+            margin: 0;
+            list-style-type: none; 
+            padding-top: 10px;
+        }
+
+        .menu-item {
+            margin-bottom: 5px;
+        }
+
+        .menu-item a.menu-link {
+            color: #bbb;
+            display: flex;
+            align-items: center;
+            padding: 20px 15px;
+            text-decoration: none;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+
+        .menu-item a.menu-link:hover, 
+        .menu-item a.menu-link.active {
+            background-color: #555;
+            color: #fff;
+        }
+
+        .menu-item a.menu-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .logo {
+            max-width: 120px;
+            display: block;
+            margin: 4px auto 20px;
+        }
+
+        .aside-top {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
         .edit-btn {
             background-color: #0088ff; 
             border-color: #0088ff;
@@ -419,14 +478,14 @@
         </div>
         <nav>
             <ul class="menu-aside">
-                <li class="menu-item"><a class="menu-link active" href="/admin">Dashboard</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/users">Customers</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/category">Category</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/addProducts">Add Product</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/products">Products</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/coupon">Coupon</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/banner">Banner</a></li>
-                <li class="menu-item"><a class="menu-link" href="/admin/orderList">Orders</a></li>
+                <li class="menu-item"><a class="menu-link active" href="/admin"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/users"><i class="fas fa-users"></i> Customers</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/category"><i class="fas fa-list"></i> Category</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/addProducts"><i class="fas fa-plus-circle"></i> Add Product</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/products"><i class="fas fa-box"></i> Products</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/coupon"><i class="fas fa-percent"></i> Coupon</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/banner"><i class="fas fa-image"></i> Banner</a></li>
+                <li class="menu-item"><a class="menu-link" href="/admin/orderList"><i class="fas fa-shopping-cart"></i> Orders</a></li>
             </ul>
         </nav>
     </aside>

@@ -7,10 +7,21 @@ const categoryInfo = async (req, res) => {
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
         const skip = (page - 1) * limit;
+        const search = req.query.search ? req.query.search.trim() : '';
 
+        let filter = {};
+        if (search) {
+
+            filter = {
+                $or: [
+                    { name: { $regex: search, $options: 'i' } },
+                    { description: { $regex: search, $options: 'i' } }
+                ]
+            };
+        }
         const [categoryData, totalCategory] = await Promise.all([
-            Category.find({}).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-            Category.estimatedDocumentCount()
+            Category.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+            Category.countDocuments(filter)
         ]);
 
         const totalPage = Math.ceil(totalCategory / limit);
@@ -18,7 +29,8 @@ const categoryInfo = async (req, res) => {
             category: categoryData,
             currentPage: page,
             totalPage: totalPage,
-            totalCategory: totalCategory
+            totalCategory: totalCategory,
+            search: search 
         });
 
     } catch (error) {
@@ -26,7 +38,6 @@ const categoryInfo = async (req, res) => {
         res.redirect("/pageerror");
     }
 };
-
 
 const addCategory = async (req, res) => {
     try {
