@@ -3,7 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/user/userController");
 const passport = require("passport");
 const profileController = require("../controllers/user/profileController");
-const { userAuth, adminAuth } = require("../middlewares/auth");
+const {userAuth} = require("../middlewares/auth");
 const productController = require("../controllers/user/productController");
 
 router.get("/",userController.loadHomepage);
@@ -35,8 +35,15 @@ router.post("/forgot-email-valid",profileController.forgotEmailValid);
 router.post("/varify-passForgot-otp",profileController.varifyForgotPassOtp);
 router.get("/reset-password",profileController.getResetPassPage);
 router.post("/pass-resend-otp", profileController.resendOtp);
-router.post('/reset-password', profileController.resetPassword)
-
+router.post("/reset-password", profileController.resetPassword)
+router.get("/userProfile",userAuth,profileController.userProfile)
+router.get("/change-email",userAuth,profileController.changeEmail)
+router.post("/change-email",userAuth,profileController.changeEmailValid);
+router.post("/verify-email-otp",userAuth,profileController.verifyEmailOtp);
+router.post("/update-email",userAuth,profileController.updateEmail)
+router.get("/change-password",userAuth,profileController.changePassword)
+router.post("/change-password",userAuth,profileController.changePasswordValid);
+router.post("/verify-password-otp",userAuth,profileController.varifyChangePassOtp)
 
 
 router.get("/shop",userController.loadShoppingPage);

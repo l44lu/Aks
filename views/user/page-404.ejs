@@ -36,7 +36,6 @@
             color: antiquewhite;
             border: none;
             padding: 28px 52px;
-            border-radius: 60px;
             cursor: pointer;
             transition: background-color 0.3s;
             font-size: 26px;
@@ -69,11 +68,9 @@
     <h1>- 404 -</h1>
     <p>An error occured. Please try agin later</p>
     <button onclick="goToHomepage()">Go to home page</button>
-
     <script>
-        function goToHomepage(){
-            windows.location.href="/";
-            
+        function goToHomepage() {
+            window.location.href = "/";
         }
     </script>
 

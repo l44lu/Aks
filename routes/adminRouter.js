@@ -57,7 +57,7 @@ router.post("/removeProductOffer", adminAuth, productController.removeProductOff
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct); 
-router.post("/editProduct/:id", adminAuth, uploads.array("images", 4), productController.editProduct)
+router.post("/editProduct/:id", adminAuth, uploads.array("image", 4), productController.editProduct)
 router.post("/delete-image", productController.deleteSingleImage)
 
 

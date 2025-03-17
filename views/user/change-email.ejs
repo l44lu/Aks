@@ -1,0 +1,160 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+  /* Luxury Email Change Page Styling */
+  .content-main {
+    background-color: #f8f7f5;
+    padding: 80px 0;
+  }
+  
+  .card-login {
+    border: none;
+    border-radius: 0;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  
+  .card-body {
+    padding: 50px 40px;
+  }
+  
+  .card-title {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 18px;
+    color: #1a1a1a;
+    text-align: center;
+    margin-bottom: 30px;
+    position: relative;
+    padding-bottom: 15px;
+  }
+  
+  .card-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 1px;
+    background-color: #d4af37;
+  }
+  
+  .form-control {
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+    padding: 12px 5px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 14px;
+    color: #1a1a1a;
+    transition: all 0.3s ease;
+    height: auto;
+    box-shadow: none;
+  }
+  
+  .form-control:focus {
+    border-color: #d4af37;
+    box-shadow: none;
+    outline: none;
+  }
+  
+  .form-control::placeholder {
+    color: #999;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+  
+  .btn-primari {
+    background-color: #1a1a1a;
+    border-color: #1a1a1a;
+    color: #fff;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    font-size: 12px;
+    padding: 12px 30px;
+    border-radius: 0;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primari:hover {
+    background-color: #d4af37;
+    border-color: #d4af37;
+    color: #1a1a1a;
+  }
+  
+  .error-message {
+    color: #d4af37;
+    font-size: 12px;
+    margin-top: 5px;
+    font-family: 'Montserrat', sans-serif;
+    letter-spacing: 0.5px;
+  }
+  
+  .is-invalid {
+    border-color: #d4af37 !important;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .card-login {
+      width: 90%;
+    }
+    
+    .card-body {
+      padding: 30px 20px;
+    }
+  }
+</style>
+
+<main class="content-main mt-80 mb-80">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-md-6 col-lg-5 col-xl-4">
+        <div class="card card-login">
+          <div class="card-body">
+            <h4 class="card-title">ACCOUNT VERIFICATION</h4>
+            <form method="post" action="/change-email" onsubmit="return validateLoginForm()">
+              <div class="mb-4">
+                <input class="form-control" name="email" placeholder="Current Email Address" type="text" id="email">
+                <div class="error-message" id="email-error"></div>
+              </div>
+              <div class="mb-4">
+                <button type="submit" class="btn btn-primari w-100">VERIFY</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  function validateLoginForm() {
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const emailValue = emailInput.value.trim();
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    if (emailValue === '') {
+      emailError.textContent = 'Please enter your email address.';
+      emailInput.classList.add('is-invalid');
+      return false;
+    } else if (!emailValue.match(emailPattern)) {
+      emailError.textContent = 'Please enter a valid email address.';
+      emailInput.classList.add('is-invalid');
+      return false;
+    } else {
+      emailError.textContent = '';
+      emailInput.classList.remove('is-invalid');
+      return true;
+    }
+  }
+</script>
+<%- include("../../views/partials/user/footer") %>

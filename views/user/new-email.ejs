@@ -1,0 +1,203 @@
+<%- include("../../views/partials/user/header") %>
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;600&family=Montserrat:wght@300;400;500&display=swap');
+  
+  .content-main {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 100px 20px;
+    background-color: #f8f5f2;
+  }
+
+  .card-login {
+    max-width: 450px;
+    width: 100%;
+    padding: 0;
+    background-color: #fff;
+    border: 1px solid #e0e0e0;
+    box-shadow: 0px 15px 35px rgba(0, 0, 0, 0.08);
+  }
+  
+  .card-body {
+    padding: 50px 40px;
+  }
+  
+  .brand-logo {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .brand-logo img {
+    height: 40px;
+  }
+
+  .card-title {
+    font-size: 28px;
+    font-weight: 600;
+    color: #111;
+    margin-bottom: 25px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    text-align: center;
+  }
+  
+  .email-subtitle {
+    font-size: 14px;
+    font-weight: 300;
+    color: #555;
+    margin-bottom: 30px;
+    text-align: center;
+  }
+
+  .mb-3 {
+    margin-bottom: 25px !important;
+  }
+  
+  .mb-4 {
+    margin-bottom: 25px !important;
+  }
+
+  .form-control {
+    width: 100%;
+    padding: 15px;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    background-color: #fafafa;
+    transition: all 0.3s;
+  }
+
+  .form-control:focus {
+    border-color: #000;
+    outline: none;
+    box-shadow: none;
+  }
+  
+  .form-control.is-invalid {
+    border-color: #dc3545;
+  }
+
+  .error-message {
+    color: #dc3545;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .btn-primari {
+    width: 100%;
+    font-weight: 500;
+    background-color: #000;
+    border: none;
+    color: #fff;
+    padding: 15px;
+    font-size: 14px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .btn-primari:hover {
+    background-color: #ffc935;
+  }
+</style>
+
+<section class="content-main">
+  <div class="card-login">
+    <div class="card-body">
+      <h4 class="card-title">Update Your Email</h4>
+      <p class="email-subtitle">Please enter your new email address below</p>
+      <form id="emailUpdateForm" method="post" action="/update-email">
+        <div class="mb-3">
+          <input class="form-control" name="newEmail" placeholder="New Email Address" type="text" id="email">
+          <div class="error-message" id="email-error"></div>
+        </div>
+        <div class="mb-4">
+          <button type="submit" class="btn-primari" id="submitBtn">CONFIRM</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- Include SweetAlert2 from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  function validateEmailForm() {
+    const emailInput = document.getElementById('email');
+    const emailError = document.getElementById('email-error');
+    const emailValue = emailInput.value.trim();
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+    if (emailValue === '') {
+      emailError.textContent = 'Please enter your new email address.';
+      emailInput.classList.add('is-invalid');
+      return false;
+    } else if (!emailValue.match(emailPattern)) {
+      emailError.textContent = 'Please enter a valid email address.';
+      emailInput.classList.add('is-invalid');
+      return false;
+    } else {
+      emailError.textContent = '';
+      emailInput.classList.remove('is-invalid');
+      return true;
+    }
+  }
+
+  // Add event listener to the form
+  document.getElementById('emailUpdateForm').addEventListener('submit', function(event) {
+    if (!validateEmailForm()) {
+      event.preventDefault(); // Stop form submission if validation fails
+      return false;
+    }
+    
+    // Show success message after form submission
+    setTimeout(function() {
+      Swal.fire({
+        title: 'Email Updated',
+        text: 'Your email has been successfully updated',
+        icon: 'success',
+        confirmButtonText: 'Continue',
+        confirmButtonColor: '#000',
+        background: '#fff'
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = '/profile'; // Redirect after confirmation
+        }
+      });
+    }, 500); // Small delay to allow form submission to complete
+  });
+</script>
+
+<style>
+  /* Custom styling for SweetAlert */
+  .swal2-popup {
+    font-family: 'Montserrat', sans-serif !important;
+    border-radius: 0 !important;
+    padding: 2em !important;
+  }
+  
+  .swal2-title {
+    font-family: 'Cormorant Garamond', serif !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-weight: 600 !important;
+  }
+  
+  .swal2-html-container {
+    font-family: 'Montserrat', sans-serif !important;
+    font-weight: 300 !important;
+  }
+  
+  .swal2-confirm {
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    font-weight: 500 !important;
+    padding: 1em 2em !important;
+  }
+</style>
+
+<%- include("../../views/partials/user/footer") %>
