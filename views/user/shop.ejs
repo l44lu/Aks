@@ -613,23 +613,41 @@
       </aside>
 
       <main class="product-grid" id="product-grid">
-        <% for (let i = product.length-1; i >=0; i--) { %>
-          <div class="product-card">
-            <span class="wishlist-btn"><i class="far fa-heart"></i></span>
-            <a href="/productDetails?id=<%= product[i]._id %>">
-              <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" />
-              <div class="product-hover-overlay">
-                <button class="quick-view-btn">Quick View</button>
-                <button class="add-to-cart-btn">Add to Bag</button>
-              </div>
-            </a>
-            <div class="product-info">
-              <h4><%= product[i].productName %></h4>
-              <p>₹<%= product[i].salePrice %> <strike>₹<%= product[i].regularPrice %></strike></p>
+        <% for (let i = product.length-1; i >= 0; i--) { %>
+            <div class="product-card">
+                <button class="wishlist-btn" onclick="toggleWishlist(event, '<%= product[i]._id %>')">
+                    <i class="far fa-heart"></i>
+                </button>            
+                <a href="/productDetails?id=<%= product[i]._id %>">
+                    <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" />
+                    <div class="product-hover-overlay">
+                        <button class="quick-view-btn">Quick View</button>
+                        <button class="action-btn add-to-cart-btn" onclick="addToCart('<%=product[i]._id%>')">
+                          <i class="fas fa-shopping-cart"></i>
+                          Add to Cart
+                        </button>
+                    </div>
+                </a>
+                <div class="product-info">
+                    <h4><%= product[i].productName %></h4>
+                    <p>₹<%= product[i].salePrice %> <strike>₹<%= product[i].regularPrice %></strike></p>
+    
+                    <div class="rating">
+                        <% let rating = Math.round(product[i].rating || 0); %> 
+                        <% for (let j = 0; j < 5; j++) { %>
+                            <% if (j < rating) { %>
+                                <i class="fas fa-star"></i> 
+                            <% } else { %>
+                                <i class="far fa-star"></i> 
+                            <% } %>
+                        <% } %>
+                        <span>(<%= product[i].rating || "No Ratings" %>)</span> 
+                    </div>
+                </div>
             </div>
-          </div>
         <% } %>
-      </main>
+    </main>
+    
     </div>
   </section>
 
@@ -676,6 +694,58 @@
   document.getElementById('refreshPrice').addEventListener('click', function () {
     window.location.href = "/shop";
   });
+
+function addToCart(productId){
+  $.ajax({
+    url:"/addToCart",
+    method:"POST",
+    data:{productId:productId},
+    success:(response)=>{
+      if(response.status){
+        Swal.fire({
+          title:"Added to Cart",
+          text:response.message,
+          icon:"success",
+          showCancelButtonText:"Cart",
+          cancelButtonText:"OK",
+          timer:2000
+        }).then((result)=>{
+          if(result.isConfirmed){
+            windows.location.href="/cart";
+          }else{
+            location.reload();
+          }
+        });
+      }else{
+        
+        Swal.fire({
+          title:"Error",
+          text:response.message||"Unable to add this to Cart",
+          icon:"error",
+          timer:2000,
+          showConfirmButton:false
+        });
+      }
+    },
+    error:(xhr)=>{
+      if(xhr.status===401){
+        handleAuthError(
+          "Not logged In",
+          "You need to log in to add item to your cart."
+        );
+      }else{
+        Swal.fire({
+          title:"Error",
+          text:"Stock limit reached ot maximum 5 item per user",
+          icon:"error",
+          timer:2000,
+          showConfirmButton:false
+        });
+      }
+    }
+  });
+}
+
 </script>
 
 

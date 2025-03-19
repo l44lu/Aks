@@ -1,29 +1,84 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const productSchema = new Schema(
-  {
-    productName: { type: String, required: true },
-    description: { type: String, required: true },
-    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category", required: true },
-    regularPrice: { 
-      type: Number,
-      required: true,
+const variantSchema = new Schema({
+    attributes: {
+        size: String,
+        color: String,
+        material: String
     },
-    salePrice: { type: Number, required: true },
-    productOffer: { type: Number, default:0 },
-    quantity: { type: Number, required: true },
-    color: { type: String, required: true },
-    productImage: { type: [String], required: true },
-    isBlocked: { type: Boolean, default: false },
+    priceAdjustment: {
+        type: Number,
+        default: 0
+    },
+    quantity: {
+        type: Number,
+        default: 0
+    }
+});
+
+const productSchema = new Schema({
+    productName: {
+        type: String,
+        required: true
+    },
+    description: {
+        type: String,
+        required: true
+    },
+    category: {
+        type: Schema.Types.ObjectId,
+        ref: 'Category',
+        required: true
+    },
+    regularPrice: {
+        type: Number,
+        required: true
+    },
+    salePrice: {
+        type: Number,
+        required: true
+    },
+    finalPrice: {
+        type: Number,
+        required: false
+    },
+    quantity: {
+        type: Number,
+        default: 0
+    },
+    productOffer: {
+        type: Number,
+        default: 0
+    },
+    color: {
+        type: [String], 
+        required: false
+    },
+    productImage: {
+        type: [String],
+        required: true
+    },
+    isBlocked: {
+        type: Boolean, 
+        default: false
+    },
     status: {
-      type: String,
-      enum: ["Available", "Unavailable", "Out of Stock"],
-      required: true,
-      default: "Available",
+        type: String,
+        enum: ['Available', 'Out of stock', 'Discontinued'],
+        required: true,
+        default: 'Available',
     },
-  },
-  { timestamps: true }
-);
-const Product = mongoose.model("Product", productSchema);
+    sizes: {
+        type: [String],
+        default: []
+    },
+    variants: {
+        type: [variantSchema],
+        default: []
+    }
+}, { timestamps: true });
+
+const Product = mongoose.model('Product', productSchema);
+
 module.exports = Product;

@@ -20,9 +20,21 @@ const addProducts = async (req, res) => {
         console.log("Received Request Body:", req.body);
         console.log("Received Files:", req.files);
 
-        const { productName, description, category, regularPrice, salePrice, quantity, color } = req.body;
-        if (!productName || !description || !category || !regularPrice || !salePrice || !quantity || !color) {
-            return res.status(400).json({ message: "All fields are required." });
+        const { 
+            productName, 
+            description, 
+            category, 
+            regularPrice, 
+            salePrice, 
+            color,
+            hasVariants,
+            variantAttributes,
+            quantity,
+            variants
+        } = req.body;
+
+        if (!productName || !description || !category || !regularPrice) {
+            return res.status(400).json({ message: "Required fields are missing." });
         }
 
         const productExist = await Product.findOne({ productName });
@@ -54,20 +66,58 @@ const addProducts = async (req, res) => {
             }
         }
 
-        const newProduct = new Product({
+        const productData = {
             productName,
             description,
             category: categoryData._id,
-            regularPrice,  
-            salePrice,
-            quantity,
+            regularPrice: parseFloat(regularPrice),
+            salePrice: parseFloat(salePrice || regularPrice),
             color,
             productImage: images,
             status: "Available",
             createdOn: new Date(),
-        });
+        };
 
+        if (hasVariants === 'true' && variants) {
+            const sizesMap = new Map();
+            const processedVariants = [];
+            
+            const variantsArray = Array.isArray(variants) ? variants : Object.values(variants);
+            
+            for (const variant of variantsArray) {
+                if (variant && variant.size) {
+                    sizesMap.set(variant.size, parseInt(variant.quantity || 0));
+                }
+                
+                processedVariants.push({
+                    attributes: {
+                        size: variant && variant.size ? variant.size : null,
+                        color: variant && variant.color ? variant.color : null,
+                        material: variant && variant.material ? variant.material : null
+                    },
+                    priceAdjustment: variant && variant.priceAdjustment ? parseFloat(variant.priceAdjustment) : 0,
+                    quantity: variant && variant.quantity ? parseInt(variant.quantity) : 0
+                });
+            }
+            const totalQuantity = processedVariants.reduce((sum, variant) => sum + (variant.quantity || 0), 0);
+            
+            productData.sizes = sizesMap;
+            productData.quantity = totalQuantity;
+            productData.variants = processedVariants; 
+            
+        } else {
+            productData.quantity = parseInt(quantity || 0);
+        }
+
+        if (salePrice && parseFloat(salePrice) < parseFloat(regularPrice)) {
+            productData.finalPrice = parseFloat(salePrice);
+        } else {
+            productData.finalPrice = parseFloat(regularPrice);
+        }
+
+        const newProduct = new Product(productData);
         await newProduct.save();
+        
         return res.redirect("/admin/Products");
 
     } catch (error) {
@@ -75,6 +125,7 @@ const addProducts = async (req, res) => {
         return res.redirect("/admin/pageerror");  
     }
 };
+
 
 const getAllProducts = async (req, res) => {
     try {
@@ -223,9 +274,9 @@ const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
+        const files = req.files; // Assuming you're using multer for file uploads
 
         console.log('data of the editProduct: ', data);
-        
 
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "Invalid product ID" });
@@ -247,22 +298,114 @@ const editProduct = async (req, res) => {
             });
         }
 
-        const categoryId = await Category.findOne({ name: data.category }, { _id: true })
+        // Get category ID
+        const category = await Category.findOne({ name: data.category });
+        if (!category) {
+            return res.status(400).json({ error: "Category not found" });
+        }
 
-        console.log('category id: ', categoryId);
+        // Process images
+        let productImages = [];
         
+        // Handle existing images
+        if (data.existingImages) {
+            const existingImages = Array.isArray(data.existingImages) 
+                ? data.existingImages 
+                : [data.existingImages];
+            
+            existingImages.forEach(img => {
+                if (img && img.trim() !== '') {
+                    productImages.push(img);
+                }
+            });
+        }
+        
+        // Process new images if any
+        if (files && files.image) {
+            const imageFiles = Array.isArray(files.image) ? files.image : [files.image];
+            
+            for (const file of imageFiles) {
+                if (file.size > 0) {
+                    // Process and save the image
+                    const imagePath = `/uploads/products/${Date.now()}-${file.originalname}`;
+                    await sharp(file.buffer)
+                        .resize(800, 800, { fit: 'contain' })
+                        .jpeg({ quality: 90 })
+                        .toFile(`./public${imagePath}`);
+                    
+                    productImages.push(imagePath);
+                }
+            }
+        }
 
+        // Handle variants
+        let variants = [];
+        let hasVariants = data.hasVariants === 'true';
+        let variantAttributes = [];
 
+        if (hasVariants) {
+            if (data.variantAttributes) {
+                variantAttributes = Array.isArray(data.variantAttributes) 
+                    ? data.variantAttributes 
+                    : [data.variantAttributes];
+            }
+
+            if (data.variants) {
+                // Process variants data
+                Object.keys(data.variants).forEach(key => {
+                    const variant = data.variants[key];
+                    if (variant) {
+                        const variantObj = {};
+                        
+                        // Add all selected attributes
+                        variantAttributes.forEach(attr => {
+                            if (variant[attr]) {
+                                variantObj[attr] = variant[attr];
+                            }
+                        });
+                        
+                        // Add price adjustment and quantity
+                        if (variant.priceAdjustment) {
+                            variantObj.priceAdjustment = variant.priceAdjustment;
+                        }
+                        
+                        if (variant.quantity) {
+                            variantObj.quantity = parseInt(variant.quantity) || 0;
+                        }
+                        
+                        variants.push(variantObj);
+                    }
+                });
+            }
+        }
+
+        // Prepare update fields
         const updateFields = {
             productName: data.productName,
             description: data.description,
-            category: categoryId, 
+            category: category._id,
             regularPrice: data.regularPrice,
-            salePrice: data.salePrice,
-            quantity: data.quantity,
-            color: data.color,
+            salePrice: data.salePrice || null,
+            color: data.color || null,
+            hasVariants: hasVariants,
+            images: productImages.length > 0 ? productImages : product.images,
         };
 
+        // Add quantity only for products without variants
+        if (!hasVariants) {
+            updateFields.quantity = parseInt(data.quantity) || 0;
+            updateFields.variants = [];
+        } else {
+            updateFields.variants = variants;
+            updateFields.variantAttributes = variantAttributes;
+            
+            // Calculate total quantity from variants
+            updateFields.quantity = variants.reduce((total, variant) => {
+                return total + (parseInt(variant.quantity) || 0);
+            }, 0);
+        }
+
+        // Update the product
         await Product.findByIdAndUpdate(id, updateFields, { new: true });
 
         res.redirect("/admin/products?success=Product updated successfully");
@@ -271,6 +414,7 @@ const editProduct = async (req, res) => {
         res.status(500).json({ error: "Failed to update product" });
     }
 };
+
 
 const deleteSingleImage = async (req, res) => {
     try {

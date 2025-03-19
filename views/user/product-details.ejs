@@ -14,6 +14,7 @@ body {
     font-weight: 300;
 }
 
+/* Existing styles preserved */
 .breadcrumbs {
     padding: 20px 0;
     background-color: #f8f7f5;
@@ -305,6 +306,103 @@ body {
     font-size: 1.1rem;
 }
 
+/* New Variants Styles */
+.variants {
+    margin-bottom: 40px;
+}
+
+.variant-section {
+    margin-bottom: 25px;
+}
+
+.variant-title {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 15px;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.variant-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* Size variants */
+.size-variant {
+    min-width: 50px;
+    height: 50px;
+    border: 1px solid #e5e0d5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.size-variant:hover {
+    border-color: #b8a484;
+}
+
+.size-variant.active {
+    border-color: #1a1a1a;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
+.size-variant.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+/* Color variants */
+.color-variant {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    position: relative;
+    transition: transform 0.3s ease;
+}
+
+.color-variant:hover {
+    transform: scale(1.1);
+}
+
+.color-variant.active::after {
+    content: "";
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    border: 1px solid #1a1a1a;
+    border-radius: 50%;
+}
+
+/* Other variant types */
+.text-variant {
+    padding: 10px 20px;
+    border: 1px solid #e5e0d5;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.text-variant:hover {
+    border-color: #b8a484;
+}
+
+.text-variant.active {
+    border-color: #1a1a1a;
+    background-color: #1a1a1a;
+    color: #ffffff;
+}
+
 .actions {
     display: flex;
     align-items: center;
@@ -406,6 +504,31 @@ body {
     color: #b8a484;
 }
 
+/* Stock badge */
+.stock-badge {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-radius: 3px;
+    margin-left: 10px;
+}
+
+.in-stock {
+    background-color: #e6f4ea;
+    color: #34a853;
+}
+
+.low-stock {
+    background-color: #fef7e0;
+    color: #fbbc04;
+}
+
+.out-of-stock {
+    background-color: #fce8e6;
+    color: #ea4335;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .product-grid {
@@ -493,7 +616,6 @@ body {
                     <div class="star-rating">
                         <div class="filled" style="width: 90%;">★★★★★</div>
                     </div>
-                    <span>(25 reviews)</span>
                 </div>
                 <div class="price">
                     <span class="current"><%= product.salePrice %></span>
@@ -506,7 +628,58 @@ body {
                         <% } %>
                     </span>
                 </div>
-                <p class="description"><%= product.description %></p>
+                <p class="description" style="font-weight: 100;"><%= product.description %></p>
+                
+                <div class="variants">
+                    <% if (product.variants && product.variants.sizes && product.variants.sizes.length > 0) { %>
+                        <div class="variant-section">
+                            <h4 class="variant-title">Size</h4>
+                            <div class="variant-options">
+                                <% product.variants.sizes.forEach((size, index) => { %>
+                                    <div class="size-variant <%= index === 0 ? 'active' : '' %> <%= !size.inStock ? 'disabled' : '' %>" 
+                                         data-size="<%= size.name %>"
+                                         data-variant-id="<%= size.variantId || '' %>"
+                                         data-in-stock="<%= size.inStock %>">
+                                        <%= size.name %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <% if (product.variants && product.variants.materials && product.variants.materials.length > 0) { %>
+                        <div class="variant-section">
+                            <h4 class="variant-title">Material</h4>
+                            <div class="variant-options">
+                                <% product.variants.materials.forEach((material, index) => { %>
+                                    <div class="text-variant <%= index === 0 ? 'active' : '' %>"
+                                         data-material="<%= material.name %>"
+                                         data-variant-id="<%= material.variantId || '' %>"
+                                         data-in-stock="<%= material.inStock %>">
+                                        <%= material.name %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+
+                    <% if (product.sizes  && product.sizes.length > 0) { %>
+                        <div class="variant-section">
+                            <h4 class="variant-title">Style</h4>
+                            <div class="variant-options">
+                                <% product.variants.styles.forEach((style, index) => { %>
+                                    <div class="text-variant <%= index === 0 ? 'active' : '' %>"
+                                         data-style="<%= style.name %>"
+                                         data-variant-id="<%= style.variantId || '' %>"
+                                         data-in-stock="<%= style.inStock %>">
+                                        <%= style.name %>
+                                    </div>
+                                <% }) %>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+
                 <ul class="features">
                     <li><i class="fas fa-crown"></i> 1 Year Brand Warranty</li>
                     <li><i class="fas fa-sync-alt"></i> 30 Day Return Policy</li>
@@ -518,13 +691,24 @@ body {
                         <span id="quantity">1</span>
                         <a href="#" class="increase"><i class="fas fa-plus"></i></a>
                     </div>
-                    <button class="add-to-cart">Add to Cart</button>
+                    <button class="add-to-cart" id="add-to-cart-btn">Add to Cart</button>
                     <a href="#" class="wishlist"><i class="fas fa-heart"></i></a>
                 </div>
                 <ul class="meta">
                     <li>Stock Code: <a href="#">FWM15VKT</a></li>
                     <li>Tags: <a href="#"><%= category.name %></a></li>
-                    <li>Availability: <span><%= quantity %> Items in Stock</span></li>
+                    <li>Availability: 
+                        <span>
+                            <%= quantity %> Items in Stock
+                            <% if (quantity > 10) { %>
+                                <span class="stock-badge in-stock">In Stock</span>
+                            <% } else if (quantity > 0) { %>
+                                <span class="stock-badge low-stock">Low Stock</span>
+                            <% } else { %>
+                                <span class="stock-badge out-of-stock">Out of Stock</span>
+                            <% } %>
+                        </span>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -673,7 +857,143 @@ body {
                 isFullscreen = false;
             }
         });
-    });
+
+        // New Variant Selection Functionality
+        // Color variants
+        const colorVariants = document.querySelectorAll('.color-variant');
+        colorVariants.forEach(variant => {
+            variant.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    colorVariants.forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    updateProductDetails();
+                }
+            });
+        });
+
+        // Size variants
+        const sizeVariants = document.querySelectorAll('.size-variant:not(.disabled)');
+        sizeVariants.forEach(variant => {
+            variant.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    sizeVariants.forEach(el => el.classList.remove('active'));
+                    this.classList.add('active');
+                    updateProductDetails();
+                }
+            });
+        });
+
+        // Other text variants (material, style)
+        const textVariants = document.querySelectorAll('.text-variant');
+        textVariants.forEach(variant => {
+            variant.addEventListener('click', function() {
+                // Find parent variant section
+                const parentSection = this.closest('.variant-section');
+                // Remove active class from all siblings
+                parentSection.querySelectorAll('.text-variant').forEach(el => el.classList.remove('active'));
+                // Add active class to clicked variant
+                this.classList.add('active');
+                updateProductDetails();
+            });
+        });
+
+        // Update product details based on selected variants
+        function updateProductDetails() {
+            // Get selected variants
+            const selectedColor = document.querySelector('.color-variant.active');
+            const selectedSize = document.querySelector('.size-variant.active');
+            const selectedMaterial = document.querySelector('.text-variant[data-material].active');
+            const selectedStyle = document.querySelector('.text-variant[data-style].active');
+            
+            // Build variant information for cart
+            const variantInfo = {
+                color: selectedColor ? selectedColor.getAttribute('data-color') : null,
+                size: selectedSize ? selectedSize.getAttribute('data-size') : null,
+                material: selectedMaterial ? selectedMaterial.getAttribute('data-material') : null,
+                style: selectedStyle ? selectedStyle.getAttribute('data-style') : null,
+                variantId: null
+            };
+            
+            // Here you would typically check if the combination is valid and has stock
+            // For now we'll just check if any selected variant is out of stock
+            const addToCartBtn = document.getElementById('add-to-cart-btn');
+            const inStockElements = [
+                selectedColor, 
+                selectedSize, 
+                selectedMaterial, 
+                selectedStyle
+            ].filter(Boolean);
+            
+            const allInStock = inStockElements.every(el => 
+                el.getAttribute('data-in-stock') === 'true' || 
+                el.getAttribute('data-in-stock') === '1'
+            );
+            
+            // Update button state
+            if (!allInStock) {
+                addToCartBtn.textContent = 'Out of Stock';
+                addToCartBtn.disabled = true;
+                addToCartBtn.style.backgroundColor = '#999';
+                addToCartBtn.textContent = 'Out of Stock';
+addToCartBtn.disabled = true;
+addToCartBtn.style.backgroundColor = '#999';
+addToCartBtn.style.cursor = 'not-allowed';
+} else {
+    addToCartBtn.textContent = 'Add to Cart';
+    addToCartBtn.disabled = false;
+    addToCartBtn.style.backgroundColor = '#1a1a1a';
+    addToCartBtn.style.cursor = 'pointer';
+}
+
+// Store variant information for cart
+addToCartBtn.setAttribute('data-variant-info', JSON.stringify(variantInfo));
+}
+
+// Initial update on page load
+updateProductDetails();
+
+// Add to cart functionality
+const addToCartBtn = document.getElementById('add-to-cart-btn');
+addToCartBtn.addEventListener('click', function() {
+    if (this.disabled) return;
+    
+    const quantity = parseInt(document.getElementById('quantity').textContent);
+    const variantInfo = JSON.parse(this.getAttribute('data-variant-info'));
+    
+    // Prepare cart item
+    const cartItem = {
+        productId: '<%= product._id %>',
+        productName: '<%= product.productName %>',
+        price: '<%= product.salePrice %>',
+        quantity: quantity,
+        variantInfo: variantInfo,
+        image: '<%= product.productImage && product.productImage[0] ? product.productImage[0] : "default.jpg" %>'
+    };
+    
+    // Add to cart - could be AJAX call or local storage update
+    console.log('Adding to cart:', cartItem);
+    
+    // Example: store in local storage
+    let cart = JSON.parse(localStorage.getItem('cart')) || [];
+    cart.push(cartItem);
+    localStorage.setItem('cart', JSON.stringify(cart));
+    
+    
+    updateCartCount();
+});
+
+// Update cart count function
+function updateCartCount() {
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const cartCountElement = document.querySelector('.cart-count');
+    if (cartCountElement) {
+        cartCountElement.textContent = cart.length;
+    }
+}
+
+// Initialize cart count
+updateCartCount();
+});
 </script>
 
 <%- include("../../views/partials/user/footer") %>

@@ -3,7 +3,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const env = require("dotenv").config();
 const session = require("express-session");
-
+const Address = require("../../models/addressSchema");
 
 
 function generateOtp(){
@@ -396,8 +396,165 @@ const varifyChangePassOtp = async (req,res)=>{
     }
 }
 
+const getAddress = async (req,res)=>{
+    try {
+        
+        const userId = req.session.user;
+        const userData = await User.findById(userId);
+        const AddressData = await Address.findOne({userId:userId});
+        res.render("address",{
+            user:userData,
+            userAddress:AddressData,
+        });
+
+    } catch (error) {
+
+        res.render("/pageNotFound")
+        
+    }
+}
 
 
+const addAddress = async(req,res)=>{
+    try {
+        const user = req.session.user;
+        res.render("add-address",{user:user});
+
+    } catch (error) {
+        res.redirect("pageNotFound");
+    }
+}
+
+
+
+const postAddress = async(req,res)=>{
+    try {
+        const userId = req.session.user;
+        const userData = await User.findOne({_id:userId});
+        const {addressType,name,city,landmark,state,pincode,phone,altPhone}=req.body;
+
+        const userAddress = await Address.findOne({userId:userData._id});
+        
+        if(!userAddress){
+            const newAddress = new Address({
+                userId:userData._id,
+                address:[{addressType,name,city,landmark,state,pincode,phone,altPhone}]
+            });
+            await newAddress.save();
+
+        }else{
+            userAddress.address.push({addressType,name,city,landmark,state,pincode,phone,altPhone})
+            await userAddress.save();
+
+        }
+
+        res.redirect("/address");
+
+
+
+    } catch (error) {
+        console.error("Error adding address ",error);
+        res.redirect("/pageNotFound")
+        
+    }
+}
+
+
+const editAddress = async(req,res)=>{
+    try {
+        const addressId = req.query.id;
+        const user = req.session.user;
+        const currAddress = await Address.findOne({
+            "address._id":addressId,        
+        })
+        if(!currAddress){
+            return res.redirect("/pageNotFound");
+        }
+
+        const addressData = currAddress.address.find((item)=>{
+            return item._id.toString() === addressId.toString();
+        });
+
+        if(!addressData){
+            return res.redirect("/pageNotFound");
+        }
+
+        res.render("edit-address",{address:addressData,user:user});
+
+    } catch (error) {
+
+        console.error("Error in edit address",error);
+        res.redirect("/pageNotFound");
+        
+    }
+}
+
+
+const postEditAddress = async (req, res) => {
+    try {
+        const data = req.body;
+        const addressId = req.query.id;
+        const findAddress = await Address.findOne({ "address._id": addressId });
+
+        if (!findAddress) {
+            return res.redirect("/pageNotFound"); 
+        }
+
+        await Address.updateOne(
+            { "address._id": addressId },
+            { $set: {
+                "address.$": {
+                    _id: addressId,
+                    addressType: data.addressType,
+                    name: data.name,
+                    city: data.city,
+                    landmark: data.landmark,
+                    state: data.state,
+                    pincode: data.pincode,
+                    phone: data.phone,
+                    altPhone: data.altPhone,
+                }
+            }}
+        );
+
+        return res.redirect("/userProfile"); 
+
+    } catch (error) {
+        console.error("Error while editing the information", error);
+        return res.redirect("/pageNotFound"); 
+    }
+};
+
+
+const deleteAddress = async(req,res)=>{
+    try {
+        
+        const addressId = req.query.id;
+        const findAddress = await Address.findOne({"address._id":addressId});
+        if(!findAddress){
+            return res.status(404).send("Address not found");
+        }
+
+        await Address.updateOne({
+            "address._id":addressId,
+
+        },
+        {
+            $pull:{
+                address:{
+                    _id:addressId,
+                }
+            }
+        }
+    )
+
+    res.redirect("/userProfile")
+
+    } catch (error) {
+        console.error("Error in deleting the address",error);
+        res.redirect("/pageNotFound");
+    }
+}
 
 
 module.exports ={
@@ -415,4 +572,10 @@ module.exports ={
     changePassword,
     changePasswordValid,
     varifyChangePassOtp,
+    getAddress,
+    addAddress,
+    postAddress,
+    editAddress,
+    postEditAddress,
+    deleteAddress
 }

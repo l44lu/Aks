@@ -277,6 +277,107 @@
             margin-top: 10px;
         }
         
+        /* New styles for variants */
+        .variant-container {
+            background: rgba(42, 42, 42, 0.5);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            position: relative;
+        }
+        
+        .variant-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .variant-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+        
+        .variant-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .remove-variant {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255, 0, 0, 0.2);
+            color: #ff6b6b;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .remove-variant:hover {
+            background: rgba(255, 0, 0, 0.4);
+        }
+        
+        .variant-divider {
+            height: 1px;
+            background: var(--border-color);
+            margin: 15px 0;
+        }
+        
+        .add-variant-btn {
+            background: rgba(73, 125, 192, 0.2);
+            color: var(--hover-color);
+            border: 1px dashed var(--hover-color);
+            border-radius: 8px;
+            padding: 12px;
+            width: 100%;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+        
+        .add-variant-btn:hover {
+            background: rgba(73, 125, 192, 0.3);
+        }
+        
+        .add-variant-btn i {
+            margin-right: 8px;
+        }
+        
+        .variant-type-selector {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .variant-type-option {
+            background: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 10px 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .variant-type-option.active {
+            background: var(--hover-color);
+            border-color: var(--hover-color);
+        }
+        
         @media (max-width: 991px) {
             .image-grid {
                 grid-template-columns: repeat(2, 1fr);
@@ -288,6 +389,10 @@
             
             .full-width {
                 grid-column: span 1;
+            }
+            
+            .variant-row {
+                grid-template-columns: 1fr;
             }
         }
         
@@ -353,14 +458,8 @@
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Quantity</label>
-                        <input placeholder="Enter stock quantity" name="quantity" type="number" min="0" class="form-control">
-                        <div id="quantity-error" class="error-message"></div>
-                    </div>
-
-                    <div class="form-group">
                         <label class="form-label">Color</label>
-                        <input name="color" placeholder="Enter product color" type="text" class="form-control">
+                        <input name="color" placeholder="Enter default product color" type="text" class="form-control">
                         <div id="color-error" class="error-message"></div>
                     </div>
 
@@ -368,6 +467,63 @@
                         <label class="form-label">Full Description</label>
                         <textarea placeholder="Enter detailed product description" id="descriptionid" name="description" class="form-control" rows="4"></textarea>
                         <div id="description-error" class="error-message"></div>
+                    </div>
+
+                    <!-- Product Variants Section -->
+                    <div class="form-group full-width">
+                        <div class="card mb-2">
+                            <div class="card-header">
+                                <h4><i class="fas fa-cubes"></i> Product Variants</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="variant-type-selector">
+                                    <div class="form-group">
+                                        <label class="form-label">Do you want to add variants?</label>
+                                        <select class="form-select" id="has-variants" name="hasVariants">
+                                            <option value="false">No, this is a simple product</option>
+                                            <option value="true">Yes, this product has variants</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div id="variants-section" style="display: none;">
+                                    <div class="form-group" id="variant-attributes">
+                                        <label class="form-label">Select variant attributes</label>
+                                        <div class="variant-row">
+                                            <div>
+                                                <input type="checkbox" id="size-attribute" name="variantAttributes" value="size">
+                                                <label for="size-attribute">Size</label>
+                                            </div>
+                                            <div>
+                                                <input type="checkbox" id="color-attribute" name="variantAttributes" value="color">
+                                                <label for="color-attribute">Color</label>
+                                            </div>
+                                            <div>
+                                                <input type="checkbox" id="material-attribute" name="variantAttributes" value="material">
+                                                <label for="material-attribute">Material</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="simple-quantity-field" style="display: block;">
+                                        <div class="form-group">
+                                            <label class="form-label">Quantity</label>
+                                            <input placeholder="Enter stock quantity" name="quantity" type="number" min="0" class="form-control">
+                                            <div id="quantity-error" class="error-message"></div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div id="variants-container" style="display: none;">
+                                        <!-- Variant items will be added here -->
+                                    </div>
+                                    
+                                    <button type="button" class="add-variant-btn" id="add-variant-btn">
+                                        <i class="fas fa-plus"></i> Add Variant
+                                    </button>
+                                    <div id="variants-error" class="error-message"></div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
 
                     <div class="form-group full-width">
@@ -490,6 +646,106 @@
 <script>
     const cropperInstances = {};
     const originalImages = {};
+    let variantCounter = 0;
+    let selectedAttributes = [];
+    
+    // Initialize handlers for variant functionality
+    document.addEventListener('DOMContentLoaded', function() {
+        // Toggle variants section based on selection
+        document.getElementById('has-variants').addEventListener('change', function() {
+            const hasVariants = this.value === 'true';
+            document.getElementById('variants-section').style.display = hasVariants ? 'block' : 'none';
+            document.getElementById('simple-quantity-field').style.display = hasVariants ? 'none' : 'block';
+            document.getElementById('variants-container').style.display = hasVariants ? 'block' : 'none';
+            
+            // Clear existing variants if switching to no variants
+            if (!hasVariants) {
+                document.getElementById('variants-container').innerHTML = '';
+            }
+        });
+        
+        // Handle variant attribute selection
+        const attributeCheckboxes = document.querySelectorAll('input[name="variantAttributes"]');
+        attributeCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                updateSelectedAttributes();
+                // Clear existing variants when attributes change
+                document.getElementById('variants-container').innerHTML = '';
+                variantCounter = 0;
+            });
+        });
+        
+        // Add variant button
+        document.getElementById('add-variant-btn').addEventListener('click', addVariant);
+    });
+    
+    function updateSelectedAttributes() {
+        selectedAttributes = [];
+        const attributeCheckboxes = document.querySelectorAll('input[name="variantAttributes"]:checked');
+        attributeCheckboxes.forEach(checkbox => {
+            selectedAttributes.push(checkbox.value);
+        });
+    }
+    
+    function addVariant() {
+        updateSelectedAttributes();
+        
+        if (selectedAttributes.length === 0) {
+            displayErrorMessage('variants-error', 'Please select at least one variant attribute');
+            return;
+        }
+        
+        variantCounter++;
+        const variantId = `variant-${variantCounter}`;
+        
+        const variantDiv = document.createElement('div');
+        variantDiv.className = 'variant-container';
+        variantDiv.id = variantId;
+        
+        let variantHtml = `
+            <div class="variant-header">
+                <div class="variant-title">Variant #${variantCounter}</div>
+            </div>
+            <button type="button" class="remove-variant" onclick="removeVariant('${variantId}')">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
+        
+        // Add fields for each selected attribute
+        variantHtml += `<div class="variant-row">`;
+        
+        selectedAttributes.forEach(attribute => {
+            variantHtml += `
+                <div class="form-group">
+                    <label class="form-label">${attribute.charAt(0).toUpperCase() + attribute.slice(1)}</label>
+                    <input type="text" class="form-control" name="variants[${variantCounter}][${attribute}]" placeholder="Enter ${attribute}">
+                </div>
+            `;
+        });
+        
+        // Always add price adjustment and quantity
+        variantHtml += `
+                <div class="form-group">
+                    <label class="form-label">Price Adjustment</label>
+                    <input type="text" class="form-control" name="variants[${variantCounter}][priceAdjustment]" placeholder="e.g. +10, -5, or leave blank">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Quantity</label>
+                    <input type="number" min="0" class="form-control" name="variants[${variantCounter}][quantity]" placeholder="Enter quantity">
+                </div>
+            </div>
+        `;
+        
+        variantDiv.innerHTML = variantHtml;
+        document.getElementById('variants-container').appendChild(variantDiv);
+    }
+    
+    function removeVariant(variantId) {
+        const variantElement = document.getElementById(variantId);
+        if (variantElement) {
+            variantElement.remove();
+        }
+    }
     
     function viewImage(event, index) {
         if (!event.target.files || !event.target.files[0]) return;
@@ -522,198 +778,145 @@
                 aspectRatio: 1,
                 viewMode: 1,
                 guides: true,
-                background: false,
                 autoCropArea: 0.8,
-                zoomable: true,
-                rotatable: true
+                responsive: true
             });
             
-            const saveButton = document.getElementById(`saveButton${index}`);
-            saveButton.onclick = function() {
-                saveCroppedImage(index);
+            // Setup save button
+            document.getElementById(`saveButton${index}`).onclick = function() {
+                const canvas = cropperInstances[index].getCroppedCanvas({
+                    width: 600,
+                    height: 600
+                });
+                
+                canvas.toBlob(function(blob) {
+                    // Create a new File object
+                    const croppedFile = new File([blob], originalImages[index].name, {
+                        type: originalImages[index].type,
+                        lastModified: new Date().getTime()
+                    });
+                    
+                    // Replace the original file in the input
+                    const container = new DataTransfer();
+                    container.items.add(croppedFile);
+                    document.getElementById(`input${index}`).files = container.files;
+                    
+                    // Update preview
+                    const imgView = document.getElementById(`imgView${index}`);
+                    imgView.src = URL.createObjectURL(croppedFile);
+                    
+                    // Hide cropper
+                    cancelCrop(index);
+                });
             };
         };
         reader.readAsDataURL(file);
     }
     
     function editImage(index) {
-        const imgView = document.getElementById(`imgView${index}`);
-        const cropperContainer = document.getElementById(`cropper-container${index}`);
-        
-        // If there's an image to edit
-        if (imgView.src) {
-            // If we don't have the cropper set up yet but have an image
-            if (!cropperInstances[index] && originalImages[index]) {
-                setupCropper(originalImages[index], index);
-            }
-            
-            // Show the cropper
-            cropperContainer.style.display = "block";
+        const input = document.getElementById(`input${index}`);
+        if (input.files && input.files[0]) {
+            document.getElementById(`cropper-container${index}`).style.display = 'block';
         }
     }
     
-    function saveCroppedImage(index) {
-        const cropper = cropperInstances[index];
-        if (!cropper) return;
-        
-        const imgView = document.getElementById(`imgView${index}`);
-        const croppedCanvas = cropper.getCroppedCanvas({
-            width: 300,
-            height: 300,
-            fillColor: '#fff'
-        });
-        
-        // Update the preview image with cropped version
-        imgView.src = croppedCanvas.toDataURL("image/jpeg", 0.9);
-        
-        // Convert to blob and store it for form submission
-        croppedCanvas.toBlob(function(blob) {
-            // Create a global variable to store the blob
-            if (!window.croppedBlobs) {
-                window.croppedBlobs = {};
-            }
-            
-            window.croppedBlobs[index] = blob;
-            
-            // Hide the cropper
-            document.getElementById(`cropper-container${index}`).style.display = "none";
-        }, 'image/jpeg', 0.9);
-    }
-    
     function cancelCrop(index) {
-        // Hide the cropper without saving changes
-        document.getElementById(`cropper-container${index}`).style.display = "none";
+        document.getElementById(`cropper-container${index}`).style.display = 'none';
     }
     
     function rotateImage(degree, index) {
-        const cropper = cropperInstances[index];
-        if (cropper) {
-            cropper.rotate(degree);
+        if (cropperInstances[index]) {
+            cropperInstances[index].rotate(degree);
         }
     }
     
     function validateAndSubmit() {
-    if (validateForm()) {
-        // If we have cropped images, add them to the form
-        if (window.croppedBlobs) {
-            const form = document.getElementById('productForm');
-            const formData = new FormData(form);
-            
-            // Remove the original files
-            formData.delete('image');
-            
-            // Add cropped files if available, otherwise use originals
-            for (let i = 1; i <= 4; i++) {
-                const input = document.getElementById(`input${i}`);
-                if (window.croppedBlobs[i]) {
-                    const fileName = `cropped-img-${new Date().getTime()}-${i}.jpg`;
-                    formData.append('image', window.croppedBlobs[i], fileName);
-                } else if (input.files && input.files[0]) {
-                    formData.append('image', input.files[0]);
-                }
-            }
-            
-            // Submit via fetch
-            fetch('/admin/addProduct', {
-                method: 'POST',
-                body: formData
-            })
-            .then(response => {
-                if (response.redirected) {
-                    window.location.href = response.url;
-                } else {
-                    return response.json();
-                }
-            })
-            .then(data => {
-                if (data && data.error) {
-                    alert(data.error);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        } else {
-            // If no cropped images, submit normally
-            document.getElementById('productForm').submit();
-        }
-    }
-}
-    
-    function validateForm() {
-        clearErrorMessages();
         let isValid = true;
+        const errors = {};
         
-        const name = document.getElementsByName('productName')[0].value;
-        const description = document.getElementById('descriptionid').value;
-        const regularPrice = document.getElementsByName('regularPrice')[0].value;
-        const salePrice = document.getElementsByName('salePrice')[0].value;
-        const quantity = document.getElementsByName('quantity')[0].value;
-        const color = document.getElementsByName('color')[0].value;
-        const category = document.getElementById('category').value;
+        // Validate product name
+        const productName = document.getElementById('product_name').value.trim();
+        if (!productName) {
+            errors['productName'] = 'Product name is required';
+            isValid = false;
+        }
+        
+        // Validate category
+        const category = document.getElementById('category').value.trim();
+        if (!category) {
+            errors['category'] = 'Category is required';
+            isValid = false;
+        }
+        
+        // Validate price
+        const regularPrice = document.querySelector('input[name="regularPrice"]').value.trim();
+        if (!regularPrice) {
+            errors['regularPrice'] = 'Regular price is required';
+            isValid = false;
+        } else if (isNaN(parseFloat(regularPrice)) || parseFloat(regularPrice) < 0) {
+            errors['regularPrice'] = 'Please enter a valid price';
+            isValid = false;
+        }
+        
+        // Validate sale price if provided
+        const salePrice = document.querySelector('input[name="salePrice"]').value.trim();
+        if (salePrice && (isNaN(parseFloat(salePrice)) || parseFloat(salePrice) < 0)) {
+            errors['salePrice'] = 'Please enter a valid sale price';
+            isValid = false;
+        }
+        
+        // Validate main image
         const mainImage = document.getElementById('input1').files;
-        
-        if (name.trim() === "") {
-            displayErrorMessage('productName-error', 'Please enter a product name.');
+        if (!mainImage || mainImage.length === 0) {
+            errors['images'] = 'Main product image is required';
             isValid = false;
         }
         
-        if (description.trim() === "") {
-            displayErrorMessage('description-error', 'Please enter a product description.');
+        // Validate description
+        const description = document.getElementById('descriptionid').value.trim();
+        if (!description) {
+            errors['description'] = 'Product description is required';
             isValid = false;
         }
         
-        if (quantity.trim() === "" || isNaN(parseInt(quantity)) || parseInt(quantity) < 0) {
-            displayErrorMessage('quantity-error', 'Please enter a valid non-negative quantity.');
-            isValid = false;
-        }
-        
-        if (!regularPrice.trim() || !/^\d+(\.\d{1,2})?$/.test(regularPrice) || parseFloat(regularPrice) < 0) {
-            displayErrorMessage('regularPrice-error', 'Please enter a valid non-negative price.');
-            isValid = false;
-        }
-        
-        if (salePrice.trim() !== "") {
-            if (!/^\d+(\.\d{1,2})?$/.test(salePrice) || parseFloat(salePrice) < 0) {
-                displayErrorMessage('salePrice-error', 'Please enter a valid non-negative price.');
+        // Validate variants if enabled
+        const hasVariants = document.getElementById('has-variants').value === 'true';
+        if (hasVariants) {
+            const variantContainers = document.querySelectorAll('.variant-container');
+            if (variantContainers.length === 0) {
+                errors['variants'] = 'Please add at least one variant';
                 isValid = false;
-            } else if (parseFloat(regularPrice) <= parseFloat(salePrice)) {
-                displayErrorMessage('salePrice-error', 'Sale price must be less than regular price.');
+            }
+        } else {
+            // Validate quantity for simple products
+            const quantity = document.querySelector('input[name="quantity"]').value.trim();
+            if (!quantity) {
+                errors['quantity'] = 'Quantity is required';
+                isValid = false;
+            } else if (isNaN(parseInt(quantity)) || parseInt(quantity) < 0) {
+                errors['quantity'] = 'Please enter a valid quantity';
                 isValid = false;
             }
         }
         
-        if (color.trim() === "") {
-            displayErrorMessage('color-error', 'Please enter a color.');
-            isValid = false;
+        // Display errors if any
+        if (!isValid) {
+            Object.keys(errors).forEach(key => {
+                displayErrorMessage(`${key}-error`, errors[key]);
+            });
+            return;
         }
         
-        if (category === "") {
-            displayErrorMessage('category-error', 'Please select a category.');
-            isValid = false;
-        }
-        
-        if (mainImage.length === 0) {
-            displayErrorMessage('images-error', 'Please select at least the main product image.');
-            isValid = false;
-        }
-        
-        return isValid;
+        // Submit the form if valid
+        document.getElementById('productForm').submit();
     }
     
     function displayErrorMessage(elementId, message) {
         const errorElement = document.getElementById(elementId);
         if (errorElement) {
-            errorElement.innerText = message;
-            errorElement.style.display = "block";
+            errorElement.textContent = message;
+            errorElement.style.display = 'block';
         }
-    }
-    
-    function clearErrorMessages() {
-        const errorElements = document.getElementsByClassName('error-message');
-        Array.from(errorElements).forEach(element => {
-            element.innerText = '';
-        });
     }
 </script>
 

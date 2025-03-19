@@ -29,6 +29,10 @@ router.get("/auth/google/callback", passport.authenticate("google", {
 router.get("/logout",userController.logout)
 
 
+router.get("/shop",userController.loadShoppingPage);
+router.get("/productDetails",productController.productDetails);
+
+
 
 router.get("/forgot-password",profileController.getForgotPassPage);
 router.post("/forgot-email-valid",profileController.forgotEmailValid);
@@ -44,10 +48,20 @@ router.post("/update-email",userAuth,profileController.updateEmail)
 router.get("/change-password",userAuth,profileController.changePassword)
 router.post("/change-password",userAuth,profileController.changePasswordValid);
 router.post("/verify-password-otp",userAuth,profileController.varifyChangePassOtp)
+router.get("/address",userAuth,profileController.getAddress);
+router.get("/editAddress",userAuth,profileController.editAddress);
+router.post("/editAddress",userAuth,profileController.postEditAddress)
 
 
-router.get("/shop",userController.loadShoppingPage);
-router.get("/productDetails",productController.productDetails);
+router.get("/addAddress",userAuth,profileController.addAddress)
+router.post("/addAddress",userAuth,profileController.postAddress);
+router.get("/deleteAddress",userAuth,profileController.deleteAddress);
+
+
+
+
+
+
 
 
 module.exports = router;

@@ -1,0 +1,195 @@
+<%- include("../../views/partials/user/header") %>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col-md-10">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-4 p-md-5">
+          <h3 class="text-center mb-4" style=" letter-spacing: 2px; color: #1a1a1a; text-transform: uppercase; font-weight: 300;">DELIVERY ADDRESS</h3>
+          
+          <div class="text-center mb-5">
+            <div style="width: 50px; height: 1px; background-color: #1a1a1a; display: inline-block;"></div>
+          </div>
+          
+          <form id="addressForm" method="POST" action="/addAddress" class="border-0">
+            <div class="row mb-4">
+              <div class="form-group col-md-4 mb-3">
+                <label for="addressType" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Address Type</label>
+                <input type="text" class="form-control border-1 border-bottom rounded-0 px-0" id="addressType" name="addressType" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+              <div class="form-group col-md-4 mb-3">
+                <label for="name" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Full Name</label>
+                <input type="text" class="form-control border-1 border-bottom rounded-0 px-0" id="name" name="name" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+              <div class="form-group col-md-4 mb-3">
+                <label for="city" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">City</label>
+                <input type="text" class="form-control border-1 border-bottom rounded-0 px-0" id="city" name="city" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+            </div>
+            
+            <div class="row mb-4">
+              <div class="form-group col-md-4 mb-3">
+                <label for="landmark" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Landmark</label>
+                <input type="text" class="form-control border-1 border-bottom rounded-0 px-0" id="landmark" name="landmark" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+              <div class="form-group col-md-4 mb-3">
+                <label for="state" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">State/Province</label>
+                <input type="text" class="form-control border-1 border-bottom rounded-0 px-0" id="state" name="state" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+              <div class="form-group col-md-4 mb-3">
+                <label for="pincode" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Postal Code</label>
+                <input type="number" class="form-control border-1 border-bottom rounded-0 px-0" id="pincode" name="pincode" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+            </div>
+            
+            <div class="row mb-5">
+              <div class="form-group col-md-6 mb-3">
+                <label for="phone" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Phone Number</label>
+                <input type="number" class="form-control border-1 border-bottom rounded-0 px-0" id="phone" name="phone" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+              <div class="form-group col-md-6 mb-3">
+                <label for="altPhone" class="form-label small text-uppercase" style="letter-spacing: 1px; color: #6c6c6c;">Alternative Phone</label>
+                <input type="number" class="form-control border-1 border-bottom rounded-0 px-0" id="altPhone" name="altPhone" required style="background: transparent; border-bottom-color: #ddd !important;">
+              </div>
+            </div>
+            
+            <div class="text-center mt-4">
+              <button type="submit" id="submitButton" class="btn btn-dark px-5 py-2" style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem; border-radius: 0;">SAVE ADDRESS</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+   document.getElementById('addressForm').addEventListener('submit', function(event) {
+       if (!validateForm()) {
+           event.preventDefault();
+       }
+   });
+
+   function validateForm() {
+       let isValid = true;
+       const requiredFields = ["addressType", "name", "city", "landmark", "state", "pincode", "phone", "altPhone"];
+       requiredFields.forEach(function(field) {
+           const input = document.getElementById(field);
+           const inputValue = input.value.trim();
+           const errorElement = document.getElementById(field + '-error');
+
+           if (inputValue === "") {
+               if (!errorElement) {
+                   const errorMessage = "This field is required.";
+                   const errorDiv = document.createElement('div');
+                   errorDiv.className = "text-danger small mt-1";
+                   errorDiv.textContent = errorMessage;
+                   errorDiv.id = field + '-error';
+                   input.parentNode.appendChild(errorDiv);
+               }
+               isValid = false;
+           } else {
+               if (errorElement) {
+                   errorElement.remove();
+               }
+           }
+       });
+
+       const addressType = document.getElementById('addressType').value;
+       const name = document.getElementById('name').value;
+       const city = document.getElementById('city').value;
+       const landmark = document.getElementById('landmark').value;
+       const state = document.getElementById('state').value;
+       const pincode = document.getElementById('pincode').value;
+       const phone = document.getElementById('phone').value;
+       const altPhone = document.getElementById('altPhone').value;
+       const namePattern = /^[A-Za-z\s]+$/;
+       const pincodePattern = /^\d{6}$/;
+       const phonePattern = /^\d{10}$/;
+       
+       if (!namePattern.test(name)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Name should contain alphabets only.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!namePattern.test(city)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'City should contain alphabets only.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!namePattern.test(landmark)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Landmark should contain alphabets only.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!namePattern.test(state)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'State should contain alphabets only.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!pincodePattern.test(pincode)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Postal code should be a 6-digit number.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!phonePattern.test(phone)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Phone number should be a 10-digit number.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (!phonePattern.test(altPhone)) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Alternative phone number should be a 10-digit number.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       if (phone === altPhone) {
+           Swal.fire({
+               title: 'Error',
+               text: 'Phone number and alternative phone number should be different.',
+               icon: 'error',
+               confirmButtonColor: '#1a1a1a',
+               confirmButtonText: 'OK'
+           });
+           isValid = false;
+       }
+       return isValid;
+   }
+</script>
+
+<%- include("../../views/partials/user/footer") %>
