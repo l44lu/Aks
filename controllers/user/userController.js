@@ -329,7 +329,7 @@ const loadShoppingPage = async (req, res) => {
         let filterQuery = {
             isBlocked: false,
             category: selectedCategory ? selectedCategory : { $in: categoryIds },
-            quantity: { $gt: 0 }
+   
         };
 
         if (maxPrice !== null) {

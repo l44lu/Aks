@@ -470,60 +470,18 @@
                     </div>
 
                     <!-- Product Variants Section -->
-                    <div class="form-group full-width">
-                        <div class="card mb-2">
-                            <div class="card-header">
-                                <h4><i class="fas fa-cubes"></i> Product Variants</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="variant-type-selector">
-                                    <div class="form-group">
-                                        <label class="form-label">Do you want to add variants?</label>
-                                        <select class="form-select" id="has-variants" name="hasVariants">
-                                            <option value="false">No, this is a simple product</option>
-                                            <option value="true">Yes, this product has variants</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                
-                                <div id="variants-section" style="display: none;">
-                                    <div class="form-group" id="variant-attributes">
-                                        <label class="form-label">Select variant attributes</label>
-                                        <div class="variant-row">
-                                            <div>
-                                                <input type="checkbox" id="size-attribute" name="variantAttributes" value="size">
-                                                <label for="size-attribute">Size</label>
-                                            </div>
-                                            <div>
-                                                <input type="checkbox" id="color-attribute" name="variantAttributes" value="color">
-                                                <label for="color-attribute">Color</label>
-                                            </div>
-                                            <div>
-                                                <input type="checkbox" id="material-attribute" name="variantAttributes" value="material">
-                                                <label for="material-attribute">Material</label>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="simple-quantity-field" style="display: block;">
-                                        <div class="form-group">
-                                            <label class="form-label">Quantity</label>
-                                            <input placeholder="Enter stock quantity" name="quantity" type="number" min="0" class="form-control">
-                                            <div id="quantity-error" class="error-message"></div>
-                                        </div>
-                                    </div>
-                                    
-                                    <div id="variants-container" style="display: none;">
-                                        <!-- Variant items will be added here -->
-                                    </div>
-                                    
-                                    <button type="button" class="add-variant-btn" id="add-variant-btn">
-                                        <i class="fas fa-plus"></i> Add Variant
-                                    </button>
-                                    <div id="variants-error" class="error-message"></div>
-                                </div>
-                            </div>
+                    <div class="mb-4">
+                        <label class="form-label">Size</label>
+                        <div class="size-buttons-container">
+                            <button type="button" class="size-btn" data-size="S">S</button>
+                            <button type="button" class="size-btn" data-size="M">M</button>
+                            <button type="button" class="size-btn" data-size="L">L</button>
+                            <button type="button" class="size-btn" data-size="XL">XL</button>
+                            <button type="button" class="size-btn" data-size="XXL">XXL</button>
                         </div>
+                        <div id="sizeQuantities"></div> <!-- This div will contain the quantity inputs -->
+                        <input type="hidden" name="sizesWithQuantities" id="sizesWithQuantities">
+                        <div id="size-error" class="error-message"></div>
                     </div>
 
                     <div class="form-group full-width">
@@ -646,106 +604,14 @@
 <script>
     const cropperInstances = {};
     const originalImages = {};
-    let variantCounter = 0;
-    let selectedAttributes = [];
+  
+        
     
-    // Initialize handlers for variant functionality
-    document.addEventListener('DOMContentLoaded', function() {
-        // Toggle variants section based on selection
-        document.getElementById('has-variants').addEventListener('change', function() {
-            const hasVariants = this.value === 'true';
-            document.getElementById('variants-section').style.display = hasVariants ? 'block' : 'none';
-            document.getElementById('simple-quantity-field').style.display = hasVariants ? 'none' : 'block';
-            document.getElementById('variants-container').style.display = hasVariants ? 'block' : 'none';
-            
-            // Clear existing variants if switching to no variants
-            if (!hasVariants) {
-                document.getElementById('variants-container').innerHTML = '';
-            }
-        });
-        
-        // Handle variant attribute selection
-        const attributeCheckboxes = document.querySelectorAll('input[name="variantAttributes"]');
-        attributeCheckboxes.forEach(checkbox => {
-            checkbox.addEventListener('change', function() {
-                updateSelectedAttributes();
-                // Clear existing variants when attributes change
-                document.getElementById('variants-container').innerHTML = '';
-                variantCounter = 0;
-            });
-        });
-        
-        // Add variant button
-        document.getElementById('add-variant-btn').addEventListener('click', addVariant);
-    });
+   
     
-    function updateSelectedAttributes() {
-        selectedAttributes = [];
-        const attributeCheckboxes = document.querySelectorAll('input[name="variantAttributes"]:checked');
-        attributeCheckboxes.forEach(checkbox => {
-            selectedAttributes.push(checkbox.value);
-        });
-    }
+
     
-    function addVariant() {
-        updateSelectedAttributes();
-        
-        if (selectedAttributes.length === 0) {
-            displayErrorMessage('variants-error', 'Please select at least one variant attribute');
-            return;
-        }
-        
-        variantCounter++;
-        const variantId = `variant-${variantCounter}`;
-        
-        const variantDiv = document.createElement('div');
-        variantDiv.className = 'variant-container';
-        variantDiv.id = variantId;
-        
-        let variantHtml = `
-            <div class="variant-header">
-                <div class="variant-title">Variant #${variantCounter}</div>
-            </div>
-            <button type="button" class="remove-variant" onclick="removeVariant('${variantId}')">
-                <i class="fas fa-times"></i>
-            </button>
-        `;
-        
-        // Add fields for each selected attribute
-        variantHtml += `<div class="variant-row">`;
-        
-        selectedAttributes.forEach(attribute => {
-            variantHtml += `
-                <div class="form-group">
-                    <label class="form-label">${attribute.charAt(0).toUpperCase() + attribute.slice(1)}</label>
-                    <input type="text" class="form-control" name="variants[${variantCounter}][${attribute}]" placeholder="Enter ${attribute}">
-                </div>
-            `;
-        });
-        
-        // Always add price adjustment and quantity
-        variantHtml += `
-                <div class="form-group">
-                    <label class="form-label">Price Adjustment</label>
-                    <input type="text" class="form-control" name="variants[${variantCounter}][priceAdjustment]" placeholder="e.g. +10, -5, or leave blank">
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Quantity</label>
-                    <input type="number" min="0" class="form-control" name="variants[${variantCounter}][quantity]" placeholder="Enter quantity">
-                </div>
-            </div>
-        `;
-        
-        variantDiv.innerHTML = variantHtml;
-        document.getElementById('variants-container').appendChild(variantDiv);
-    }
-    
-    function removeVariant(variantId) {
-        const variantElement = document.getElementById(variantId);
-        if (variantElement) {
-            variantElement.remove();
-        }
-    }
+
     
     function viewImage(event, index) {
         if (!event.target.files || !event.target.files[0]) return;
@@ -879,25 +745,28 @@
             isValid = false;
         }
         
-        // Validate variants if enabled
-        const hasVariants = document.getElementById('has-variants').value === 'true';
-        if (hasVariants) {
-            const variantContainers = document.querySelectorAll('.variant-container');
-            if (variantContainers.length === 0) {
-                errors['variants'] = 'Please add at least one variant';
-                isValid = false;
+        // Validate Size Selection & Quantities
+ const selectedSizes = document.querySelectorAll(".size-btn.selected");
+    if (selectedSizes.length === 0) {
+        displayErrorMessage("size-error", "Please select at least one size.");
+        isValid = false;
+    } else {
+        let allQuantitiesValid = true;
+        selectedSizes.forEach(button => {
+            const size = button.getAttribute("data-size");
+            const quantityInput = document.getElementById(`sizeQuantity-${size}`);
+
+            if (!quantityInput || quantityInput.value.trim() === "" || parseInt(quantityInput.value, 10) <= 0) {
+                allQuantitiesValid = false;
             }
-        } else {
-            // Validate quantity for simple products
-            const quantity = document.querySelector('input[name="quantity"]').value.trim();
-            if (!quantity) {
-                errors['quantity'] = 'Quantity is required';
-                isValid = false;
-            } else if (isNaN(parseInt(quantity)) || parseInt(quantity) < 0) {
-                errors['quantity'] = 'Please enter a valid quantity';
-                isValid = false;
-            }
+        });
+
+        if (!allQuantitiesValid) {
+            displayErrorMessage("size-error", "Each selected size must have a valid quantity (≥1).");
+            isValid = false;
         }
+    }
+     
         
         // Display errors if any
         if (!isValid) {
@@ -918,6 +787,65 @@
             errorElement.style.display = 'block';
         }
     }
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const sizeButtons = document.querySelectorAll(".size-btn");
+    const sizeQuantitiesContainer = document.getElementById("sizeQuantities");
+    const sizesWithQuantitiesInput = document.getElementById("sizesWithQuantities");
+
+    sizeButtons.forEach(button => {
+        button.addEventListener("click", function () {
+            this.classList.toggle("selected");
+            handleSizeSelection(this);
+        });
+    });
+
+    function handleSizeSelection(button) {
+        const size = button.getAttribute("data-size");
+        let existingInput = document.getElementById(`sizeQuantity-${size}`);
+
+        if (button.classList.contains("selected")) {
+            // Add input field if not existing
+            if (!existingInput) {
+                const inputField = document.createElement("div");
+                inputField.classList.add("size-input-wrapper");
+                inputField.innerHTML = `
+                    <div class="mb-3">
+                        <label class="form-label">Quantity for ${size}</label>
+                        <input type="number" id="sizeQuantity-${size}" name="sizeQuantities[${size}]" 
+                               class="form-control size-quantity" min="1" required>
+                    </div>
+                `;
+                sizeQuantitiesContainer.appendChild(inputField);
+
+                // Listen for input changes
+                inputField.querySelector("input").addEventListener("input", updateHiddenField);
+            }
+        } else {
+            // Remove input field when size is deselected
+            if (existingInput) {
+                existingInput.closest(".size-input-wrapper").remove();
+            }
+        }
+
+        updateHiddenField();
+    }
+
+    function updateHiddenField() {
+        const selectedSizes = {};
+        document.querySelectorAll(".size-btn.selected").forEach(btn => {
+            const size = btn.getAttribute("data-size");
+            const quantityInput = document.getElementById(`sizeQuantity-${size}`);
+            
+            if (quantityInput && quantityInput.value.trim() !== "" && parseInt(quantityInput.value) > 0) {
+                selectedSizes[size] = quantityInput.value;
+            }
+        });
+
+        sizesWithQuantitiesInput.value = JSON.stringify(selectedSizes);
+    }
+});
 </script>
 
 <%- include("../../views/partials/admin/footer") %>

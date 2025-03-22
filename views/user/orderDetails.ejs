@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Details | Aks </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #ffffff;
+            --secondary-color: #a87c2d;
+            --secondary-light: #dcc59a;
+            --background-color: #f8f8f8;
+            --text-primary: #1a1a1a;
+            --text-secondary: #666666;
+            --border-color: #e0e0e0;
+            --success-color: #2c614f;
+            --warning-color: #a87c2d;
+            --danger-color: #8c2e2e;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3, h4, h5 {
+            font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+
+        .logo {
+            text-align: center;
+            padding: 2rem 0;
+        }
+
+        .logo h1 {
+            font-size: 2.2rem;
+            letter-spacing: 2px;
+            margin: 0;
+            text-transform: uppercase;
+        }
+
+        .page-header {
+            background-color: var(--primary-color);
+            padding: 3rem 0;
+            color: white;
+            margin-bottom: 3rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .page-header::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 3px;
+            background-color: var(--secondary-color);
+        }
+
+        .order-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        .section-title {
+            position: relative;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            font-size: 1.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 60px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .status-timeline {
+            background: white;
+            border: 1px solid var(--border-color);
+            padding: 3rem;
+            margin-bottom: 3rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            position: relative;
+            padding-bottom: 2.5rem;
+        }
+
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: 1rem;
+            top: 2.5rem;
+            bottom: 0;
+            width: 1px;
+            background: var(--secondary-light);
+        }
+
+        .timeline-item:last-child::before {
+            display: none;
+        }
+
+        .timeline-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: rgb(0, 0, 0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 2rem;
+            position: relative;
+            z-index: 1;
+            border: 2px solid var(--secondary-color);
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-content h5 {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .text-muted {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .order-details-card {
+            background: white;
+            margin-bottom: 3rem;
+            position: relative;
+            border: 1px solid var(--border-color);
+        }
+
+        .card-header {
+            padding: 2rem 3rem;
+            border-bottom: 1px solid var(--border-color);
+            position: relative;
+        }
+
+        .card-header::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 3rem;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+        }
+
+        .card-header h3 {
+            margin: 0;
+            color: var(--text-primary);
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+        }
+
+        .card-body {
+            padding: 3rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-item {
+            color: var(--text-secondary);
+        }
+
+        .info-item strong {
+            display: block;
+            color: var(--text-primary);
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+        }
+
+        .status-badge {
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .status-pending {
+            background-color: var(--secondary-light);
+            color: var(--warning-color);
+        }
+
+        .status-completed {
+            background-color: #e4f0ec;
+            color: var(--success-color);
+        }
+
+        .status-cancelled {
+            background-color: #f5e6e6;
+            color: var(--danger-color);
+        }
+
+        .shipping-card {
+            background: #f8f8f8;
+            padding: 2rem;
+            position: relative;
+            border-left: 3px solid var(--secondary-color);
+        }
+
+        .shipping-card h4 {
+            margin-bottom: 1.5rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 1.1rem;
+        }
+
+        .product-card {
+            display: flex;
+            align-items: center;
+            padding: 2rem;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 0;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            background-color: #f9f9f9;
+        }
+
+        .product-card:last-child {
+            border-bottom: none;
+        }
+
+        .product-image {
+            width: 100px;
+            height: 100px;
+            object-fit: cover;
+            margin-right: 2rem;
+            border: 1px solid var(--border-color);
+        }
+
+        .product-details {
+            flex: 1;
+        }
+
+        .product-details h5 {
+            margin-bottom: 0.75rem;
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        .product-price {
+            text-align: right;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+
+        .price-breakdown {
+            border-top: 1px solid var(--border-color);
+            margin-top: 2rem;
+            padding-top: 2rem;
+        }
+
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .price-item.total {
+            font-size: 1.3rem;
+            font-weight: 500;
+            color: var(--primary-color);
+            border-top: 1px solid var(--border-color);
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .text-success {
+            color: var(--success-color);
+        }
+
+        .btn-custom {
+            padding: 1rem 2rem;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            background-color: transparent;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: rgb(0, 0, 0);
+        }
+
+        .btn-primary:hover {
+            background-color: #333;
+        }
+
+        .btn-outline {
+            border: black;
+            color: black;
+        }
+
+        .btn-outline:hover {
+            background-color: var(--primary-color);
+            color: rgb(0, 0, 0);
+        }
+
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #a53535;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 3rem;
+            justify-content: center;
+        }
+
+        .accent-divider {
+            display: block;
+            width: 50px;
+            height: 2px;
+            background-color: var(--secondary-color);
+            margin: 0 auto 3rem;
+        }
+
+        .order-id {
+            font-size: 1rem;
+            letter-spacing: 1px;
+            margin-top: 0.5rem;
+            font-weight: 300;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 1024px) {
+            .order-container {
+                max-width: 90%;
+                padding: 0 1.5rem;
+            }
+
+            .status-timeline, .card-body {
+                padding: 2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                padding: 2rem 0;
+            }
+
+            .logo h1 {
+                font-size: 1.8rem;
+            }
+
+            .order-container {
+                max-width: 100%;
+                padding: 0 1.5rem;
+            }
+
+            .status-timeline, .card-body {
+                padding: 1.5rem;
+            }
+
+            .timeline-item {
+                padding-bottom: 2rem;
+            }
+
+            .timeline-icon {
+                margin-right: 1.5rem;
+            }
+
+            .product-card {
+                padding: 1.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header {
+                padding: 1.5rem 0;
+            }
+
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+
+            .order-container {
+                padding: 0 1rem;
+            }
+
+            .section-title {
+                font-size: 1.5rem;
+            }
+
+            .status-timeline, .card-body {
+                padding: 1.5rem 1rem;
+            }
+
+            .card-header {
+                padding: 1.5rem;
+            }
+
+            .card-header h3 {
+                font-size: 1.3rem;
+            }
+
+            .timeline-item {
+                flex-direction: column;
+            }
+
+            .timeline-icon {
+                margin-bottom: 1rem;
+            }
+
+            .timeline-item::before {
+                left: 1.25rem;
+                top: 2.5rem;
+            }
+
+            .product-card {
+                flex-direction: column;
+                text-align: center;
+                padding: 1.5rem 1rem;
+            }
+
+            .product-image {
+                margin-right: 0;
+                margin-bottom: 1rem;
+            }
+
+            .product-price {
+                text-align: center;
+                margin-top: 1rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .btn-custom {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="logo">
+        <h1>Aks Fashion</h1>
+    </div>
+
+    <header class="page-header">
+        <div class="order-container">
+            <h2>YOUR ORDER</h2>
+            <p class="order-id">ORDER #<%= order.orderNumber %></p>
+        </div>
+    </header>
+
+    <div class="order-container">
+        <div class="order-details-card">
+            <div class="card-header">
+                <h3>Order Status</h3>
+            </div>
+            <div class="card-body">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <span class="status-badge status-<%= order.status.toLowerCase() %>">
+                        <i class="fas fa-circle"></i>
+                        <%= order.status %>
+                    </span>
+                    <p style="margin-top: 1rem; color: var(--text-secondary);">Placed on <%= order.orderDate %></p>
+                </div>
+
+                <div class="status-timeline">
+                    <div class="timeline-item">
+                        <div class="timeline-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h5>Order Placed</h5>
+                            <p class="text-muted"><%= order.orderDate %></p>
+                        </div>
+                    </div>
+                    <% if (order.status !== 'Cancelled') { %>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="fas fa-check"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Order Confirmed</h5>
+                                <p class="text-muted"><%= order.confirmationDate %></p>
+                            </div>
+                        </div>
+                        <% if (order.status === 'Completed') { %>
+                            <div class="timeline-item">
+                                <div class="timeline-icon">
+                                    <i class="fas fa-box"></i>
+                                </div>
+                                <div class="timeline-content">
+                                    <h5>Order Completed</h5>
+                                    <p class="text-muted"><%= order.completionDate %></p>
+                                </div>
+                            </div>
+                        <% } %>
+                    <% } else { %>
+                        <div class="timeline-item">
+                            <div class="timeline-icon">
+                                <i class="fas fa-times"></i>
+                            </div>
+                            <div class="timeline-content">
+                                <h5>Order Cancelled</h5>
+                                <p class="text-muted"><%= order.cancellationDate %></p>
+                            </div>
+                        </div>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-details-card">
+            <div class="card-header">
+                <h3>Order Items</h3>
+            </div>
+            <div class="card-body">
+                <% order.products.forEach(function(product) { %>
+                    <div class="product-card">
+                        <div class="product-details">
+                            <h5><%= product.name %></h5>
+                            <p class="text-muted">Quantity: <%= product.quantity %></p>
+                            <p class="text-muted">Unit Price: $<%= product.price.toFixed(2) %></p>
+                        </div>
+                        <div class="product-price">
+                            $<%= (product.price * product.quantity).toFixed(2) %>
+                        </div>
+                    </div>
+                <% }); %>
+
+                <div class="price-breakdown">
+                    <div class="price-item">
+                        <span>Subtotal</span>
+                        <span>$<%= order.totalAmount.toFixed(2) %></span>
+                    </div>
+                    <div class="price-item">
+                        <span>Shipping</span>
+                        <span>$<%= order.shippingCost.toFixed(2) %></span>
+                    </div>
+                    <% if (order.discount) { %>
+                        <div class="price-item text-success">
+                            <span>Discount</span>
+                            <span>-$<%= order.discount.toFixed(2) %></span>
+                        </div>
+                    <% } %>
+                    <div class="price-item total">
+                        <span>Total</span>
+                        <span>$<%= order.finalAmount.toFixed(2) %></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="order-details-card">
+            <div class="card-header">
+                <h3>Shipping & Payment</h3>
+            </div>
+            <div class="card-body">
+                <div class="info-grid">
+                    <div class="info-item">
+                        <strong>Payment Method</strong>
+                        <%= order.paymentMethod %>
+                    </div>
+                    <div class="info-item">
+                        <strong>Payment Status</strong>
+                        <span class="text-success">
+                            <i class="fas fa-check-circle"></i> Paid
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <strong>Shipping Method</strong>
+                        <%= order.shippingMethod %>
+                    </div>
+                    <div class="info-item">
+                        <strong>Contact Email</strong>
+                        <%= order.email %>
+                    </div>
+                </div>
+
+                <div class="shipping-card">
+                    <h4>Shipping Address</h4>
+                    <p class="mb-0"><%= order.address %></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="accent-divider"></div>
+
+        <div class="action-buttons">
+            <a href="/myorders" class="btn-custom btn-outline">
+                <i class="fas fa-arrow-left"></i>
+                Back to Orders
+            </a>
+            
+            <% if (order.status === 'Pending') { %>
+                <button class="btn-custom btn-danger" onclick="cancelOrder('<%= order.orderId %>')">
+                    <i class="fas fa-times"></i>
+                    Cancel Order
+                </button>
+            <% } %>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function cancelOrder(orderNumber) {
+            Swal.fire({
+                title: 'Cancel Order',
+                text: 'Are you sure you want to cancel this order?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '##ffffff',
+                cancelButtonColor: '#ffffff',
+                confirmButtonText: 'Yes, cancel it',
+                cancelButtonText: 'No, keep it',
+                customClass: {
+                    confirmButton: 'btn-custom btn-danger',
+                    cancelButton: 'btn-custom btn-outline'
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch(`/orderCancel/${orderNumber}`, { 
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' }
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire({
+                                title: 'Order Cancelled',
+                                text: 'Your order has been cancelled successfully.',
+                                icon: 'success',
+                                confirmButtonColor: '#1a1a1a'
+                            }).then(() => window.location.href = "/myOrders")
+                        } else {
+                            Swal.fire({
+                                title: 'Error',
+                                text: 'Failed to cancel the order. Please try again.',
+                                icon: 'error',
+                                confirmButtonColor: '#1a1a1a'
+                            });
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'An error occurred while cancelling the order.',
+                            icon: 'error',
+                            confirmButtonColor: '#1a1a1a'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>

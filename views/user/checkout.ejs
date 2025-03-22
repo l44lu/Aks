@@ -1,0 +1,1119 @@
+<%- include("../../views/partials/user/header") %>
+<style>
+
+    /* Luxury Fashion Checkout Page CSS */
+
+/* Global Variables */
+:root {
+  --primary-color: #1a1a1a;
+  --secondary-color: #e0c89f;
+  --accent-color: #d4af37;
+  --text-color: #333333;
+  --light-text: #8a8a8a;
+  --border-color: #e6e6e6;
+  --background-color: #ffffff;
+  --error-color: #b71c1c;
+  --success-color: #1e8449;
+  --box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
+
+}
+
+/* Base Styles */
+body {
+  font-family: var(--font-secondary);
+  color: var(--text-color);
+  background-color: #f9f9f9;
+  margin: 0;
+  padding: 0;
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-primary);
+  font-weight: 400;
+  letter-spacing: 0.05em;
+}
+
+/* Layout */
+.checkout-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 0 1.5rem;
+}
+
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 2rem;
+}
+
+.main-content {
+  background-color: var(--background-color);
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+}
+
+.sidebar {
+  align-self: start;
+  position: sticky;
+  top: 2rem;
+}
+
+/* Progress Bar */
+.checkout-header {
+  margin-bottom: 3rem;
+  background-color: var(--background-color);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.progress-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.progress-bar {
+  height: 2px;
+  background-color: var(--border-color);
+  margin: 1.5rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--accent-color);
+  width: 25%;
+  transition: var(--transition);
+}
+
+.steps-container {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-top: -2.5rem;
+}
+
+.step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
+}
+
+.step-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: var(--background-color);
+  border: 2px solid var(--border-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: 600;
+  color: var(--light-text);
+  margin-bottom: 0.5rem;
+  transition: var(--transition);
+}
+
+.step.active .step-circle {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+.step.completed .step-circle {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+.step-label {
+  font-size: 0.9rem;
+  color: var(--light-text);
+  letter-spacing: 0.05em;
+  font-weight: 500;
+  transition: var(--transition);
+}
+
+.step.active .step-label,
+.step.completed .step-label {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+/* Section Titles */
+.section-title {
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--primary-color);
+}
+
+.section-title svg {
+  margin-right: 0.75rem;
+  stroke: var(--accent-color);
+}
+
+/* Address Selection */
+.addresses {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+}
+
+.address-card {
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.address-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.address-card input[type="radio"] {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  transition: var(--transition);
+}
+
+.address-card input[type="radio"]:checked {
+  border-color: var(--accent-color);
+  background-color: var(--accent-color);
+  box-shadow: inset 0 0 0 4px var(--background-color);
+}
+
+.address-name {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+.address-text {
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+
+.add-address-btn {
+  background-color: transparent;
+  border: 1px solid var(--accent-color);
+  color: var(--accent-color);
+  padding: 0.75rem 1.5rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.05em;
+  display: inline-flex;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.add-address-btn:hover {
+  background-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+.add-address-btn span {
+  margin-right: 0.5rem;
+}
+
+/* Coupon Section */
+.coupon-container {
+  margin-bottom: 2.5rem;
+}
+
+.coupon-input-group {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.coupon-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.coupon-input:focus {
+  border-color: var(--accent-color);
+}
+
+.apply-coupon, .view-coupons-btn {
+  padding: 0 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.05em;
+}
+
+.view-coupons-btn {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apply-coupon:hover, .view-coupons-btn:hover {
+  background-color: var(--accent-color);
+  border-color: var(--accent-color);
+  color: var(--background-color);
+}
+
+.coupon-success {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(30, 132, 73, 0.1);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--success-color);
+}
+
+.coupon-success svg {
+  stroke: var(--success-color);
+}
+
+.remove-coupon-btn {
+  background: none;
+  border: none;
+  color: var(--error-color);
+  cursor: pointer;
+  font-size: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  padding: 0;
+}
+
+.coupon-error {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: rgba(183, 28, 28, 0.1);
+  border-radius: 4px;
+  font-size: 0.9rem;
+  color: var(--error-color);
+}
+
+.coupon-error svg {
+  stroke: var(--error-color);
+}
+
+/* Products */
+.products {
+  margin-bottom: 2.5rem;
+}
+
+.product-card {
+  display: flex;
+  align-items: center;
+  padding: 1.5rem;
+  border: 1px solid var(--border-color);
+  margin-bottom: 1rem;
+  transition: var(--transition);
+}
+
+.product-card:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.product-image {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 1.5rem;
+}
+
+.product-info {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.product-details {
+  flex: 1;
+}
+
+.product-name {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+
+.product-quantity {
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+
+.product-price {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+/* Order Summary */
+.order-summary {
+  background-color: var(--background-color);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.75rem 0;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.95rem;
+}
+
+.summary-row:last-child {
+  border-bottom: none;
+}
+
+.summary-total {
+  font-weight: 600;
+  font-size: 1.1rem;
+  color: var(--primary-color);
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 2px solid var(--border-color);
+}
+
+.continue-btn {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  letter-spacing: 0.05em;
+  margin-top: 1.5rem;
+  text-transform: uppercase;
+}
+
+.continue-btn:hover {
+  background-color: var(--accent-color);
+}
+
+/* Address Modal */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background-color: var(--background-color);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  padding: 2rem;
+  box-shadow: var(--box-shadow);
+  position: relative;
+}
+
+.close {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--light-text);
+  transition: var(--transition);
+}
+
+.close:hover {
+  color: var(--primary-color);
+}
+
+.modal-content h2 {
+  font-family: var(--font-primary);
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+.input-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+  color: var(--light-text);
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.95rem;
+  outline: none;
+  transition: var(--transition);
+}
+
+.input-group input:focus,
+.input-group select:focus {
+  border-color: var(--accent-color);
+}
+
+
+.button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.cancel-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--light-text);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.cancel-btn:hover {
+  background-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.save-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.save-btn:hover {
+  background-color: var(--accent-color);
+}
+
+/* Coupon Modal */
+.coupon-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+}
+
+.coupon-modal-content {
+  background-color: var(--background-color);
+  border-radius: 8px;
+  width: 90%;
+  max-width: 500px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: var(--box-shadow);
+}
+
+.coupon-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.coupon-modal-header h3 {
+  font-family: var(--font-primary);
+  font-size: 1.25rem;
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.close-modal {
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--light-text);
+  transition: var(--transition);
+}
+
+.close-modal:hover {
+  color: var(--primary-color);
+}
+
+.coupon-modal-body {
+  padding: 1.5rem;
+}
+
+.coupon-item {
+  display: flex;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.coupon-item:hover {
+  border-color: var(--accent-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+.coupon-left {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--accent-color);
+  padding: 1rem;
+  width: 100px;
+}
+
+.discount-badge {
+  text-align: center;
+  color: var(--background-color);
+}
+
+.discount-amount {
+  font-size: 1.5rem;
+  font-weight: 600;
+  display: block;
+}
+
+.discount-label {
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.coupon-right {
+  flex: 1;
+  padding: 1rem;
+}
+
+.coupon-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.75rem;
+}
+
+.coupon-name {
+  font-family: var(--font-primary);
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.coupon-tag {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--accent-color);
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.coupon-details {
+  font-size: 0.85rem;
+  color: var(--light-text);
+  margin-bottom: 1rem;
+}
+
+.coupon-expiry {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+.use-coupon-btn {
+  width: 100%;
+  padding: 0.75rem;
+  background-color: var(--primary-color);
+  color: var(--background-color);
+  border: none;
+  border-radius: 4px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: var(--transition);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.use-coupon-btn:hover {
+  background-color: var(--accent-color);
+}
+
+.no-coupons {
+  text-align: center;
+  padding: 2rem;
+  color: var(--light-text);
+}
+
+/* Error Message Styling */
+.error-message {
+  color: var(--error-color);
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .checkout-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .sidebar {
+    position: static;
+  }
+}
+
+@media (max-width: 768px) {
+  .checkout-container {
+    padding: 0 1rem;
+  }
+  
+  .main-content,
+  .sidebar {
+    padding: 1.5rem;
+  }
+  
+  .product-info {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .product-price {
+    margin-top: 0.5rem;
+  }
+  
+  .row {
+    grid-template-columns: 1fr;
+  }
+  
+  .step-label {
+    font-size: 0.7rem;
+  }
+}
+
+/* Add Font Imports */
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+</style>
+
+<div class="checkout-header">
+    <div class="progress-container">
+        <div class="progress-bar">
+            <div class="progress-bar-fill"></div>
+        </div>
+        <div class="steps-container">
+            <% 
+            const steps = [
+                { id: 1, label: 'Cart', status: 'completed' },
+                { id: 2, label: 'Shipping', status: 'active' },
+                { id: 3, label: 'Payment', status: 'pending' },
+                { id: 4, label: 'Confirmation', status: 'pending' }
+            ];
+            %>
+            <% steps.forEach(step => { %>
+                <div class="step <%= step.status %>">
+                    <div class="step-circle">
+                        <% if (step.status === 'completed') { %> ✓ <% } else { %> <%= step.id %> <% } %>
+                    </div>
+                    <span class="step-label"><%= step.label %></span>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+</div>
+<!-- Header End -->
+
+<div class="checkout-container">
+    <div class="checkout-grid">
+        <!-- Left Column -->
+        <div class="main-content">
+            
+            <!-- Address Selection -->
+            <h2 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
+                </svg>
+                Select Delivery Address
+            </h2>
+            <div class="addresses">
+                <% addresses.forEach(addressDoc => { %>
+                    <% addressDoc.address.forEach(address => { %>
+                        <label class="address-card" for="address-<%= address._id %>">
+                            <input type="radio" name="address" id="address-<%= address._id %>">
+                            <div class="address-details">
+                                <div class="address-name"><%= address.name %></div>
+                                <div class="address-text">
+                                    <%= address.street %> <%= address.city %>, <%= address.pincode %>
+                                </div>
+                            </div>
+                        </label>
+                    <% }); %>
+                <% }); %>
+                <!-- Add New Address Button -->
+                <div class="flex justify-end">
+                    <button onclick="openModal()" 
+                        class="add-address-btn flex items-center gap-1 px-3 py-2 border border-gray-400 rounded-md text-gray-700 text-sm font-medium hover:border-purple-500 hover:shadow-md transition">
+                        <span class="text-purple-600 text-base">➕</span> Add Address
+                    </button>
+                </div>
+                
+            </div>
+
+            <!-- Coupon Section -->
+
+            <!-- Order Items -->
+            <h2 class="section-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                    <line x1="3" y1="6" x2="21" y2="6"></line>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                </svg>
+                Order Items
+            </h2>
+            <div class="products">
+                <% products.forEach(product => { %>
+                    <div class="product-card">
+                        <img class="product-image" src="/uploads/product-images/<%= product.productImage%>" alt="<%= product.productName %>">
+                        <div class="product-info">
+                            <div class="product-details">
+                                <div class="product-name"><%= product.productName %></div>
+                            </div>
+                            <div class="product-quantity">
+                                <strong>Quantity:</strong> <%= product.quantity %>
+                            </div>
+                            <div class="product-price">₹<%= product.totalPrice %></div>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+            <div class="sidebar">
+                <div class="order-summary">
+                    <h2 class="section-title">Order Summary</h2>
+                    <div class="summary-row">
+                        <span>Subtotal</span>
+                        <span>₹<%= subtotal.toFixed(2) %></span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Delivery</span>
+                        <span>₹<%= delivery.toFixed(2) %></span>
+                    </div>
+                    <!-- <div class="summary-row" id="coupon-discount" style="display: none;">
+                        <span>Coupon Discount</span>
+                        <span class="dis-coupon" id="dis-coupon"></span>
+                        <button onclick="removeCoupon()" class="remove-coupon-btn">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                            Remove Coupon
+                        </button>
+                    </div> -->
+                    <div class="summary-row summary-total">
+                        <span>Total</span>
+                        <span id="total-amount">₹<%= total.toFixed(2) %></span>
+                    </div>
+                    <button class="continue-btn" id="continue-btn" >Continue to Payment</button>
+                </div>
+            </div>
+    </div>
+</div>
+    <!-- Address Modal -->
+    <div id="addressModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">x</span>
+            <h2>Add New Address</h2>
+            <form id="addressForm" action="/addAddressCheckout" method="POST">
+                <div class="input-group">
+                    <label for="addressType" style="margin-right: 3px;">Address Type </label>
+                    <select id="addressType" name="addressType"   required>
+                        <option value="Home">Home</option>
+                        <option value="Work">Work</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+    
+                <div class="row">
+                    <div class="input-group">
+                        <label for="name">Full Name</label>
+                        <input type="text" id="name" name="name">
+                    </div>
+                    <div class="input-group">
+                        <label for="phone">Phone</label>
+                        <input type="text" id="phone" name="phone">
+                    </div>
+                </div>
+    
+                <div class="row">
+                    <div class="input-group">
+                        <label for="altPhone">Alternate Phone</label>
+                        <input type="text" id="altPhone" name="altPhone">
+                    </div>
+                    <div class="input-group">
+                        <label for="pincode">Pincode</label>
+                        <input type="text" id="pincode" name="pincode">
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="input-group">
+                        <label for="landmark">Landmark</label>
+                        <input type="text" id="landmark" name="landmark">
+                    </div>
+                    <div class="input-group">
+                        <label for="city">City</label>
+                        <input type="text" id="city" name="city">
+                    </div>
+                </div>
+    
+                <div class="input-group">
+                    <label for="state">State</label>
+                    <input type="text" id="state" name="state">
+                </div>
+    
+                <!-- Cancel & Save Buttons -->
+                <div class="button-group">
+                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="save-btn">Save Address</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+
+<script>
+document.getElementById('addressForm').addEventListener('submit', validateForm);
+
+function validateForm(event) {
+    event.preventDefault(); 
+
+    const name = document.getElementById('name').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const altPhone = document.getElementById('altPhone').value.trim();
+    const pincode = document.getElementById('pincode').value.trim();
+    const city = document.getElementById('city').value.trim();
+    const state = document.getElementById('state').value.trim();
+
+    resetErrors();
+
+    let isValid = true;
+
+    if (!name) {
+        showError('name', 'Full Name is required');
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+        showError('name', 'Full Name must contain only letters');
+        isValid = false;
+    }
+
+    if (!phone) {
+        showError('phone', 'Phone number is required');
+        isValid = false;
+    } else if (!/^\d{10}$/.test(phone)) {
+        showError('phone', 'Phone number must be exactly 10 digits');
+        isValid = false;
+    }
+
+    if (altPhone) {
+        if (!/^\d{10}$/.test(altPhone)) {
+            showError('altPhone', 'Alternate Phone must be exactly 10 digits');
+            isValid = false;
+        } else if (altPhone === phone) {
+            showError('altPhone', 'Alternate Phone cannot be the same as Phone');
+            isValid = false;
+        }
+    }
+
+    if (!pincode) {
+        showError('pincode', 'Pincode is required');
+        isValid = false;
+    } else if (!/^\d{6}$/.test(pincode)) {
+        showError('pincode', 'Pincode must be exactly 6 digits');
+        isValid = false;
+    }
+
+    if (!city) {
+        showError('city', 'City is required');
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(city)) {
+        showError('city', 'City must contain only letters');
+        isValid = false;
+    }
+
+    if (!state) {
+        showError('state', 'State is required');
+        isValid = false;
+    } else if (!/^[a-zA-Z\s]+$/.test(state)) {
+        showError('state', 'State must contain only letters');
+        isValid = false;
+    }
+
+    // If all fields are valid, submit the form
+    if (isValid) {
+        document.getElementById('addressForm').submit();
+    }
+}
+
+// Function to show error messages
+function showError(fieldId, message) {
+    const inputField = document.getElementById(fieldId);
+    const inputGroup = inputField.closest('.input-group');
+    let errorElement = inputGroup.querySelector('.error-message');
+
+    if (!errorElement) {
+        errorElement = document.createElement('div');
+        errorElement.className = 'error-message';
+        errorElement.style.color = 'red';
+        errorElement.style.fontSize = '12px';
+        errorElement.style.marginTop = '5px';
+        inputGroup.appendChild(errorElement);
+    }
+
+    errorElement.textContent = message;
+    inputField.style.border = '1px solid red';
+}
+
+// Function to reset errors
+function resetErrors() {
+    document.querySelectorAll('.error-message').forEach(error => error.remove());
+    document.querySelectorAll('.input-group input, .input-group select').forEach(input => {
+        input.style.border = '1px solid #ccc';
+    });
+}
+
+
+const modal = document.getElementById('addressModal');
+const addAddressBtn = document.querySelector('.add-address-btn');
+const closeBtn = document.querySelector('.close'); 
+const cancelBtn = document.querySelector('.cancel-btn'); 
+const addressForm = document.getElementById('addressForm'); 
+
+if (addAddressBtn) {
+    addAddressBtn.addEventListener('click', () => {
+        modal.style.display = 'flex'; 
+        document.body.style.overflow = 'hidden'; 
+    });
+}
+
+function closeModal() {
+    modal.style.display = 'none';
+    document.body.style.overflow = 'auto'; 
+
+    if (addressForm) {
+        addressForm.reset();
+    }
+}
+
+if (closeBtn) {
+    closeBtn.addEventListener('click', closeModal);
+}
+
+if (cancelBtn) {
+    cancelBtn.addEventListener('click', closeModal);
+}
+
+window.addEventListener('click', (event) => {
+    if (event.target === modal) {
+        closeModal();
+    }
+});
+
+</script>
+
+<script>
+const continueBtn = document.getElementById('continue-btn');
+
+continueBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+
+    const selectedAddress = document.querySelector('input[name="address"]:checked');
+
+    if (!selectedAddress) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Address Required',
+            text: 'Please select an address before proceeding.',
+            confirmButtonColor: '#FF3F6C'
+        })
+        return
+    }
+
+    const addressId = selectedAddress.id.replace('address-', '');
+    window.location.href = `/payment?id=${addressId}`;
+});
+
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<%- include("../../views/partials/user/footer") %>

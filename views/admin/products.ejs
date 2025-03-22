@@ -45,7 +45,7 @@
                 <th>Sale Price</th>
                 <th>Offer (%)</th>
                 <th>Offer Action</th>
-                <th>Quantity</th>
+                <th>Size && Quantity</th>
                 <th>Action</th>
                 <th>Edit</th>
             </tr>
@@ -64,7 +64,17 @@
                         <button id="offerbtn" class="btn btn-secondary removeofferbtn" data-id="<%= data[i]._id %>">Remove</button>
                     <% } %>
                 </td>
-                <td><%= data[i].quantity %></td>
+                <td class="py-6 px-6 border">
+                    <% if (data[i].sizes && data[i].sizes.length > 0) { %>
+                        <ul class="text-left">
+                            <% data[i].sizes.forEach(sizeData => { %>
+                                <li><strong><%= sizeData.size %>:</strong> <%= sizeData.quantity %></li>
+                            <% }); %>
+                        </ul>
+                    <% } else { %>
+                        <span class="text-gray-500">No sizes available</span>
+                    <% } %>
+                </td>
                 <td>
                     <%if(data[i].isBlocked===false){%>
                     <button class="btn btn-danger" style="width: 80px;">

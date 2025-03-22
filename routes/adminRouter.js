@@ -3,6 +3,7 @@ const router = express.Router();
 const adminController = require("../controllers/admin/adminController");
 const customerController = require("../controllers/admin/customerController");
 const categoryController = require("../controllers/admin/categoryController");
+const orderController = require("../controllers/admin/orderController");
 const { userAuth, adminAuth } = require("../middlewares/auth");
 const productController = require("../controllers/admin/productController");
 const multer = require("multer"); 
@@ -28,13 +29,9 @@ router.get("/logout", adminController.logout);
 
 
 
-
-
 router.get("/users", adminAuth, customerController.customerInfo);
 router.get("/blockCustomer", adminAuth, customerController.customerBlocked);
 router.get("/unblockCustomer", adminAuth, customerController.customerunBlock);
-
-
 
 
 
@@ -48,7 +45,6 @@ router.get("/editCategory", adminAuth, categoryController.getEditCategory);
 router.post("/editCategory", adminAuth, categoryController.editCategory);
 
 
-
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
 router.post("/addProduct", adminAuth, uploads.array("image", 4), productController.addProducts);
 router.get("/products",adminAuth,productController.getAllProducts);
@@ -60,6 +56,8 @@ router.get("/editProduct", adminAuth, productController.getEditProduct);
 router.post("/editProduct/:id", adminAuth, uploads.array("image", 4), productController.editProduct)
 router.post("/delete-image", productController.deleteSingleImage)
 
+
+router.get("/orderList",adminAuth,orderController.getOrderListPageAdmin);
 
 
 

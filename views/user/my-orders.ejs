@@ -1,0 +1,582 @@
+<%- include("../../views/partials/user/profileMain") %>
+
+<style>
+  /* Luxury fashion brand styling */
+  .orders-container {
+    max-width: 1200px;
+    margin: 40px auto;
+    font-family: 'Didot', 'Times New Roman', serif;
+    color: #1a1a1a;
+  }
+  
+  /* Empty state styling */
+  .empty-state {
+    text-align: center;
+    padding: 80px 40px;
+    background: #fff;
+    border: 1px solid #e0e0e0;
+    margin-bottom: 40px;
+  }
+  
+  .empty-state i {
+    font-size: 60px;
+    color: #1a1a1a;
+    margin-bottom: 20px;
+  }
+  
+  .empty-state h3 {
+    font-size: 24px;
+    font-weight: 400;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 15px;
+  }
+  
+  .empty-state p {
+    font-size: 16px;
+    color: #777;
+    margin-bottom: 30px;
+  }
+  
+  /* Order card styling */
+  .order-card {
+    background: #fff;
+    margin-bottom: 30px;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+  
+  .order-header {
+    padding: 25px 30px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .order-header h4 {
+    font-size: 18px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    margin: 0;
+  }
+  
+  .order-header .text-muted {
+    font-size: 14px;
+    color: #888;
+  }
+  
+  .status-badge {
+    display: inline-block;
+    padding: 6px 15px;
+    border-radius: 2px;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 400;
+  }
+  
+  .status-badge i {
+    font-size: 8px;
+    vertical-align: middle;
+  }
+  
+  .status-delivered {
+    background-color: #f0f7f0;
+    color: #356635;
+  }
+  
+  .status-pending {
+    background-color: #fef8e8;
+    color: #8a6d3b;
+  }
+  
+  .status-payment {
+    background-color: #fef0f0;
+    color: #a94442;
+  }
+  
+  .status-processing {
+    background-color: #f0f6fe;
+    color: #31708f;
+  }
+  
+  .order-content {
+    padding: 30px;
+  }
+  
+  .order-info {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin-bottom: 40px;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .info-item {
+    line-height: 1.6;
+  }
+  
+  .info-item strong {
+    font-weight: 500;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-size: 12px;
+    color: #1a1a1a;
+  }
+  
+  .products-list {
+    margin-bottom: 40px;
+  }
+  
+  .products-list h5 {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  
+  .product-card {
+    display: flex;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f8f8f8;
+  }
+  
+  .product-image {
+    width: 100px;
+    height: 120px;
+    object-fit: cover;
+    margin-right: 20px;
+  }
+  
+  .product-info {
+    flex: 1;
+  }
+  
+  .product-info h5 {
+    font-size: 16px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    border: none;
+    padding: 0;
+    margin: 0 0 10px 0;
+  }
+  
+  .product-info p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 10px;
+  }
+  
+  .return-section {
+    margin-top: 15px;
+  }
+  
+  .return-reason-select {
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    font-size: 13px;
+    font-family: 'Didot', 'Times New Roman', serif;
+    padding: 8px 12px;
+    border-radius: 0;
+  }
+  
+  .order-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  
+  /* Buttons styling */
+  .btn-custom {
+    padding: 10px 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    font-weight: 400;
+    border-radius: 0;
+    transition: all 0.3s ease;
+  }
+  
+  .btn-primary.btn-custom {
+    background-color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+  }
+  
+  .btn-primary.btn-custom:hover {
+    background-color: #333 !important;
+  }
+  
+  .btn-warning.btn-custom {
+    background-color: #c8a165;
+    border-color: #c8a165;
+    color: white;
+  }
+  
+  .btn-warning.btn-custom:hover {
+    background-color: #b89050;
+    border-color: #b89050;
+  }
+  
+  .btn-outline-danger.btn-custom {
+    border-color: #1a1a1a;
+    color: #1a1a1a;
+    background-color: transparent;
+  }
+  
+  .btn-outline-danger.btn-custom:hover {
+    background-color: #1a1a1a;
+    color: white;
+  }
+  
+  .btn-outline-secondary.btn-custom {
+    border-color: #777;
+    color: #777;
+  }
+  
+  .btn-outline-secondary.btn-custom:hover {
+    background-color: #f5f5f5;
+    color: #1a1a1a;
+  }
+  
+  /* Dropdown styling */
+  .dropdown-menu {
+    border-radius: 0;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+    border: none;
+    padding: 0;
+  }
+  
+  .dropdown-item {
+    padding: 12px 20px;
+    font-size: 12px;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #f5f5f5;
+  }
+  
+  .dropdown-item:hover {
+    background-color: #f9f9f9;
+  }
+  
+  /* Pagination styling */
+  .pagination-container {
+    margin: 50px 0;
+  }
+  
+  .pagination {
+    gap: 5px;
+  }
+  
+  .page-item .page-link {
+    border: none;
+    background: transparent;
+    color: #777;
+    padding: 10px 15px;
+    font-size: 14px;
+  }
+  
+  .page-item.active .page-link {
+    background-color: #1a1a1a;
+    color: white;
+  }
+  
+  .page-item.disabled .page-link {
+    color: #ccc;
+  }
+  
+  /* Responsive adjustments */
+  @media (max-width: 768px) {
+    .order-info {
+      grid-template-columns: 1fr;
+    }
+    
+    .order-actions {
+      flex-direction: column;
+    }
+    
+    .btn-custom {
+      width: 100%;
+    }
+  }
+</style>
+
+<div class="orders-container">
+  <% if (orders.length === 0) { %>
+      <!-- Empty State for No Orders -->
+      <div class="empty-state">
+          <i class="fas fa-shopping-bag"></i>
+          <h3>Your Collection is Empty</h3>
+          <p class="text-muted">You have not placed any orders yet. Explore our latest collections.</p>
+          <a href="/shop" class="btn btn-custom text-white" style="background-color: #1a1a1a; border-color:#1a1a1a;">
+              DISCOVER THE COLLECTION
+          </a>
+      </div>
+  <% } else { %>
+      <% orders.forEach(function(order) { %>
+          <div class="order-card">
+              <!-- Order Header -->
+              <div class="order-header d-flex justify-content-between align-items-center">
+                  <div>
+                      <h4 class="mb-1">ORDER #<%= order.orderNumber %></h4>
+                      <span class="text-muted">Placed on <%= order.orderDate %></span>
+                  </div>
+                  <span class="status-badge status-<%= order.status.toLowerCase().replace(' ', '-') %>">
+                      <i class="fas fa-circle me-1"></i> <%= order.status %>
+                  </span>
+              </div>
+
+              <!-- Order Content -->
+              <div class="order-content">
+                  <!-- Order Information -->
+                  <div class="order-info">
+                      <div class="info-item"><strong>Amount</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
+                      <div class="info-item"><strong>Payment Method</strong><br> <%= order.paymentMethod %></div>
+                      <div class="info-item"><strong>Total</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
+                      <div class="info-item"><strong>Shipping Address</strong><br> <%= order.address %></div>
+                  </div>
+
+                  <!-- Order Items -->
+                  <div class="products-list">
+                      <h5>Items</h5>
+                      <% order.products.forEach(function(product) { %>
+                          <div class="product-card">
+                              <img src="/uploads/product-images/<%= product.image %>" alt="<%= product.name %>" class="product-image">
+                              <div class="product-info">
+                                  <h5><%= product.name %></h5>
+                                  <p>
+                                      <span class="me-3">Quantity: <%= product.quantity %></span>
+                                      <span class="me-3">Price: ₹<%= product.price.toFixed(2) %></span>
+                                      <span>Size: <%= product.selectedSize %></span>
+                                  </p>
+
+                                  <!-- Return Option for Delivered Orders -->
+                                  <% if (order.status === 'Delivered') { %>
+                                      <div class="return-section mt-2">
+                                          <select class="form-select return-reason-select" id="returnReason" aria-label="Select return reason">
+                                              <option value="" selected>Select Return Reason</option>
+                                              <option value="wrong_size">Wrong Size</option>
+                                              <option value="damaged">Product Damaged/Defective</option>
+                                              <option value="not_as_described">Product Not As Described</option>
+                                              <option value="wrong_item">Wrong Item Received</option>
+                                              <option value="quality_issues">Quality Issues</option>
+                                              <option value="other">Other</option>
+                                          </select>
+                                          <button class="btn btn-warning mt-2 btn-custom" 
+                                              onclick="initiateReturn('<%= order.orderId %>', '<%= product.id %>')">
+                                              <i class="fas fa-undo"></i> REQUEST RETURN
+                                          </button>
+                                      </div>
+                                  <% } %>
+                                  
+                              </div>
+                          </div>
+                      <% }); %>
+                  </div>
+
+                  <!-- Order Actions -->
+                  <div class="order-actions">
+                      <button class="btn btn-primary btn-custom" onclick="viewOrderDetails('<%= order.orderId %>')">
+                          <i class="fas fa-eye"></i> VIEW DETAILS
+                      </button>
+                      <button class="btn btn-primary btn-custom" onclick="downloadInvoice('<%= order.orderId %>')">
+                          <i class="fas fa-file-pdf"></i> DOWNLOAD INVOICE
+                      </button>
+
+                      <!-- Retry Payment Button for Pending Payments -->
+                      <% if (order.status === 'payment pending') { %>
+                          <button class="btn btn-warning btn-custom" 
+                                  onclick="retryPayment('<%= order.orderId %>', '<%= order.address._id %>', 'upi', '<%= order.finalAmount %>')">
+                              <i class="fas fa-redo"></i> RETRY PAYMENT
+                          </button>
+                      <% } %>
+
+                      <!-- Cancel Order Option -->
+                      <% if (order.status === 'Pending') { %>
+                          <button class="btn btn-outline-danger btn-custom" onclick="cancelOrder('<%= order.orderId %>')">
+                              <i class="fas fa-times"></i> CANCEL ORDER
+                          </button>
+
+                          <!-- Modify Items Option for Orders with Multiple Products -->
+                          <% if (order.products.length >= 2) { %>
+                              <div class="dropdown">
+                                  <button class="btn btn-outline-secondary btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                      <i class="fas fa-edit"></i> MODIFY ITEMS
+                                  </button>
+                                  <ul class="dropdown-menu">
+                                      <% order.products.forEach(function(product) { %>
+                                          <li>
+                                              <a class="dropdown-item" href="#" onclick="cancelProduct('<%= order.orderId %>', '<%= product.id %>')">
+                                                  Cancel <%= product.name %>
+                                              </a>
+                                          </li>
+                                      <% }); %>
+                                  </ul>
+                              </div>
+                          <% } %>
+                      <% } %>
+                  </div>
+              </div>
+          </div>
+      <% }); %>
+  <% } %>
+</div>
+
+<!-- Pagination -->
+<div class="pagination-container text-center mt-4">
+  <% if (totalPages > 1) { %>
+      <nav>
+          <ul class="pagination justify-content-center">
+              <!-- Previous Button -->
+              <% if (currentPage > 1) { %>
+                  <li class="page-item">
+                      <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                  </li>
+              <% } else { %>
+                  <li class="page-item disabled"><a class="page-link">Previous</a></li>
+              <% } %>
+
+              <!-- Page Numbers -->
+              <% for (let i = 1; i <= totalPages; i++) { %>
+                  <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                  </li>
+              <% } %>
+
+              <!-- Next Button -->
+              <% if (currentPage < totalPages) { %>
+                  <li class="page-item">
+                      <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                  </li>
+              <% } else { %>
+                  <li class="page-item disabled"><a class="page-link">Next</a></li>
+              <% } %>
+          </ul>
+      </nav>
+  <% } %>
+</div>
+
+<!-- Bootstrap Bundle (includes Popper.js) -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+
+<script>
+
+document.getElementById('returnReason').addEventListener('click', () => {
+  console.log('Dropdown clicked!');
+});
+
+
+function cancelOrder(orderNumber) {
+  Swal.fire({
+      title: 'Cancel Order',
+      text: 'Are you sure you want to cancel this order?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1a1a1a',
+      cancelButtonColor: '#777',
+      confirmButtonText: 'Yes, cancel it',
+      cancelButtonText: 'No, keep it'
+  }).then((result) => {
+      if (result.isConfirmed) {
+          fetch(`/orderCancel/${orderNumber}`, { 
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  Swal.fire({
+                      title: 'Order Cancelled',
+                      text: 'Your order has been cancelled successfully.',
+                      icon: 'success',
+                      confirmButtonColor: '#1a1a1a'
+                  })
+                  .then(() => location.reload());
+              } else {
+                  Swal.fire({
+                      title: 'Error',
+                      text: 'Unable to cancel your order. Please try again.',
+                      icon: 'error',
+                      confirmButtonColor: '#1a1a1a'
+                  });
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                  title: 'Error',
+                  text: 'An unexpected error occurred. Please try again later.',
+                  icon: 'error',
+                  confirmButtonColor: '#1a1a1a'
+              });
+          });
+      }
+  });
+}
+
+function cancelProduct(orderNumber, productId) {
+  Swal.fire({
+      title: 'Cancel Item',
+      text: 'Do you want to remove this item from your order?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#1a1a1a',
+      cancelButtonColor: '#777',
+      confirmButtonText: 'Yes, remove it',
+      cancelButtonText: 'No, keep it'
+  }).then((result) => {
+      if (result.isConfirmed) {
+          fetch(`/productCancel/${orderNumber}/${productId}`, { 
+              method: 'DELETE',
+              headers: { 'Content-Type': 'application/json' }
+          })
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Item Removed',
+                      text: 'The item has been removed from your order.',
+                      confirmButtonColor: '#1a1a1a',
+                      timer: 2000,
+                      showConfirmButton: false
+                  }).then(() => location.reload());
+              } else {
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error',
+                      text: data.message || 'Unable to remove this item. Please try again.',
+                      confirmButtonColor: '#1a1a1a',
+                      timer: 2500,
+                      showConfirmButton: false
+                  });
+              }
+          })
+          .catch(error => {
+              console.error('Error:', error);
+              Swal.fire({
+                  icon: 'error',
+                  title: 'Error',
+                  text: 'An unexpected error occurred. Please try again later.',
+                  confirmButtonColor: '#1a1a1a',
+                  timer: 2500,
+                  showConfirmButton: false
+              });
+          });
+      }
+  });
+}
+
+
+
+function viewOrderDetails(orderNumber) {
+  window.location.href = `/orderDetails/${orderNumber}`;
+}
+
+
+</script>
+                  
+<%- include("../../views/partials/user/footer") %>

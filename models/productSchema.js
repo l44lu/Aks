@@ -1,21 +1,7 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 
-const variantSchema = new Schema({
-    attributes: {
-        size: String,
-        color: String,
-        material: String
-    },
-    priceAdjustment: {
-        type: Number,
-        default: 0
-    },
-    quantity: {
-        type: Number,
-        default: 0
-    }
-});
+
 
 const productSchema = new Schema({
     productName: {
@@ -43,17 +29,9 @@ const productSchema = new Schema({
         type: Number,
         required: false
     },
-    quantity: {
-        type: Number,
-        default: 0
-    },
     productOffer: {
         type: Number,
         default: 0
-    },
-    color: {
-        type: [String], 
-        required: false
     },
     productImage: {
         type: [String],
@@ -69,14 +47,11 @@ const productSchema = new Schema({
         required: true,
         default: 'Available',
     },
-    sizes: {
-        type: [String],
-        default: []
-    },
-    variants: {
-        type: [variantSchema],
-        default: []
-    }
+    sizes: [{
+        size:{type:String,required:true},
+        quantity:{type:Number,required:true}
+    }]
+    
 }, { timestamps: true });
 
 const Product = mongoose.model('Product', productSchema);

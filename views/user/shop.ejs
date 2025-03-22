@@ -350,7 +350,7 @@
   }
 
   .wishlist-btn:hover {
-    background: #a11826;
+    background: #75242c;
   }
 
   .product-hover-overlay {
@@ -615,9 +615,9 @@
       <main class="product-grid" id="product-grid">
         <% for (let i = product.length-1; i >= 0; i--) { %>
             <div class="product-card">
-                <button class="wishlist-btn" onclick="toggleWishlist(event, '<%= product[i]._id %>')">
-                    <i class="far fa-heart"></i>
-                </button>            
+              <button class="wishlist-btn" data-product-id="<%= product[i]._id %>" onclick="addToWishlist('<%=product[i]._id%>')">
+                <i class="fas fa-heart"></i>
+              </button>           
                 <a href="/productDetails?id=<%= product[i]._id %>">
                     <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" />
                     <div class="product-hover-overlay">
@@ -632,17 +632,7 @@
                     <h4><%= product[i].productName %></h4>
                     <p>₹<%= product[i].salePrice %> <strike>₹<%= product[i].regularPrice %></strike></p>
     
-                    <div class="rating">
-                        <% let rating = Math.round(product[i].rating || 0); %> 
-                        <% for (let j = 0; j < 5; j++) { %>
-                            <% if (j < rating) { %>
-                                <i class="fas fa-star"></i> 
-                            <% } else { %>
-                                <i class="far fa-star"></i> 
-                            <% } %>
-                        <% } %>
-                        <span>(<%= product[i].rating || "No Ratings" %>)</span> 
-                    </div>
+                    
                 </div>
             </div>
         <% } %>
@@ -667,6 +657,46 @@
 </div>
 
 <script>
+function addToWishlist(productId){
+  $.ajax({
+    url:"/addToWishlist",
+    method:"POST",
+    data:{productId:productId},
+    success:(response)=>{
+      Swal.close();
+
+      Swal.fire({
+        title:response.status ? " Added to Wishlist <3" : "!!Already in Wishlist!",
+        text: response.status 
+          ? "This product has been successfully added to your wishlist."
+          : response.message || "This product is already in your wishlist.",      
+          icon: response.status ? "success" : "info",
+        showConfirmButton: false,
+        timer: 2000,
+        toast: true,
+        position: "top-end",
+        iconColor: response.status ? "#ff6b81" : "#ffcc00",
+        customClass: response.status ? "swal-success" : "swal-warning",  
+      });
+
+    },
+    error:()=>{
+      Swal.close();
+      Swal.fire({
+        title: "Something went wrong!",
+        text: "Failed to add the product to wishlist. Please try again later.",
+        icon: "error",
+        confirmButtonText: "OK",
+        iconColor: "#ff4b5c",
+        customClass: "swal-error",
+      });
+    },
+  });
+}
+
+
+
+
   document.querySelectorAll('.category-filter').forEach(item => {
     item.addEventListener('click', function (event) {
       event.preventDefault();
@@ -747,6 +777,8 @@ function addToCart(productId){
 }
 
 </script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 
 <%- include("../../views/partials/user/footer") %>

@@ -27,10 +27,7 @@ const addProducts = async (req, res) => {
             regularPrice, 
             salePrice, 
             color,
-            hasVariants,
-            variantAttributes,
-            quantity,
-            variants
+            sizesWithQuantities,
         } = req.body;
 
         if (!productName || !description || !category || !regularPrice) {
@@ -66,6 +63,30 @@ const addProducts = async (req, res) => {
             }
         }
 
+        let sizesWithQuantitiess = []
+        if (sizesWithQuantities) {
+            try {
+                const parsedSizes = JSON.parse(sizesWithQuantities)
+                if (typeof parsedSizes !== "object" || Object.keys(parsedSizes).length === 0) {
+                    throw new Error("Invalid sizesWithQuantities format")
+                }
+                sizesWithQuantitiess = Object.entries(parsedSizes).map(([size, quantity]) => {
+                    if (!size || typeof size !== "string" || size.trim() === "") {
+                        throw new Error(`Invalid size name: ${size}`)
+                    }
+                    if (!quantity || isNaN(quantity) || quantity < 0) {
+                        throw new Error(`Invalid quantity for size ${size}`)
+                    }
+                    return { size, quantity: parseInt(quantity, 10) }
+                })
+            
+            } catch (error) {
+                return res.status(400).json({ error: "Invalid sizesWithQuantities format" })
+            }
+        }
+
+        
+
         const productData = {
             productName,
             description,
@@ -73,47 +94,11 @@ const addProducts = async (req, res) => {
             regularPrice: parseFloat(regularPrice),
             salePrice: parseFloat(salePrice || regularPrice),
             color,
+            sizes:sizesWithQuantitiess,
             productImage: images,
             status: "Available",
             createdOn: new Date(),
         };
-
-        if (hasVariants === 'true' && variants) {
-            const sizesMap = new Map();
-            const processedVariants = [];
-            
-            const variantsArray = Array.isArray(variants) ? variants : Object.values(variants);
-            
-            for (const variant of variantsArray) {
-                if (variant && variant.size) {
-                    sizesMap.set(variant.size, parseInt(variant.quantity || 0));
-                }
-                
-                processedVariants.push({
-                    attributes: {
-                        size: variant && variant.size ? variant.size : null,
-                        color: variant && variant.color ? variant.color : null,
-                        material: variant && variant.material ? variant.material : null
-                    },
-                    priceAdjustment: variant && variant.priceAdjustment ? parseFloat(variant.priceAdjustment) : 0,
-                    quantity: variant && variant.quantity ? parseInt(variant.quantity) : 0
-                });
-            }
-            const totalQuantity = processedVariants.reduce((sum, variant) => sum + (variant.quantity || 0), 0);
-            
-            productData.sizes = sizesMap;
-            productData.quantity = totalQuantity;
-            productData.variants = processedVariants; 
-            
-        } else {
-            productData.quantity = parseInt(quantity || 0);
-        }
-
-        if (salePrice && parseFloat(salePrice) < parseFloat(regularPrice)) {
-            productData.finalPrice = parseFloat(salePrice);
-        } else {
-            productData.finalPrice = parseFloat(regularPrice);
-        }
 
         const newProduct = new Product(productData);
         await newProduct.save();
@@ -274,10 +259,19 @@ const editProduct = async (req, res) => {
     try {
         const id = req.params.id;
         const data = req.body;
-        const files = req.files; // Assuming you're using multer for file uploads
+        const files = req.files; 
 
         console.log('data of the editProduct: ', data);
 
+        let sizes = []
+        try {
+            if (data.sizesWithQuantities) {
+                sizes = JSON.parse(data.sizesWithQuantities).filter(size => size.quantity > 0)
+            }
+        } catch (parseError) {
+            console.error("Error parsing sizesWithQuantities:", parseError)
+            return res.redirect("/admin/pageError")
+        }
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "Invalid product ID" });
         }
@@ -387,7 +381,7 @@ const editProduct = async (req, res) => {
             regularPrice: data.regularPrice,
             salePrice: data.salePrice || null,
             color: data.color || null,
-            hasVariants: hasVariants,
+            sizes:sizes,
             images: productImages.length > 0 ? productImages : product.images,
         };
 
