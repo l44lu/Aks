@@ -3,7 +3,7 @@ const Product = require("../../models/productSchema");
 const Order = require("../../models/orderSchema");
 const mongodb = require("mongodb");
 const mongoose = require('mongoose');
-// const { v4: uuidv4 } = require('uuid');
+const { v4: uuidv4 } = require('uuid');
 
 
 
@@ -58,11 +58,38 @@ const getOrderListPageAdmin = async (req, res) => {
 };
 
 
+const getOrderDetailsPageAdmin = async(req,res)=>{
+    try {
+        const orderId = req.params.id;
+        console.log("Fetching order details for ID:",orderId);
+
+        const order = await Order.findOne({orderId}).lean();
+
+        if(!order){
+            console.log("Order not found");
+            return res.redirect("/admin/orderList")
+        }
+
+        res.render("orderDetailsAdmin",{order});
+
+    } catch (error) {
+
+        console.error("Error while loading the detials page",error);
+        res.redirect("/admin-error")
+        
+    }
+}
+
+
+
+
 
 
 
 module.exports = {
 
     getOrderListPageAdmin,
+    getOrderDetailsPageAdmin,
+
 
 }

@@ -58,6 +58,7 @@ router.post("/delete-image", productController.deleteSingleImage)
 
 
 router.get("/orderList",adminAuth,orderController.getOrderListPageAdmin);
+router.get("/orderDetailsAdmin/:id",adminAuth,orderController.getOrderDetailsPageAdmin);
 
 
 

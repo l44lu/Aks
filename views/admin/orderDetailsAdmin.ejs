@@ -1,0 +1,462 @@
+<%- include("../../views/partials/admin/header") %>
+<style>
+    body {
+        margin-left: 70px;
+        margin-top: 30px;
+        font-family: Arial, sans-serif;
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+    
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+    }
+    
+    h1 {
+        margin-bottom: 30px;
+        color: #ffffff;
+        border-bottom: 2px solid #333;
+        padding-bottom: 10px;
+    }
+    
+    .order-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .card {
+        background-color: #1e1e1e;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        padding: 20px;
+        margin-bottom: 20px;
+        border: 1px solid #333;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+        margin-bottom: 15px;
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        border-bottom: 1px solid #333;
+        padding-bottom: 10px;
+    }
+    
+    h2 i {
+        margin-right: 10px;
+        color: #3498db;
+    }
+    
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid #333;
+    }
+    
+    .label {
+        font-weight: bold;
+        color: #aaaaaa;
+        width: 40%;
+    }
+    
+    .value {
+        text-align: right;
+        width: 60%;
+        color: #ffffff;
+    }
+    
+    .price-tag {
+        font-weight: bold;
+        color: #2ecc71;
+    }
+    
+    .status-badge {
+        padding: 5px 10px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        display: inline-block;
+    }
+    
+    .status-pending { background-color: #f39c12; color: #121212; }
+    .status-processing { background-color: #3498db; color: #121212; }
+    .status-shipped { background-color: #9b59b6; color: #121212; }
+    .status-delivered { background-color: #2ecc71; color: #121212; }
+    .status-cancelled { background-color: #e74c3c; color: #121212; }
+    .status-return { background-color: #e67e22; color: #121212; }
+    .status-payment { background-color: #f1c40f; color: #121212; }
+    
+    .select-container {
+        margin-top: 15px;
+    }
+    
+    select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 4px;
+        border: 1px solid #444;
+        outline: none;
+        background-color: #2a2a2a;
+        color: #ffffff;
+    }
+    
+    select:disabled {
+        opacity: 0.7;
+        background-color: #252525;
+    }
+    
+    .order-items {
+        grid-column: 1 / span 2;
+    }
+    
+    .item-card {
+        display: flex;
+        border-bottom: 1px solid #333;
+        padding: 15px 0;
+    }
+    
+    .item-card:last-child {
+        border-bottom: none;
+    }
+    
+    .item-image {
+        width: 100px;
+        margin-right: 20px;
+    }
+    
+    .item-image img {
+        width: 100%;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 4px;
+        border: 1px solid #444;
+    }
+    
+    .item-details {
+        flex: 1;
+    }
+    
+    .item-details h3 {
+        margin-top: 0;
+        margin-bottom: 10px;
+        font-size: 1.1rem;
+        color: #ffffff;
+    }
+    
+    .quantity-tag {
+        background-color: #2a2a2a;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-size: 0.9rem;
+        border: 1px solid #444;
+    }
+    
+    .return-request-section {
+        background-color: #252525;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 15px;
+        border: 1px solid #444;
+    }
+    
+    .return-request-section h4 {
+        font-size: 1rem;
+        margin: 0 0 10px 0;
+        color: #e67e22;
+        display: flex;
+        align-items: center;
+    }
+    
+    .return-request-section h4 i {
+        margin-right: 5px;
+    }
+    
+    .return-actions {
+        display: flex;
+        gap: 10px;
+        margin-top: 15px;
+    }
+    
+    .return-actions button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        transition: transform 0.1s, box-shadow 0.2s;
+    }
+    
+    .return-actions button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    
+    .return-actions button i {
+        margin-right: 5px;
+    }
+    
+    .return-actions button:first-child {
+        background-color: #2ecc71;
+        color: #121212;
+    }
+    
+    .reject-btn {
+        background-color: #e74c3c;
+        color: #121212;
+    }
+    
+    @media (max-width: 768px) {
+        .order-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .order-items {
+            grid-column: 1;
+        }
+        
+        .item-card {
+            flex-direction: column;
+        }
+        
+        .item-image {
+            width: 100%;
+            margin-right: 0;
+            margin-bottom: 10px;
+        }
+    }
+</style>
+<body>
+    <div class="container">
+        <h1>Order Details</h1>
+
+        <div class="order-grid">
+            <!-- Order Details -->
+            <div class="card">
+                <h2><i class="fas fa-shopping-bag"></i> Order Info</h2>
+                
+                <div class="info-row">
+                    <span class="label">Order ID:</span>
+                    <span class="value">#<%= order.orderId %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Total Amount:</span>
+                    <span class="value price-tag">₹<%= order.finalAmount.toLocaleString() %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Payment Method:</span>
+                    <span class="value"><%= order.paymentMethod %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Order Date:</span>
+                    <span class="value"><%= new Date(order.createdOn).toLocaleDateString('en-IN', { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Status:</span>
+                    <span class="value">
+                        <% let statusClass = '';
+                           if (order.status === 'Pending') statusClass = 'status-pending';
+                           else if (order.status === 'Processing') statusClass = 'status-processing';
+                           else if (order.status === 'Shipped') statusClass = 'status-shipped';
+                           else if (order.status === 'Delivered') statusClass = 'status-delivered';
+                           else if (order.status === 'Cancelled') statusClass = 'status-cancelled';
+                           else if (order.status.includes('Return')) statusClass = 'status-return';
+                           else if (order.status.includes('payment')) statusClass = 'status-payment';
+                        %>
+                        <span class="status-badge <%= statusClass %>"><%= order.status %></span>
+                    </span>
+                </div>
+
+                <div class="select-container">
+                    <select id="status-<%= order.orderId %>" onchange="updateStatus('<%= order.orderId %>')" <%= ['Delivered', 'Return Request', 'Return Accepted', 'Return Rejected','payment pending'].includes(order.status) ? 'disabled' : '' %>>
+                        <option value="Pending" <%= order.status === 'Pending' ? 'selected' : '' %>>Pending</option>
+                        <option value="Processing" <%= order.status === 'Processing' ? 'selected' : '' %>>Processing</option>
+                        <option value="Shipped" <%= order.status === 'Shipped' ? 'selected' : '' %>>Shipped</option>
+                        <option value="Delivered" <%= order.status === 'Delivered' ? 'selected' : '' %>>Delivered</option>
+                        <option value="Cancelled" <%= order.status === 'Cancelled' ? 'selected' : '' %>>Cancelled</option>
+                        <option value="Return Request" <%= order.status === 'Return Request' ? 'selected' : '' %> disabled>Return Request</option>
+                        <option value="Return Accepted" <%= order.status === 'Return Accepted' ? 'selected' : '' %> disabled>Return Accepted</option>
+                        <option value="Return Rejected" <%= order.status === 'Return Rejected' ? 'selected' : '' %> disabled>Return Rejected</option>
+                        <option value="payment pending" <%= order.status === 'payment pending' ? 'selected' : '' %> disabled>Payment Pending</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Shipping Address -->
+            <div class="card">
+                <h2><i class="fas fa-map-marker-alt"></i> Shipping Address</h2>
+                
+                <div class="info-row">
+                    <span class="label">Name:</span>
+                    <span class="value"><%= order.address.name %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Landmark:</span>
+                    <span class="value"><%= order.address.landmark%></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">City:</span>
+                    <span class="value"><%= order.address.city %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">State/Pincode:</span>
+                    <span class="value"><%= order.address.state %> - <%= order.address.pincode %></span>
+                </div>
+                
+                <div class="info-row">
+                    <span class="label">Phone:</span>
+                    <span class="value"><%= order.address.phone %></span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Order Items -->
+        <div class="card order-items">
+            <h2><i class="fas fa-box-open"></i> Ordered Items</h2>
+            
+            <% order.orderItems.forEach(item => { %>
+                <div class="item-card">
+                    <div class="item-image">
+                        <img src="/uploads/re-image/<%= item.productImage[0] %>" alt="<%= item.productName %>" />
+                    </div>
+                    
+                    <div class="item-details">
+                        <h3><%= item.productName %></h3>
+                        <p><span class="quantity-tag">Qty: <%= item.quantity %></span></p>
+                        <p><span class="price-tag">₹<%= item.price.toLocaleString() %></span></p>
+
+                        <% if (item.returnRequest?.status === 'Pending') { %>
+                            <div class="return-request-section">
+                                <h4><i class="fas fa-undo-alt"></i> Return Request</h4>
+                                <p><strong>Reason:</strong> <%= item.returnRequest.reason %></p>
+                                
+                                <div class="return-actions">
+                                    <button onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Approved')">
+                                        <i class="fas fa-check"></i> Approve Return
+                                    </button>
+                                    <button class="reject-btn" onclick="handleReturn('<%= order.orderId %>', '<%= item.productId %>', 'Rejected')">
+                                        <i class="fas fa-times"></i> Reject Return
+                                    </button>
+                                </div>
+                            </div>
+                        <% } %>
+                    </div>
+                </div>
+            <% }) %>
+        </div>
+    </div>
+
+    <script>
+        const finalAmount = '<%= order.finalAmount %>';
+
+        async function handleReturn(orderId, productId, status) {
+            try {
+                const response = await fetch('/admin/handleReturn', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ orderId, productId, status, finalAmount })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: result.message,
+                        confirmButtonColor: '#28a745',
+                        timer: 3000,
+                        showConfirmButton: false,
+                        toast: true,
+                        position: 'top-end',
+                        background: '#2a2a2a',
+                        color: '#ffffff'
+                    }).then(() => {
+                        window.location.reload();
+                    });
+                } else {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Oops...',
+                        text: result.message || 'Error while updating the status!',
+                        confirmButtonColor: '#dc3545',
+                        background: '#2a2a2a',
+                        color: '#ffffff'
+                    });
+                }
+            } catch (error) {
+                console.error("Error handling return:", error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error!',
+                    text: 'Something went wrong while processing your request.',
+                    confirmButtonColor: '#dc3545',
+                    background: '#2a2a2a',
+                    color: '#ffffff'
+                });
+            }
+        }
+
+        function updateStatus(itemId) {
+            const status = document.getElementById(`status-${itemId}`).value;
+            
+            Swal.fire({
+                title: 'Update Order Status?',
+                text: `Are you sure you want to change the status to "${status}"?`,
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, update it!',
+                background: '#2a2a2a',
+                color: '#ffffff'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/changeStatus', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ itemId, status })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        Swal.fire({
+                            icon: data.success ? 'success' : 'error',
+                            title: data.success ? 'Success!' : 'Oops!',
+                            text: data.message || 'Something went wrong.',
+                            confirmButtonText: 'OK',
+                            background: '#2a2a2a',
+                            color: '#ffffff'
+                        }).then(() => location.reload());
+                    })
+                    .catch(error => {
+                        console.error("Error updating status:", error);
+                        Swal.fire({ 
+                            icon: 'error', 
+                            title: 'Error!', 
+                            text: 'Failed to update order status.',
+                            background: '#2a2a2a',
+                            color: '#ffffff'
+                        });
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+
+<%- include("../../views/partials/admin/footer") %>
