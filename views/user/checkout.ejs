@@ -839,7 +839,7 @@ h1, h2, h3, h4, h5, h6 {
             <div class="products">
                 <% products.forEach(product => { %>
                     <div class="product-card">
-                        <img class="product-image" src="/uploads/product-images/<%= product.productImage%>" alt="<%= product.productName %>">
+                        <img class="product-image" src="<%= product.productImage[0]%>" alt="<%= product.productName %>">
                         <div class="product-info">
                             <div class="product-details">
                                 <div class="product-name"><%= product.productName %></div>
