@@ -1417,41 +1417,44 @@ body {
     }
 
     function addToWishlist(productId) {
+    console.log(" Add to Wishlist Clicked | Product ID:", productId); // Debugging
 
-        $.ajax({
+    $.ajax({
         url: "/addToWishlist",
         method: "POST",
         data: { productId: productId },
         success: (response) => {
+            console.log("🔹 Server Response:", response); // Debugging
+
             Swal.close();
 
             Swal.fire({
-            title: response.status ? " Added to Wishlist!" : "!!! Already in Wishlist!",
-            text: response.status 
-                ? "This product has been successfully added to your wishlist."
-                : response.message || "This product is already in your wishlist.",
-            icon: response.status ? "success" : "info",
-            showConfirmButton: false,
-            timer: 2000,
-            toast: true,
-            position: "top-end",
-            iconColor: response.status ? "#ff6b81" : "#ffcc00",
-            customClass: response.status ? "swal-success" : "swal-warning",
+                title: response.status ? " Added to Wishlist!" : "!! Already in Wishlist!",
+                text: response.message || "This product is already in your wishlist.",
+                icon: response.status ? "success" : "info",
+                showConfirmButton: false,
+                timer: 2000,
+                toast: true,
+                position: "top-end",
+                iconColor: response.status ? "#ff6b81" : "#ffcc00",
+                customClass: response.status ? "swal-success" : "swal-warning",
             });
         },
-        error: () => {
+        error: (xhr) => {
+            console.error("❌ AJAX Error:", xhr.responseText); 
             Swal.close();
             Swal.fire({
-            title: " Oops! Something went wrong!",
-            text: "Failed to add the product to wishlist. Please try again later.",
-            icon: "error",
-            confirmButtonText: "OK",
-            iconColor: "#ff4b5c",
-            customClass: "swal-error",
+                title: "❌ Oops! Something went wrong!",
+                text: "Failed to add the product to wishlist. Please try again later.",
+                icon: "error",
+                confirmButtonText: "OK",
+                iconColor: "#ff4b5c",
+                customClass: "swal-error",
             });
         },
-        });
-        }
+    });
+}
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 

@@ -73,6 +73,7 @@ router.delete("/removeFromCart", userAuth, cartController.deleteProduct);
 
 router.get("/wishlist",userAuth,wishlistController.loadWishlist)
 router.post("/addToWishlist",userAuth,wishlistController.addToWishlist);
+router.get("/removeWishlist",userAuth,wishlistController.removeProduct)
 
 
 router.get("/checkout",userAuth,orderController.getCheckoutpage);

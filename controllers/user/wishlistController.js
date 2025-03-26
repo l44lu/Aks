@@ -58,6 +58,7 @@ const loadWishlist = async (req, res) => {
     }
 };
 
+
 const addToWishlist = async (req, res) => {
     try {
         const { productId } = req.body; 
@@ -122,15 +123,32 @@ const addToWishlist = async (req, res) => {
     }
 };
 
+const removeProduct = async(req,res)=>{
+    try{
 
+        const productId = req.query.productId
+        const userId = req.session.user
+        const user = await User.findById(userId)
+        const index = user.wishlist.indexOf(productId)
+        user.wishlist.splice(index,1)
+        await user.save();
+        await Wishlist.findOneAndUpdate(
+            {userId},
+            {$pull:{products:{productId}}},
+            {new:true}
+        );
+        return res.redirect("/wishlist")
+        
+    }catch{
+        console.error("Error removing product from wishlist:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
 
-
-
-
-
+    }
+}
 
 
 module.exports={
     addToWishlist,
     loadWishlist,
+    removeProduct,
 }
