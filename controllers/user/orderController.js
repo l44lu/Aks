@@ -508,18 +508,21 @@ const cancelProduct = async (req, res) => {
 
         const canceledProduct = order.orderItems[productIndex];
 
+        
         const product = await Product.findById(productId);
-        if (product) {
-
+        
+        if (cancelproduct) {
+            
             product.quantity += canceledProduct.quantity;
-
+            
             if (canceledProduct.size && product.sizes.has(canceledProduct.size)) {
                 product.sizes.set(canceledProduct.size, (product.sizes.get(canceledProduct.size) || 0) + canceledProduct.quantity);
             }
-
+            
             await product.save();
         }
         
+
         const productTotalPrice = canceledProduct.price * canceledProduct.quantity;
         order.finalAmount -= productTotalPrice;
         order.totalPrice -= productTotalPrice;

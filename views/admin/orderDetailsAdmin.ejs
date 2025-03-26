@@ -1,12 +1,6 @@
 <%- include("../../views/partials/admin/header") %>
 <style>
-    body {
-        margin-left: 70px;
-        margin-top: 30px;
-        font-family: Arial, sans-serif;
-        background-color: #121212;
-        color: #e0e0e0;
-    }
+
     
     .container {
         max-width: 1200px;
@@ -232,7 +226,7 @@
         }
     }
 </style>
-<body>
+
     <div class="container">
         <h1>Order Details</h1>
 
@@ -414,7 +408,8 @@
 
         function updateStatus(itemId) {
             const status = document.getElementById(`status-${itemId}`).value;
-            
+            console.log("Attempting to update order:", itemId, "to status:", status);
+                        
             Swal.fire({
                 title: 'Update Order Status?',
                 text: `Are you sure you want to change the status to "${status}"?`,
@@ -457,6 +452,8 @@
             });
         }
     </script>
-</body>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
 
 <%- include("../../views/partials/admin/footer") %>

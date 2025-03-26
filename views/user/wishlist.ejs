@@ -376,7 +376,7 @@ body {
           <button class="remove-btn" onclick="confirmRemove('<%= product._id %>')">×</button>
           <div class="product-image">
             <a href="/productDetails?id=<%= product._id %>">
-              <img src="/uploads/product-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+              <img src="<%= product.productImage[0].replace('resized_','resized_/') %>" alt="<%= product.productName %>">
             </a>
           </div>
           <div class="product-info">

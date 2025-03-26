@@ -124,6 +124,12 @@ const addToWishlist = async (req, res) => {
 
 
 
+
+
+
+
+
+
 module.exports={
     addToWishlist,
     loadWishlist,
