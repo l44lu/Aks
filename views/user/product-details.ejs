@@ -77,53 +77,28 @@ body {
 }
 
 .main-image {
-    position: relative;
+    width: 657px;
+    height: 657px;
     overflow: hidden;
-}
-
-.zoom-icon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #1a1a1a;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
-    z-index: 5;
-    font-size: 1.2rem;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-}
-
-.zoom-icon:hover {
-    background-color: #1a1a1a;
-    color: #ffffff;
-    transform: scale(1.1);
+    cursor: zoom-in;
 }
 
 .image-slider figure {
-    display: none;
-    margin: 0;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
 
 .image-slider figure.active {
     display: block;
-    opacity: 1;
+    /* opacity: 1; */
 }
 
 .image-slider img {
     width: 100%;
-    height: 700px;
+    height: 100%;
     object-fit: cover;
-    transition: all 1s cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 0.3s ease;
     filter: brightness(1.02);
 }
 
@@ -190,6 +165,39 @@ body {
     object-fit: cover;
     transition: transform 0.6s cubic-bezier(0.22, 1, 0.36, 1);
 }
+
+.image-zoom-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .image-zoom-container.zoomed {
+            opacity: 1;
+        }
+
+        .zoomed-image {
+            position: absolute;
+            background-repeat: no-repeat;
+            background-size: 200%;
+            background-position: center;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .lens {
+            position: absolute;
+            background: rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            pointer-events: none;
+            display: none;
+        }
 
 .thumbnails div:hover img {
     transform: scale(1.1);
@@ -368,7 +376,7 @@ body {
 
 .features {
     list-style: none;
-    margin-bottom: 40px;
+    margin-bottom: -20px;
 }
 
 .features li {
@@ -997,17 +1005,22 @@ body {
 .image-slider.loaded img {
     animation: fadeIn 1s ease forwards;
 }
+.gallery {
+    background-color: #ffffff;
+    padding: 0;
+    border-radius: 0;
+    position: relative;
+    height: 833px;
+    width: 660px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.6s ease;
+}
 
 /* Parallax Effect */
 .gallery:hover .image-slider img {
     transform-origin: center;
     perspective: 1000px;
     transform-style: preserve-3d;
-}
-
-/* Zoom on Hover */
-.main-image {
-    overflow: hidden;
 }
 
 /* Elegant Hover Effects */
@@ -1083,8 +1096,7 @@ body {
     <div class="container">
         <div class="product-grid">
             <div class="gallery">
-                <div class="main-image">
-                    <i class="fas fa-search zoom-icon"></i>
+                <div class="main-image" id="mainProductImage">
                     <div class="image-slider">
                         <% if (product.productImage && Array.isArray(product.productImage)) { %>
                             <% product.productImage.forEach((img, index) => { %>
@@ -1095,6 +1107,10 @@ body {
                         <% } else { %>
                             <figure class="active"><img src="default.jpg" alt="Default Image"></figure>
                         <% } %>
+                    </div>
+                    <div class="image-zoom-container">
+                        <div class="zoomed-image"></div>
+                        <div class="lens"></div>
                     </div>
                 </div>
                 <div class="thumbnails">
@@ -1165,6 +1181,48 @@ body {
 </section>
 
 <script>
+
+document.addEventListener('DOMContentLoaded', () => {
+            const mainProductImage = document.getElementById('mainProductImage');
+            const imageSlider = mainProductImage.querySelector('.image-slider');
+            const zoomContainer = mainProductImage.querySelector('.image-zoom-container');
+            const zoomedImage = zoomContainer.querySelector('.zoomed-image');
+            const lens = zoomContainer.querySelector('.lens');
+
+            imageSlider.addEventListener('mousemove', (e) => {
+                const activeImage = imageSlider.querySelector('figure.active img');
+                const rect = activeImage.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+
+                // Set lens position and size
+                const lensWidth = rect.width / 2;
+                const lensHeight = rect.height / 2;
+                lens.style.width = `${lensWidth}px`;
+                lens.style.height = `${lensHeight}px`;
+                lens.style.left = `${x - lensWidth / 2}px`;
+                lens.style.top = `${y - lensHeight / 2}px`;
+                lens.style.display = 'block';
+
+                // Zoom effect
+                zoomedImage.style.backgroundImage = `url(${activeImage.src})`;
+                zoomedImage.style.backgroundSize = '200%';
+                
+                const percentX = (x / rect.width) * 100;
+                const percentY = (y / rect.height) * 100;
+                zoomedImage.style.backgroundPosition = `${percentX}% ${percentY}%`;
+
+                zoomContainer.classList.add('zoomed');
+            });
+
+            mainProductImage.addEventListener('mouseleave', () => {
+                zoomContainer.classList.remove('zoomed');
+                lens.style.display = 'none';
+            });
+        });
+
+    
+
     document.addEventListener('DOMContentLoaded', () => {
         const slider = document.querySelector('.image-slider');
         const figures = slider.querySelectorAll('figure');
@@ -1199,118 +1257,22 @@ body {
             qtyVal.textContent = value + 1;
         });
 
-        const zoomContainers = document.querySelectorAll('.zoom-container');
-        
-        zoomContainers.forEach(container => {
-            const img = container.querySelector('img');
-            const lens = container.querySelector('.zoom-lens');
-            const zoomedImage = container.querySelector('.zoomed-image');
-            
-            function getZoomRatio() {
-                return img.naturalWidth / img.width;
-            }
-            
-            function initZoom() {
-                zoomedImage.style.backgroundImage = `url('${img.src}')`;
-                zoomedImage.style.backgroundSize = `${img.width * getZoomRatio()}px ${img.height * getZoomRatio()}px`;
                 
-                container.addEventListener('mouseenter', function() {
-                    lens.style.display = 'block';
-                    zoomedImage.style.display = 'block';
-                });
-                
-                container.addEventListener('mouseleave', function() {
-                    lens.style.display = 'none';
-                    zoomedImage.style.display = 'none';
-                });
-                
-                container.addEventListener('mousemove', function(e) {
-                    let pos = getCursorPos(e);
-                    
-                    let x = pos.x - (lens.offsetWidth / 2);
-                    let y = pos.y - (lens.offsetHeight / 2);
-                    
-                    if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
-                    if (x < 0) {x = 0;}
-                    if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
-                    if (y < 0) {y = 0;}
-                    
-                    lens.style.left = x + "px";
-                    lens.style.top = y + "px";
-                    
-                    let ratio = getZoomRatio();
-                    zoomedImage.style.backgroundPosition = `-${x * ratio}px -${y * ratio}px`;
-                });
-                
-                function getCursorPos(e) {
-                    let rect = img.getBoundingClientRect();
-                    let x = e.pageX - rect.left - window.pageXOffset;
-                    let y = e.pageY - rect.top - window.pageYOffset;
-                    return {x, y};
-                }
-            }
-            
-            if (img.complete) {
-                initZoom();
-            } else {
-                img.addEventListener('load', initZoom);
-            }
-        });
-        
-        const zoomIcon = document.querySelector('.zoom-icon');
-        const gallery = document.querySelector('.gallery');
-        let isFullscreen = false;
-        
-        zoomIcon.addEventListener('click', () => {
-            if (!isFullscreen) {
-                gallery.style.position = 'fixed';
-                gallery.style.top = '0';
-                gallery.style.left = '0';
-                gallery.style.width = '100vw';
-                gallery.style.height = '100vh';
-                gallery.style.zIndex = '9999';
-                gallery.style.padding = '40px';
-                gallery.style.backgroundColor = 'rgba(255, 255, 255, 0.98)';
-                gallery.style.display = 'flex';
-                gallery.style.flexDirection = 'column';
-                gallery.style.justifyContent = 'center';
-                zoomIcon.innerHTML = '<i class="fas fa-times"></i>';
-                isFullscreen = true;
-            } else {
-                gallery.style.position = 'relative';
-                gallery.style.top = 'auto';
-                gallery.style.left = 'auto';
-                gallery.style.width = 'auto';
-                gallery.style.height = 'auto';
-                gallery.style.zIndex = 'auto';
-                gallery.style.padding = '0';
-                gallery.style.backgroundColor = 'transparent';
-                gallery.style.display = 'block';
-                zoomIcon.innerHTML = '<i class="fas fa-expand"></i>';
-                isFullscreen = false;
-            }
-        });
     });
 
     let selectedSize = null;
     let selectedSizeQuantity = null;
-
-    // Function to handle size selection
     function selectSize(button) {
-        // Remove active class from all size buttons
         document.querySelectorAll('.size-option').forEach(btn => {
             btn.classList.remove('active-size');
         });
 
-        // Add selected styles to the clicked button
         button.classList.add('active-size');
 
-        // Store selected size and its quantity
         selectedSize = button.getAttribute('data-size');
         selectedSizeQuantity = button.getAttribute('data-quantity');
     }
   
-    // Modify addToCart to include size selection
     async function addToCart(event, productId, productPrice) {
         event.preventDefault();
         event.stopPropagation();

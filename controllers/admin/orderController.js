@@ -97,12 +97,60 @@ const changeOrderStatus = async (req,res)=>{
             return res.status(404).json({success:false,message:"Order not found"})
         }
         console.log("hit 3 on changeOrderStatus")
-        return res.status(200).json({success:true,message:"Status updated successfully"}) // Fixed message
+        return res.status(200).json({success:true,message:"Status updated successfully"}) 
     } catch (error) {
         console.error("Error while Updating the status :",error);
         return res.status(500).json({success:false,message:"Internal Server error"})
     }
 }
+
+
+const handleReturn = async (req, res) => {
+    try {
+        const { orderId, productId, status } = req.body;
+        const order = await Order.findOne({ orderId }).populate("userId");
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        const item = order.orderItems.find(item => item.productId.toString() === productId);
+        if (!item) {
+            return res.status(404).json({ success: false, message: "Product not found in the order" });
+        }
+
+        item.returnRequest.status = status;
+        item.returnRequest.requestDate = new Date();
+
+        if (status === "Approved") {
+            order.status = "Return Accepted";
+
+            const product = await Product.findById(productId);
+            if (product) {
+                product.quantity += item.quantity;
+                if (item.selectedSize) {
+                    const sizeIndex = product.sizes.findIndex(s => s.size === item.selectedSize);
+                    if (sizeIndex !== -1) {
+                        product.sizes[sizeIndex].quantity += item.quantity;
+                    }
+                }
+                await product.save();
+            }
+
+            const refundAmount = item.price * item.quantity;
+            
+        } else if (status === "Rejected") {
+            order.status = "Return Rejected";
+        }
+
+        await order.save();
+        return res.status(200).json({ success: true, message: `Product return ${status.toLowerCase()}!`, order });
+
+    } catch (error) {
+        console.error("Error handling the return:", error);
+        return res.status(500).json({ success: false, message: "Internal server Error" });
+    }
+};
 
 
 
@@ -113,5 +161,6 @@ module.exports = {
 
     getOrderListPageAdmin,
     getOrderDetailsPageAdmin,
-    changeOrderStatus
+    changeOrderStatus,
+    handleReturn,
 }

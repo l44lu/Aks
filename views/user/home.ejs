@@ -287,17 +287,17 @@ body {
 }
 
 .add-wishlist, .add-cart {
-  display: block;
-  padding: 10px 15px;
-  text-align: center;
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  color: var(--secondary-color);
-  border: 1px solid #eee;
-  transition: var(--transition);
-  text-decoration: none;
-  font-weight: 400;
+    display: block;
+    padding: 11px 67px;
+    text-align: center;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: var(--secondary-color);
+    border: 1px solid #eee;
+    transition: var(--transition);
+    text-decoration: none;
+    font-weight: 400;
 }
 
 .add-cart {
@@ -608,12 +608,8 @@ body {
                         </div>
                         <h6><%= product[i].productName %></h6>
                         <div class="for-addWishlist">
-                            <a href="/addToWishllist?id=<%=product[i]._id%>" class="add-wishlist">+ Add To Wishlist</a>
+                            <button onclick="addToWishlist('<%=product[i]._id%>')" class="add-wishlist">+ Add To Wishlist</button>
                         </div>
-                        <div class="for-addCart">
-                            <a href="/addToCart?id=<%=product[i]._id%>" class="add-cart">+ Add To Cart</a>
-                        </div>
-                        
 
                         <div class="rating">
                             <i class="fa fa-star-o"></i>
@@ -632,5 +628,50 @@ body {
         </div>
     </section>
     <!-- Product Section End -->
+
+
+    <script>
+    function addToWishlist(productId){
+      $.ajax({
+        url:"/addToWishlist",
+        method:"POST",
+        data:{productId:productId},
+        success:(response)=>{
+          Swal.close();
+
+          Swal.fire({
+            title:response.status ? " Added to Wishlist <3" : "!!Already in Wishlist!",
+            text: response.status 
+              ? "This product has been successfully added to your wishlist."
+              : response.message || "This product is already in your wishlist.",      
+              icon: response.status ? "success" : "info",
+            showConfirmButton: false,
+            timer: 2000,
+            toast: true,
+            position: "top-end",
+            iconColor: response.status ? "#000000" : "#000000",
+            customClass: response.status ? "swal-success" : "swal-warning",  
+          });
+
+        },
+        error:()=>{
+          Swal.close();
+          Swal.fire({
+            title: "Something went wrong!",
+            text: "Failed to add the product to wishlist. Please try again later.",
+            icon: "error",
+            confirmButtonText: "OK",
+            iconColor: "#ff4b5c",
+            customClass: "swal-error",
+          });
+        },
+      });
+    }
+
+
+
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 
 <%-include("../../views/partials/user/footer")%>

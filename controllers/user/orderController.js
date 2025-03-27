@@ -318,54 +318,54 @@ const orderPlaced = async (req, res) => {
         req.session.appliedCoupon = undefined
         req.session.orderId = newOrder._id
         
-        if (paymentMethod === "upi") {
-            let wallet = await Wallet.findOne({ user: userId })
-            if (!wallet) {
-                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
-            }
+        // if (paymentMethod === "upi") {
+        //     let wallet = await Wallet.findOne({ user: userId })
+        //     if (!wallet) {
+        //         wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
+        //     }
             
-            wallet.transaction.push({
-                type: "debit",
-                amount: finalAmount,
-                transactionId: `TXN${Date.now()}`,
-                createdAt: new Date(),
-                productName: orderedItems.map(item => item.productId.toString()),
-                method: "upi"
-            })
-            await wallet.save()
+            // wallet.transaction.push({
+            //     type: "debit",
+            //     amount: finalAmount,
+            //     transactionId: `TXN${Date.now()}`,
+            //     createdAt: new Date(),
+            //     productName: orderedItems.map(item => item.productId.toString()),
+            //     method: "upi"
+            // })
+            // await wallet.save()
 
             // req.session.appliedCoupon = undefined
             // req.session.appliedCoupon = null    //soon to be added 
-            req.session.orderId = newOrder._id
-            req.session.finalAmount = finalAmount
-            req.session.offerPrice = null
-            return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
-        } else if (paymentMethod === 'wallet') {
-            let wallet = await Wallet.findOne({ user: userId })
-            if (!wallet) {
-                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
-            }
+        //     req.session.orderId = newOrder._id
+        //     req.session.finalAmount = finalAmount
+        //     req.session.offerPrice = null
+        //     return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
+        // } else if (paymentMethod === 'wallet') {
+        //     let wallet = await Wallet.findOne({ user: userId })
+        //     if (!wallet) {
+        //         wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
+        //     }
             
-            wallet.transaction.push({
-                type: "debit",
-                amount: finalAmount,
-                transactionId: `TXN${Date.now()}`, 
-                createdAt: new Date(),
-                productName: orderedItems.map(item => item.productId.toString()),
-                method: "wallet"
-            })
+        //     wallet.transaction.push({
+        //         type: "debit",
+        //         amount: finalAmount,
+        //         transactionId: `TXN${Date.now()}`, 
+        //         createdAt: new Date(),
+        //         productName: orderedItems.map(item => item.productId.toString()),
+        //         method: "wallet"
+        //     })
             
-            wallet.balance = !wallet.balance ? 0 : wallet.balance - finalAmount
-            await wallet.save()
+        //     wallet.balance = !wallet.balance ? 0 : wallet.balance - finalAmount
+        //     await wallet.save()
 
-            req.session.appliedCoupon = null
-            req.session.orderId = newOrder._id
-            req.session.finalAmount = finalAmount
-            req.session.offerPrice = null
-            req.session.appliedCoupon = undefined
+        //     req.session.appliedCoupon = null
+        //     req.session.orderId = newOrder._id
+        //     req.session.finalAmount = finalAmount
+        //     req.session.offerPrice = null
+        //     req.session.appliedCoupon = undefined
             
-            return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
-        }
+        //     return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
+        // }
         return res.json({ success: true, message: "Order placed successfully", orderId: newOrder._id })
     } catch (error) {
         console.log("Error while placing order:", error)
@@ -470,12 +470,12 @@ const orderCancel = async (req,res)=>{
         const order  = await Order.findOne({orderId:orderId});
         if(!order){
             return res.status(404).json({success:"false",message:"order not found"});
-
         }
+        
         for(let item of order.orderItems){
             await Product.updateOne(
-                {_id:item.productId,"sizes:sizes":item.selectedSize},
-                {$inc:{"sizes.$quantity":item.quantity}}
+                {_id:item.productId,"sizes.size":item.selectedSize},
+                {$inc:{"sizes.$.quantity":item.quantity}}
             );
         }
 
@@ -512,14 +512,16 @@ const cancelProduct = async (req, res) => {
         
         const product = await Product.findById(productId);
         
-        if (cancelproduct) {
+        if (cancelProduct) {
             
             product.quantity += canceledProduct.quantity;
             
-            if (canceledProduct.size && product.sizes.has(canceledProduct.size)) {
-                product.sizes.set(canceledProduct.size, (product.sizes.get(canceledProduct.size) || 0) + canceledProduct.quantity);
+            if (canceledProduct.selectedSize) {
+                const sizeIndex = product.sizes.findIndex(s => s.size === canceledProduct.selectedSize);
+                if (sizeIndex !== -1) {
+                    product.sizes[sizeIndex].quantity += canceledProduct.quantity;
+                }
             }
-            
             await product.save();
         }
         
@@ -534,22 +536,22 @@ const cancelProduct = async (req, res) => {
         }
         
         const userWallet = await Wallet.findOne({ user: order.userId })
-        if (userWallet) {
-            userWallet.balance += productTotalPrice
+        // if (userWallet) {
+        //     userWallet.balance += productTotalPrice
             
-            userWallet.transaction.push({
-                amount: productTotalPrice,
-                transactionId: order.orderId,
-                productName: order.orderItems.map(item => item.productName),
-                type: 'credit',
-                method:"refund",
-            })
+        //     userWallet.transaction.push({
+        //         amount: productTotalPrice,
+        //         transactionId: order.orderId,
+        //         productName: order.orderItems.map(item => item.productName),
+        //         type: 'credit',
+        //         method:"refund",
+        //     })
             
-            await userWallet.save()
-            console.log('Refund added to wallet successfully.')
-        } else {
-            console.log('User wallet not found.')
-        }
+        //     await userWallet.save()
+        //     console.log('Refund added to wallet successfully.')
+        // } else {
+        //     console.log('User wallet not found.')
+        // }
         
         order.orderItems.splice(productIndex, 1)
         if (order.orderItems.length === 0) {

@@ -60,7 +60,7 @@ router.post("/delete-image", productController.deleteSingleImage)
 router.get("/orderList",adminAuth,orderController.getOrderListPageAdmin);
 router.get("/orderDetailsAdmin/:id",adminAuth,orderController.getOrderDetailsPageAdmin);
 router.post("/changeStatus",adminAuth, orderController.changeOrderStatus)
-
+router.post("/handleReturn",adminAuth,orderController.handleReturn)
 
 
 
