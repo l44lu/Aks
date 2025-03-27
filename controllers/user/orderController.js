@@ -571,6 +571,58 @@ const cancelProduct = async (req, res) => {
 
 
 
+const returnOrder = async (req, res) => {
+    const { orderId, productId, reason } = req.body;
+
+    try {
+        const order = await Order.findOne({ orderId });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found" });
+        }
+
+        if (!order.orderItems || order.orderItems.length === 0) {
+            return res.status(400).json({ success: false, message: "No products in the order" });
+        }
+
+        if (order.status !== "Delivered") {
+            return res.status(400).json({ success: false, message: "Return request is only allowed if the product is Delivered" });
+        }
+        const productIndex = order.orderItems.findIndex(item => item.productId.toString() === productId);
+
+        if (productIndex === -1) {
+            return res.status(400).json({ success: false, message: "Product not found in the order" });
+        }
+
+        if (!order.orderItems[productIndex].returnRequest) {
+            order.orderItems[productIndex].returnRequest = {};
+        }
+
+        order.orderItems[productIndex].returnRequest = {
+            status: "Pending",
+            reason,
+            requestDate: new Date(),
+        };
+
+        order.markModified(`orderItems.${productIndex}.returnRequest`);
+
+        const allProductsReturned = order.orderItems.every(item => item.returnRequest?.status === "Pending");
+
+        if (allProductsReturned) {
+            order.status = "Return Request";
+        }
+
+        await order.save();
+        return res.status(200).json({ success: true, message: "Return request submitted successfully", order });
+
+    } catch (error) {
+        console.error(" Error while processing return request:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+};
+
+
+
 module.exports={
     loadOrders,
     getCheckoutpage,
@@ -582,5 +634,6 @@ module.exports={
     loadOrderDetails,
     orderCancel,
     cancelProduct,
+    returnOrder,
 
 }
