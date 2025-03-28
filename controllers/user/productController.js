@@ -23,6 +23,15 @@ const productDetails = async (req, res) => {
         const productOffer = product.productOffer || 0;
         const totalOffer = categoryOffer + productOffer;
 
+        const relatedProducts = await Product.find({
+            category: findCategory._id, 
+            _id: { $ne: productId },
+            isBlocked: false,
+            status: 'Available'
+        })
+        .limit(4) 
+        .select('productName productImage salePrice regularPrice productOffer'); // Select only necessary fields
+
         res.render("product-details", {
             user: userData,
             product: product,
@@ -30,7 +39,7 @@ const productDetails = async (req, res) => {
             totalOffer: totalOffer,
             category: findCategory,
             sizes: product.sizes,
-            // variants: variants,
+            relatedProducts: relatedProducts, 
         });
 
     } catch (error) {
@@ -38,7 +47,6 @@ const productDetails = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
-
 
 
 

@@ -306,7 +306,6 @@ const logout = async(req,res)=>{
     }
 }
 
-
 const loadShoppingPage = async (req, res) => {
     try {
         console.log("Fetching shopping page data...");
@@ -353,6 +352,7 @@ const loadShoppingPage = async (req, res) => {
             category: category,
             currentPage: page,
             totalPage: totalPage,
+            sort:sort
         });
 
     } catch (error) {
@@ -360,11 +360,6 @@ const loadShoppingPage = async (req, res) => {
         res.redirect("pageNotFound");
     }
 };
-
-
-
-
-
 
 
 

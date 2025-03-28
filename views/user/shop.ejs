@@ -571,15 +571,12 @@
     </div>
   </div>
 
-  <div class="filter-bar">
-    <div class="filter-toggle">
-      <i class="fas fa-sliders-h"></i> Filter
-    </div>
-    <select class="sorting-options" id="sortSelect">
-      <option value="">Sort by: Featured</option>
-      <option value="low">Price: Low to High</option>
-      <option value="high">Price: High to Low</option>
-      <option value="newest">Newest</option>
+  <div class="sort-options">
+    <label for="sortSelect" style="margin-left: 2px;"> Sort By:</label>
+    <select id="sortSelect" onchange="applySort()">
+        <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
+        <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>
+        <option value="priceHighLow" <%= sort === 'priceHighLow' ? 'selected' : '' %>>Price: High to Low</option>
     </select>
   </div>
 
@@ -630,9 +627,7 @@
                 </a>
                 <div class="product-info">
                     <h4><%= product[i].productName %></h4>
-                    <p>₹<%= product[i].salePrice %> <strike>₹<%= product[i].regularPrice %></strike></p>
-    
-                    
+                    <p>₹<%= product[i].salePrice %> <strike>₹<%= product[i].regularPrice %></strike></p> 
                 </div>
             </div>
         <% } %>
@@ -657,6 +652,13 @@
 </div>
 
 <script>
+  function applySort() {
+      let sortValue = document.getElementById("sortSelect").value;
+      let urlParams = new URLSearchParams(window.location.search);
+      urlParams.set("sort", sortValue);
+      window.location.href = window.location.pathname + "?" + urlParams.toString();
+  }
+
 function addToWishlist(productId){
   $.ajax({
     url:"/addToWishlist",

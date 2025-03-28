@@ -601,7 +601,7 @@ body {
                             <div class="product-img product-img-zoom">
                                 <a href="/productDetails?id=<%= product[i]._id %>">
                                     <img class="default-img" 
-                                    src="<%= product[i].productImage[0].replace('_', '_/') %>"
+                                    src="<%= product[i].productImage[0].replace('_',   '_/') %>"
                                     alt="<%= product[i].productName %>">
                                 </a>
                             </div>
@@ -618,8 +618,8 @@ body {
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                         </div>
-                        <h5><span style="text-decoration: line-through; ">$<%= product[i].regularPrice %></span> $<%= product[i].discountedPrice %></h5>
-                        <h5>$<%= product[i].salePrice %></h5>
+                        <h5><span style="text-decoration: line-through; "><%= product[i].regularPrice %></span> <%= product[i].discountedPrice %></h5>
+                        <h5><%= product[i].salePrice %></h5>
  
                     </div>
                 </div>
@@ -627,9 +627,6 @@ body {
             </div>
         </div>
     </section>
-    <!-- Product Section End -->
-
-
     <script>
     function addToWishlist(productId){
       $.ajax({
