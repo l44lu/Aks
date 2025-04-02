@@ -324,9 +324,8 @@
             <% order.orderItems.forEach(item => { %>
                 <div class="item-card">
                     <div class="item-image">
-                        <img src="/uploads/re-image/<%= item.productImage[0] %>" alt="<%= item.productName %>" />
+                        <img src="<%= item.productImage[0].replace('_', '_/') %>" alt="<%= item.productName %>" />
                     </div>
-                    
                     <div class="item-details">
                         <h3><%= item.productName %></h3>
                         <p><span class="quantity-tag">Qty: <%= item.quantity %></span></p>

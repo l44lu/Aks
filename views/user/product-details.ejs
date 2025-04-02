@@ -18,10 +18,10 @@ body {
 /* Container and Grid */
 .product-section {
     padding: 80px 250px;
-    padding-bottom: 0px;
     position: relative;
     overflow: hidden;
 }
+
 .product-section::before {
     content: '';
     position: absolute;
@@ -1127,7 +1127,8 @@ body {
 
 .product-card .product-image img {
     width: 100%;
-    height: 315px;
+    height: 100%;
+    object-fit: cover;
 }
 
 .product-card .product-details {
@@ -1155,7 +1156,6 @@ body {
 
 .product-card .regular-price {
     color: #888;
-    text-decoration: line-through;
 }
 
 .product-card .offer-badge {
@@ -1180,9 +1180,7 @@ body {
         flex: 0 0 70%;
     }
 }
-a{
-    text-decoration: none;
-}
+
 </style>
 
 
@@ -1303,34 +1301,8 @@ a{
         </div>
     </div>
 </section>
+
 <script>
-    async function getProductDetails(productId) {
-    const currentProduct = await Product.findById(productId);
-
-    if (!currentProduct) {
-        return null;
-    }
-    const relatedProducts = await Product.find({
-        category: currentProduct.category,
-        _id: { $ne: productId }, 
-        isBlocked: false,
-        status: 'Available'
-    }).limit(4);
-
-    return {
-        product: currentProduct,
-        relatedProducts: relatedProducts
-    };
-}
-
-router.get('/product/:id', async (req, res) => {
-    const { product, relatedProducts } = await getProductDetails(req.params.id);
-    
-    res.render('product-details', { 
-        product, 
-        relatedProducts,
-    });
-});
 
 document.addEventListener('DOMContentLoaded', () => {
             const mainProductImage = document.getElementById('mainProductImage');
@@ -1345,6 +1317,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
 
+                // Set lens position and size
                 const lensWidth = rect.width / 2;
                 const lensHeight = rect.height / 2;
                 lens.style.width = `${lensWidth}px`;
@@ -1353,6 +1326,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 lens.style.top = `${y - lensHeight / 2}px`;
                 lens.style.display = 'block';
 
+                // Zoom effect
                 zoomedImage.style.backgroundImage = `url(${activeImage.src})`;
                 zoomedImage.style.backgroundSize = '200%';
                 

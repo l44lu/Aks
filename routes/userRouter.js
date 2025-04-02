@@ -76,22 +76,24 @@ router.post("/addToWishlist",userAuth,wishlistController.addToWishlist);
 router.get("/removeWishlist",userAuth,wishlistController.removeProduct)
 
 
-router.get("/checkout", userAuth,orderController.getCheckoutpage)
-router.get("/payment",userAuth,orderController.loadPayment)
-// router.get('/payment-failure', userAuth, orderController.paymentFailure)
-router.post("/createOrder",userAuth,orderController.createOrder)
-router.post("/orderPlaced",userAuth,orderController.orderPlaced)
-router.get("/orderConformed",userAuth,orderController.orderConformed)
-// router.get('/payment-success', userAuth, orderController.loadPaymentSuccess)
+router.get("/checkout", userAuth,orderController.getCheckoutPage);
+router.get("/payment",userAuth,orderController.loadPayment);
+router.get('/payment-failure', userAuth, orderController.paymentFailure);
+router.post("/createOrder",userAuth,orderController.createOrder);
+router.post("/orderPlaced",userAuth,orderController.orderPlaced);
+router.get("/orderConformed",userAuth,orderController.orderConformed);
+router.get('/payment-success', userAuth, orderController.loadPaymentSuccess);
 
-router.get("/myOrders",userAuth,orderController.loadOrders)
-// router.get("/download-invoice/:id",orderController.downloadInvoice)
-router.get("/orderDetails/:id",userAuth,orderController.loadOrderDetails)
-router.delete("/orderCancel/:id",userAuth,orderController.orderCancel)
-router.delete('/productCancel/:orderNumber/:productId',userAuth,orderController.cancelProduct)
-router.post('/myOrders/return',userAuth, orderController.returnOrder)
-// router.post('/retryPaymentSuccess', userAuth,orderController.retryPayment)
-// router.post('/create-retry-order', userAuth,orderController.createRetryOrder)
+router.get("/myOrders",userAuth,orderController.loadOrders);
+router.get("/download-invoice/:id",orderController.downloadInvoice);
+router.get("/orderDetails/:id",userAuth,orderController.loadOrderDetails);
+router.delete("/orderCancel/:id",userAuth,orderController.orderCancel);
+router.delete('/productCancel/:orderNumber/:productId',userAuth,orderController.cancelProduct);
+router.post('/myOrders/return',userAuth, orderController.returnOrder);
+router.post('/retryPaymentSuccess', userAuth,orderController.retryPayment);
+router.post('/create-retry-order', userAuth,orderController.createRetryOrder);
+
+
 
 
 

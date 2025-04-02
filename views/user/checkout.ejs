@@ -760,332 +760,615 @@ h1, h2, h3, h4, h5, h6 {
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap');
 
 </style>
-
+<!-- Header -->
 <div class="checkout-header">
-    <div class="progress-container">
-        <div class="progress-bar">
-            <div class="progress-bar-fill"></div>
-        </div>
-        <div class="steps-container">
-            <% 
-            const steps = [
-                { id: 1, label: 'Cart', status: 'completed' },
-                { id: 2, label: 'Shipping', status: 'active' },
-                { id: 3, label: 'Payment', status: 'pending' },
-                { id: 4, label: 'Confirmation', status: 'pending' }
-            ];
-            %>
-            <% steps.forEach(step => { %>
-                <div class="step <%= step.status %>">
-                    <div class="step-circle">
-                        <% if (step.status === 'completed') { %> ✓ <% } else { %> <%= step.id %> <% } %>
-                    </div>
-                    <span class="step-label"><%= step.label %></span>
-                </div>
-            <% }); %>
-        </div>
-    </div>
+  <div class="progress-container">
+      <div class="progress-bar">
+          <div class="progress-bar-fill"></div>
+      </div>
+      <div class="steps-container">
+          <% 
+          const steps = [
+              { id: 1, label: 'Cart', status: 'completed' },
+              { id: 2, label: 'Shipping', status: 'active' },
+              { id: 3, label: 'Payment', status: 'pending' },
+              { id: 4, label: 'Confirmation', status: 'pending' }
+          ];
+          %>
+          <% steps.forEach(step => { %>
+              <div class="step <%= step.status %>">
+                  <div class="step-circle">
+                      <% if (step.status === 'completed') { %> ✓ <% } else { %> <%= step.id %> <% } %>
+                  </div>
+                  <span class="step-label"><%= step.label %></span>
+              </div>
+          <% }); %>
+      </div>
+  </div>
 </div>
 <!-- Header End -->
 
 <div class="checkout-container">
-    <div class="checkout-grid">
-        <!-- Left Column -->
-        <div class="main-content">
-            
-            <!-- Address Selection -->
-            <h2 class="section-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
-                    <polyline points="9 22 9 12 15 12 15 22"></polyline>
-                </svg>
-                Select Delivery Address
-            </h2>
-            <div class="addresses">
-                <% addresses.forEach(addressDoc => { %>
-                    <% addressDoc.address.forEach(address => { %>
-                        <label class="address-card" for="address-<%= address._id %>">
-                            <input type="radio" name="address" id="address-<%= address._id %>">
-                            <div class="address-details">
-                                <div class="address-name"><%= address.name %></div>
-                                <div class="address-text">
-                                    <%= address.street %> <%= address.city %>, <%= address.pincode %>
-                                </div>
-                            </div>
-                        </label>
-                    <% }); %>
-                <% }); %>
-                <!-- Add New Address Button -->
-                <div class="flex justify-end">
-                    <button onclick="openModal()" 
-                        class="add-address-btn flex items-center gap-1 px-3 py-2 border border-gray-400 rounded-md text-gray-700 text-sm font-medium hover:border-purple-500 hover:shadow-md transition">
-                        <span class="text-purple-600 text-base">➕</span> Add Address
-                    </button>
-                </div>
-                
-            </div>
+  <div class="checkout-grid">
+      <!-- Left Column -->
+      <div class="main-content">
+          
+          <!-- Address Selection -->
+          <h2 class="section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                  <polyline points="9 22 9 12 15 12 15 22"></polyline>
+              </svg>
+              Select Delivery Address
+          </h2>
+          <div class="addresses">
+              <% addresses.forEach(addressDoc => { %>
+                  <% addressDoc.address.forEach(address => { %>
+                      <label class="address-card" for="address-<%= address._id %>">
+                          <input type="radio" name="address" id="address-<%= address._id %>">
+                          <div class="address-details">
+                              <div class="address-name"><%= address.name %></div>
+                              <div class="address-text">
+                                  <%= address.street %> <%= address.city %>, <%= address.pincode %>
+                              </div>
+                          </div>
+                      </label>
+                  <% }); %>
+              <% }); %>
+              <!-- Add New Address Button -->
+              <div class="flex justify-end">
+                  <button onclick="openModal()" 
+                      class="add-address-btn flex items-center gap-1 px-3 py-2 border border-gray-400 rounded-md text-gray-700 text-sm font-medium hover:border-purple-500 hover:shadow-md transition">
+                      <span class="text-purple-600 text-base">➕</span> Add Address
+                  </button>
+              </div>
+              
+          </div>
 
-            <!-- Coupon Section -->
+          <!-- Coupon Section -->
+          <h2 class="section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+              </svg>
+              Apply Coupon
+          </h2>
+          <div class="coupon-container">
+              <% if (appliedCoupon || locals.couponApplied) { %>
+                  <div class="coupon-success">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                      </svg>
+                      <span>Coupon "<%= appliedCoupon.couponCode %>" applied successfully!</span>
+                      <form class="remove-coupon-form">
+                          <button type="submit" class="remove-coupon-btn" onclick="removeCoupon()">
+                              <i class="fas fa-times-circle"></i> Remove Coupon
+                          </button>
+                      </form>                        
+                  </div>
+              <% } else { %>
+                  <div class="coupon-input-group">
+                      <input 
+                          type="text" 
+                          name="couponCode" 
+                          id="couponCode"
+                          placeholder="Enter coupon code"
+                          class="coupon-input"
+                          required
+                      >
+                      <button id="apply-coupon" class="apply-coupon" onclick="applyCoupon('<%= total.toFixed(2) %>')" 
+                          <% if (locals.couponApplied) { %> disabled <% } %>>
+                          Apply
+                      </button>
+                      <button id="view-coupons" class="view-coupons-btn" onclick="openCouponModal()" 
+                      <% if (!coupons || coupons.length === 0) { %> disabled <% } %>>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                      View Coupons
+                  </button>
+                  </div>
+                  <% if (locals.couponError) { %>
+                      <div class="coupon-error">
+                          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <circle cx="12" cy="12" r="10"></circle>
+                              <line x1="12" y1="8" x2="12" y2="12"></line>
+                              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                          </svg>
+                          <span><%= couponError %></span>
+                      </div>
+                  <% } %>
+              <% } %>
+          </div>
+          
+          <!-- Order Items -->
+          <h2 class="section-title">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                  <line x1="3" y1="6" x2="21" y2="6"></line>
+                  <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              Order Items
+          </h2>
+          <div class="products">
+              <% products.forEach(product => { %>
+                  <div class="product-card">
+                      <img class="product-image" src="/uploads/product-images/<%= product.productImage%>" alt="<%= product.productName %>">
+                      <div class="product-info">
+                          <div class="product-details">
+                              <div class="product-name"><%= product.productName %></div>
+                          </div>
+                          <div class="product-quantity">
+                              <strong>Quantity:</strong> <%= product.quantity %>
+                          </div>
+                          <div class="product-price">₹<%= product.totalPrice %></div>
+                      </div>
+                  </div>
+              <% }); %>
+          </div>
+      </div>
 
-            <!-- Order Items -->
-            <h2 class="section-title">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
-                    <line x1="3" y1="6" x2="21" y2="6"></line>
-                    <path d="M16 10a4 4 0 0 1-8 0"></path>
-                </svg>
-                Order Items
-            </h2>
-            <div class="products">
-                <% products.forEach(product => { %>
-                    <div class="product-card">
-                        <img class="product-image" src="<%= product.productImage[0]%>" alt="<%= product.productName %>">
-                        <div class="product-info">
-                            <div class="product-details">
-                                <div class="product-name"><%= product.productName %></div>
-                            </div>
-                            <div class="product-quantity">
-                                <strong>Quantity:</strong> <%= product.quantity %>
-                            </div>
-                            <div class="product-price">₹<%= product.totalPrice %></div>
-                        </div>
-                    </div>
-                <% }); %>
-            </div>
-        </div>
-
-            <div class="sidebar">
-                <div class="order-summary">
-                    <h2 class="section-title">Order Summary</h2>
-                    <div class="summary-row">
-                        <span>Subtotal</span>
-                        <span>₹<%= subtotal.toFixed(2) %></span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Delivery</span>
-                        <span>₹<%= delivery.toFixed(2) %></span>
-                    </div>
-                    <!-- <div class="summary-row" id="coupon-discount" style="display: none;">
-                        <span>Coupon Discount</span>
-                        <span class="dis-coupon" id="dis-coupon"></span>
-                        <button onclick="removeCoupon()" class="remove-coupon-btn">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                <line x1="18" y1="6" x2="6" y2="18"></line>
-                                <line x1="6" y1="6" x2="18" y2="18"></line>
-                            </svg>
-                            Remove Coupon
-                        </button>
-                    </div> -->
-                    <div class="summary-row summary-total">
-                        <span>Total</span>
-                        <span id="total-amount">₹<%= total.toFixed(2) %></span>
-                    </div>
-                    <button class="continue-btn" id="continue-btn" >Continue to Payment</button>
-                </div>
-            </div>
-    </div>
+          <!-- Right Column -->
+          <div class="sidebar">
+              <div class="order-summary">
+                  <h2 class="section-title">Order Summary</h2>
+                  <div class="summary-row">
+                      <span>Subtotal</span>
+                      <span>₹<%= subtotal.toFixed(2) %></span>
+                  </div>
+                  <div class="summary-row">
+                      <span>Delivery</span>
+                      <span>₹<%= delivery.toFixed(2) %></span>
+                  </div>
+                  <div class="summary-row" id="coupon-discount" style="display: none;">
+                      <span>Coupon Discount</span>
+                      <span class="dis-coupon" id="dis-coupon"></span>
+                      <button onclick="removeCoupon()" class="remove-coupon-btn">
+                          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                              <line x1="18" y1="6" x2="6" y2="18"></line>
+                              <line x1="6" y1="6" x2="18" y2="18"></line>
+                          </svg>
+                          Remove Coupon
+                      </button>
+                  </div>
+                  <div class="summary-row summary-total">
+                      <span>Total</span>
+                      <span id="total-amount">₹<%= total.toFixed(2) %></span>
+                  </div>
+                  <button class="continue-btn" id="continue-btn" >Continue to Payment</button>
+              </div>
+          </div>
+  </div>
 </div>
-    <!-- Address Modal -->
-    <div id="addressModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">x</span>
-            <h2>Add New Address</h2>
-            <form id="addressForm" action="/addAddressCheckout" method="POST">
-                <div class="input-group">
-                    <label for="addressType" style="margin-right: 3px;">Address Type </label>
-                    <select id="addressType" name="addressType"   required>
-                        <option value="Home">Home</option>
-                        <option value="Work">Work</option>
-                        <option value="Other">Other</option>
-                    </select>
-                </div>
-    
-                <div class="row">
-                    <div class="input-group">
-                        <label for="name">Full Name</label>
-                        <input type="text" id="name" name="name">
-                    </div>
-                    <div class="input-group">
-                        <label for="phone">Phone</label>
-                        <input type="text" id="phone" name="phone">
-                    </div>
-                </div>
-    
-                <div class="row">
-                    <div class="input-group">
-                        <label for="altPhone">Alternate Phone</label>
-                        <input type="text" id="altPhone" name="altPhone">
-                    </div>
-                    <div class="input-group">
-                        <label for="pincode">Pincode</label>
-                        <input type="text" id="pincode" name="pincode">
-                    </div>
-                </div>
+  <!-- Address Modal -->
+  <div id="addressModal" class="modal">
+      <div class="modal-content">
+          <span class="close" onclick="closeModal()">x</span>
+          <h2>Add New Address</h2>
+          <form id="addressForm" action="/addAddressCheckout" method="POST">
+              <div class="input-group">
+                  <label for="addressType" style="margin-right: 3px;">Address Type </label>
+                  <select id="addressType" name="addressType"   required>
+                      <option value="Home">Home</option>
+                      <option value="Business">Business</option>
+                      <option value="Work">Work</option>
+                      <option value="Other">Other</option>
+                  </select>
+              </div>
+  
+              <div class="row">
+                  <div class="input-group">
+                      <label for="name">Full Name</label>
+                      <input type="text" id="name" name="name">
+                  </div>
+                  <div class="input-group">
+                      <label for="phone">Phone</label>
+                      <input type="text" id="phone" name="phone">
+                  </div>
+              </div>
+  
+              <div class="row">
+                  <div class="input-group">
+                      <label for="altPhone">Alternate Phone</label>
+                      <input type="text" id="altPhone" name="altPhone">
+                  </div>
+                  <div class="input-group">
+                      <label for="pincode">Pincode</label>
+                      <input type="text" id="pincode" name="pincode">
+                  </div>
+              </div>
 
-                <div class="row">
-                    <div class="input-group">
-                        <label for="landmark">Landmark</label>
-                        <input type="text" id="landmark" name="landmark">
-                    </div>
-                    <div class="input-group">
-                        <label for="city">City</label>
-                        <input type="text" id="city" name="city">
-                    </div>
-                </div>
-    
-                <div class="input-group">
-                    <label for="state">State</label>
-                    <input type="text" id="state" name="state">
-                </div>
-    
-                <!-- Cancel & Save Buttons -->
-                <div class="button-group">
-                    <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
-                    <button type="submit" class="save-btn">Save Address</button>
-                </div>
-            </form>
-        </div>
-    </div>
+              <div class="row">
+                  <div class="input-group">
+                      <label for="landMark">Landmark</label>
+                      <input type="text" id="landMark" name="landMark">
+                  </div>
+                  <div class="input-group">
+                      <label for="city">City</label>
+                      <input type="text" id="city" name="city">
+                  </div>
+              </div>
+  
+              <div class="input-group">
+                  <label for="state">State</label>
+                  <input type="text" id="state" name="state">
+              </div>
+  
+              <!-- Cancel & Save Buttons -->
+              <div class="button-group">
+                  <button type="button" class="cancel-btn" onclick="closeModal()">Cancel</button>
+                  <button type="submit" class="save-btn">Save Address</button>
+              </div>
+          </form>
+      </div>
+  </div>
 
-
+<!-- Coupon Modal -->
+<div id="coupon-modal" class="coupon-modal">
+  <div class="coupon-modal-content">
+      <div class="coupon-modal-header">
+          <h3>Available Coupons</h3>
+          <span class="close-modal" onclick="closeCouponModal()">×</span>
+      </div>
+      <div class="coupon-modal-body">
+          <% if (coupons.length > 0) { %>
+              <% coupons.forEach(function(coupon) { %>
+                  <div class="coupon-item">
+                      <div class="coupon-left">
+                          <div class="discount-badge">
+                              <span class="discount-amount">₹<%= coupon.offerPrice %></span>
+                              <span class="discount-label">OFF</span>
+                          </div>
+                      </div>
+                      <div class="coupon-right">
+                          <div class="coupon-header">
+                              <div class="coupon-name"><%= coupon.name %></div>
+                              <div class="coupon-tag">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                      <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path>
+                                  </svg>
+                                  SAVE
+                              </div>
+                          </div>
+                          <div class="coupon-details">
+                              <div class="min-order">Min. Order: ₹<%= coupon.minimumPrice %></div>
+                              <div class="coupon-expiry">
+                                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                      <circle cx="12" cy="12" r="10"></circle>
+                                      <polyline points="12 6 12 12 16 14"></polyline>
+                                  </svg>
+                                  <span>Valid for today's order</span>
+                              </div>
+                          </div>
+                          <button class="use-coupon-btn" onclick="useCoupon('<%= coupon.name %>')">
+                              Apply Coupon
+                              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <polyline points="9 18 15 12 9 6"></polyline>
+                              </svg>
+                          </button>
+                      </div>
+                  </div>
+              <% }); %>
+          <% } else { %>
+              <div class="no-coupons">No Coupons Available</div>
+          <% } %>
+      </div>
+  </div>
+</div>
 
 
 
 <script>
+function openCouponModal() {
+      document.getElementById('coupon-modal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+}
+
+  function closeCouponModal() {
+      document.getElementById('coupon-modal').style.display = 'none';
+      document.body.style.overflow = 'auto'; 
+  }
+
+  function useCoupon(couponCode) {
+      document.getElementById('couponCode').value = couponCode;
+      closeCouponModal();
+   
+  }
+
+  window.onclick = function(event) {
+      const modal = document.getElementById('coupon-modal');
+      if (event.target === modal) {
+          closeCouponModal();
+      }
+  }
+
+
+  async function applyCoupon(productPrice) {
+  const couponCode = document.getElementById('couponCode').value;
+
+  const response = await fetch('/applyCoupon', {
+      method: 'POST',
+      headers: {
+          'Content-type': 'application/json'
+      },
+      body: JSON.stringify({ couponCode, productPrice })
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+      Swal.fire({
+          icon: 'success',
+          title: 'Success!',
+          text: result.message || 'Coupon applied successfully!',
+          showConfirmButton: false,
+          timer: 2000
+      }).then(() => {
+          
+          const totalAmountElement = document.getElementById('total-amount');
+          const totalAmount = parseFloat(totalAmountElement.textContent.replace('₹', '').trim());
+          const offerPrice = result.offerPrice
+
+          console.log('Offer price for coupon: ', offerPrice);
+
+          totalAmountElement.textContent = `₹${(totalAmount - offerPrice).toFixed(2)}`;
+
+          const couponDiscountElement = document.getElementById('coupon-discount'); 
+          const discountValueElement = couponDiscountElement.querySelector('.dis-coupon'); 
+
+          couponDiscountElement.style.display = 'block';
+
+          const applyCoupon = document.getElementById('apply-coupon')
+          applyCoupon.disabled = true
+
+          discountValueElement.textContent = `-₹${offerPrice.toFixed(2)}`;               
+      });
+
+      return;
+  }
+
+  Swal.fire({
+      icon: 'error',
+      title: 'Oops...',
+      text: result.message || 'Coupon not found! Try again',
+      confirmButtonColor: '#d33'
+  });
+}
+
+const couponCheck = '<%= appliedCoupon %>'
+
+let couponApplied = null
+
+if (couponCheck) {
+  couponApplied = JSON.parse('<%- JSON.stringify(appliedCoupon) %>');
+  console.log('applied coupon: ', couponApplied);
+  console.log('applied coupon values: ', couponApplied.couponName);
+}
+
+
+if (couponApplied) {
+  const totalAmountElement = document.getElementById('total-amount');
+          const totalAmount = parseFloat(totalAmountElement.textContent.replace('₹', '').trim());
+          const offerPrice = couponApplied.couponOfferPrice;
+
+          console.log('Offer price for coupon: ', offerPrice);
+
+          totalAmountElement.textContent = `₹${(totalAmount - offerPrice).toFixed(2)}`;
+
+          const couponDiscountElement = document.getElementById('coupon-discount'); 
+          const discountValueElement = couponDiscountElement.querySelector('.dis-coupon'); 
+
+          couponDiscountElement.style.display = 'block';
+
+          // const applyCoupon = document.getElementById('apply-coupon')
+          // applyCoupon.disabled = true
+
+          discountValueElement.textContent = `-₹${offerPrice.toFixed(2)}`;               
+}
+
+
+async function removeCoupon(couponCode) {
+      
+      const response = await fetch('/removeCoupon', {
+          method: 'PATCH',
+          headers: {
+              'Content-type': 'application/json'
+          },
+          body: JSON.stringify({ couponCode })
+      })
+  
+      const result = await response.json()
+  
+      if (result.success) {
+          Swal.fire({
+              icon: 'success',
+              title: 'Success',
+              text: result.message || 'Coupon removed successfully!',
+          }).then(() => {
+              window.location.reload();
+              return;
+          })
+      }
+  
+  
+      Swal.fire({
+              icon: 'Error',
+              title: 'Error',
+              text: result.message || 'Error while removing the coupon!!',
+      })
+  }
+
+</script>
+
+<!-- Modal JavaScript -->
+<script>
+// Attach validation to form submit event
 document.getElementById('addressForm').addEventListener('submit', validateForm);
 
+// Function to validate the form
 function validateForm(event) {
-    event.preventDefault(); 
+  event.preventDefault(); // Prevent form submission
 
-    const name = document.getElementById('name').value.trim();
-    const phone = document.getElementById('phone').value.trim();
-    const altPhone = document.getElementById('altPhone').value.trim();
-    const pincode = document.getElementById('pincode').value.trim();
-    const city = document.getElementById('city').value.trim();
-    const state = document.getElementById('state').value.trim();
+  // Get input values
+  const name = document.getElementById('name').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const altPhone = document.getElementById('altPhone').value.trim();
+  const pincode = document.getElementById('pincode').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const state = document.getElementById('state').value.trim();
+  const landMark = document.getElementById("landMark").value.trim();
 
-    resetErrors();
+  // Reset error styles
+  resetErrors();
 
-    let isValid = true;
+  let isValid = true;
 
-    if (!name) {
-        showError('name', 'Full Name is required');
-        isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(name)) {
-        showError('name', 'Full Name must contain only letters');
-        isValid = false;
-    }
+  // Name validation (at least 3 characters, only letters)
+  if (!name) {
+      showError("name", "Full Name is required")
+      isValid = false
+  } else if (name.length < 3) {
+      showError("name", "Full Name must be at least 3 characters")
+      isValid = false
+  } else if (!/^[a-zA-Z\s]+$/.test(name)) {
+      showError("name", "Only letters allowed in Full Name")
+      isValid = false
+  }
 
-    if (!phone) {
-        showError('phone', 'Phone number is required');
-        isValid = false;
-    } else if (!/^\d{10}$/.test(phone)) {
-        showError('phone', 'Phone number must be exactly 10 digits');
-        isValid = false;
-    }
+  // Phone validation (10 digits)
+  if (!phone) {
+      showError('phone', 'Phone number is required');
+      isValid = false;
+  } else if (!/^\d{10}$/.test(phone)) {
+      showError('phone', 'Phone number must be exactly 10 digits');
+      isValid = false;
+  }
 
-    if (altPhone) {
-        if (!/^\d{10}$/.test(altPhone)) {
-            showError('altPhone', 'Alternate Phone must be exactly 10 digits');
-            isValid = false;
-        } else if (altPhone === phone) {
-            showError('altPhone', 'Alternate Phone cannot be the same as Phone');
-            isValid = false;
-        }
-    }
+  // Alternate Phone validation (optional but must be 10 digits and different from phone)
+  if (altPhone) {
+      if (!/^\d{10}$/.test(altPhone)) {
+          showError('altPhone', 'Alternate Phone must be exactly 10 digits');
+          isValid = false;
+      } else if (altPhone === phone) {
+          showError('altPhone', 'Alternate Phone cannot be the same as Phone');
+          isValid = false;
+      }
+  }
 
-    if (!pincode) {
-        showError('pincode', 'Pincode is required');
-        isValid = false;
-    } else if (!/^\d{6}$/.test(pincode)) {
-        showError('pincode', 'Pincode must be exactly 6 digits');
-        isValid = false;
-    }
+  // Pincode validation (6 digits)
+  if (!pincode) {
+      showError('pincode', 'Pincode is required');
+      isValid = false;
+  } else if (!/^\d{6}$/.test(pincode)) {
+      showError('pincode', 'Pincode must be exactly 6 digits');
+      isValid = false;
+  }
 
-    if (!city) {
-        showError('city', 'City is required');
-        isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(city)) {
-        showError('city', 'City must contain only letters');
-        isValid = false;
-    }
+  // City validation (only letters allowed)
+  if (!city) {
+      showError('city', 'City is required');
+      isValid = false;
+  } else if (!/^[a-zA-Z\s]+$/.test(city)) {
+      showError('city', 'City must contain only letters');
+      isValid = false;
+  }
 
-    if (!state) {
-        showError('state', 'State is required');
-        isValid = false;
-    } else if (!/^[a-zA-Z\s]+$/.test(state)) {
-        showError('state', 'State must contain only letters');
-        isValid = false;
-    }
+   // Landmark validation (at least 3 characters, letters & numbers allowed)
+   if (!landMark) {
+      showError("landMark", "Landmark is required")
+      isValid = false
+  } else if (landMark.length < 3) {
+      showError("landMark", "Landmark must be at least 3 characters")
+      isValid = false
+  } else if (!/^[a-zA-Z0-9\s]+$/.test(landMark)) {
+      showError("landMark", "Only letters and numbers allowed in Landmark")
+      isValid = false
+  }
 
-    // If all fields are valid, submit the form
-    if (isValid) {
-        document.getElementById('addressForm').submit();
-    }
+  // State validation (only letters allowed)
+  if (!state) {
+      showError('state', 'State is required');
+      isValid = false;
+  } else if (!/^[a-zA-Z\s]+$/.test(state)) {
+      showError('state', 'State must contain only letters');
+      isValid = false;
+  }
+
+  // If all fields are valid, submit the form
+  if (isValid) {
+      document.getElementById('addressForm').submit();
+  }
 }
 
 // Function to show error messages
 function showError(fieldId, message) {
-    const inputField = document.getElementById(fieldId);
-    const inputGroup = inputField.closest('.input-group');
-    let errorElement = inputGroup.querySelector('.error-message');
+  const inputField = document.getElementById(fieldId);
+  const inputGroup = inputField.closest('.input-group');
+  let errorElement = inputGroup.querySelector('.error-message');
 
-    if (!errorElement) {
-        errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        errorElement.style.color = 'red';
-        errorElement.style.fontSize = '12px';
-        errorElement.style.marginTop = '5px';
-        inputGroup.appendChild(errorElement);
-    }
+  if (!errorElement) {
+      errorElement = document.createElement('div');
+      errorElement.className = 'error-message';
+      errorElement.style.color = 'red';
+      errorElement.style.fontSize = '12px';
+      errorElement.style.marginTop = '5px';
+      inputGroup.appendChild(errorElement);
+  }
 
-    errorElement.textContent = message;
-    inputField.style.border = '1px solid red';
+  errorElement.textContent = message;
+  inputField.style.border = '1px solid red';
 }
 
 // Function to reset errors
 function resetErrors() {
-    document.querySelectorAll('.error-message').forEach(error => error.remove());
-    document.querySelectorAll('.input-group input, .input-group select').forEach(input => {
-        input.style.border = '1px solid #ccc';
-    });
+  document.querySelectorAll('.error-message').forEach(error => error.remove());
+  document.querySelectorAll('.input-group input, .input-group select').forEach(input => {
+      input.style.border = '1px solid #ccc';
+  });
 }
 
 
+// Get Elements
 const modal = document.getElementById('addressModal');
 const addAddressBtn = document.querySelector('.add-address-btn');
-const closeBtn = document.querySelector('.close'); 
-const cancelBtn = document.querySelector('.cancel-btn'); 
-const addressForm = document.getElementById('addressForm'); 
+const closeBtn = document.querySelector('.close'); // Fixed class selector
+const cancelBtn = document.querySelector('.cancel-btn'); // Now exists in HTML
+const addressForm = document.getElementById('addressForm'); // Fixed missing id
 
+// Open Modal when clicking "Add New Address"
 if (addAddressBtn) {
-    addAddressBtn.addEventListener('click', () => {
-        modal.style.display = 'flex'; 
-        document.body.style.overflow = 'hidden'; 
-    });
+  addAddressBtn.addEventListener('click', () => {
+      modal.style.display = 'flex'; // Keep 'flex' for modal positioning
+      document.body.style.overflow = 'hidden'; // Prevent scrolling
+  });
 }
 
+// Close Modal Function
 function closeModal() {
-    modal.style.display = 'none';
-    document.body.style.overflow = 'auto'; 
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto'; // Restore scrolling
 
-    if (addressForm) {
-        addressForm.reset();
-    }
+  // Reset form fields when closing modal
+  if (addressForm) {
+      addressForm.reset();
+  }
 }
 
+// Close modal when clicking (X) button
 if (closeBtn) {
-    closeBtn.addEventListener('click', closeModal);
+  closeBtn.addEventListener('click', closeModal);
 }
 
+// Close modal when clicking "Cancel" button
 if (cancelBtn) {
-    cancelBtn.addEventListener('click', closeModal);
+  cancelBtn.addEventListener('click', closeModal);
 }
 
+// Close modal when clicking outside the content
 window.addEventListener('click', (event) => {
-    if (event.target === modal) {
-        closeModal();
-    }
+  if (event.target === modal) {
+      closeModal();
+  }
 });
 
 </script>
@@ -1094,26 +1377,26 @@ window.addEventListener('click', (event) => {
 const continueBtn = document.getElementById('continue-btn');
 
 continueBtn.addEventListener('click', (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const selectedAddress = document.querySelector('input[name="address"]:checked');
+  const selectedAddress = document.querySelector('input[name="address"]:checked');
 
-    if (!selectedAddress) {
-        Swal.fire({
-            icon: 'warning',
-            title: 'Address Required',
-            text: 'Please select an address before proceeding.',
-            confirmButtonColor: '#FF3F6C'
-        })
-        return
-    }
+  if (!selectedAddress) {
+      Swal.fire({
+          icon: 'warning',
+          title: 'Address Required',
+          text: 'Please select an address before proceeding.',
+          confirmButtonColor: '#FF3F6C'
+      })
+      return
+  }
 
-    const addressId = selectedAddress.id.replace('address-', '');
-    window.location.href = `/payment?id=${addressId}`;
+  const addressId = selectedAddress.id.replace('address-', '');
+  window.location.href = `/payment?id=${addressId}`;
 });
 
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"></script>
 <%- include("../../views/partials/user/footer") %>

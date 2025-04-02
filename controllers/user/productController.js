@@ -4,6 +4,7 @@ const User = require("../../models/userSchema");
 
 
 
+
 const productDetails = async (req, res) => {
     try {
         const userId = req.session.user;
@@ -23,14 +24,12 @@ const productDetails = async (req, res) => {
         const productOffer = product.productOffer || 0;
         const totalOffer = categoryOffer + productOffer;
 
-        const relatedProducts = await Product.find({
-            category: findCategory._id, 
-            _id: { $ne: productId },
-            isBlocked: false,
-            status: 'Available'
-        })
-        .limit(4) 
-        .select('productName productImage salePrice regularPrice productOffer'); // Select only necessary fields
+        const relatedProducts =await Product.find({
+            category:findCategory._id,
+            _id:{$ne:productId},
+            isBlocked:false,
+            status:"Available"
+        }).limit(4).select("productName productImage salePrice regularPrice productOffer")
 
         res.render("product-details", {
             user: userData,
@@ -39,7 +38,7 @@ const productDetails = async (req, res) => {
             totalOffer: totalOffer,
             category: findCategory,
             sizes: product.sizes,
-            relatedProducts: relatedProducts, 
+            relatedProducts:relatedProducts,
         });
 
     } catch (error) {
@@ -47,6 +46,8 @@ const productDetails = async (req, res) => {
         res.redirect("/pageNotFound");
     }
 };
+
+
 
 
 

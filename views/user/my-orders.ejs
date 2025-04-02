@@ -301,129 +301,156 @@
     }
   }
 </style>
-
 <div class="orders-container">
+  <!-- Search Form -->
+  <div class="search-container mb-4">
+    <form id="orderSearchForm" class="d-flex" method="GET" action="">
+      <input type="text" name="search" id="orderNumberSearch" class="form-control me-2" 
+             placeholder="Search by Order #" aria-label="Search orders" 
+             value="<%= searchTerm %>">
+      <button type="submit" class="btn btn-dark btn-custom">
+        <i class="fas fa-search"></i> Search
+      </button>
+      <% if (searchTerm) { %>
+        <a href="/myOrders" class="btn btn-outline-secondary btn-custom ms-2">
+          <i class="fas fa-times"></i> Clear
+        </a>
+      <% } %>
+    </form>
+  </div>
+
   <% if (orders.length === 0) { %>
       <!-- Empty State for No Orders -->
-      <div class="empty-state">
-          <i class="fas fa-shopping-bag"></i>
-          <h3>Your Collection is Empty</h3>
-          <p class="text-muted">You have not placed any orders yet. Explore our latest collections.</p>
-          <a href="/shop" class="btn btn-custom text-white" style="background-color: #1a1a1a; border-color:#1a1a1a;">
-              DISCOVER THE COLLECTION
+      <% if (searchTerm) { %>
+        <div class="empty-state">
+          <i class="fas fa-search"></i>
+          <h3>No Orders Found</h3>
+          <p class="text-muted">No orders matching "#<%= searchTerm %>" were found.</p>
+          <a href="/my-orders" class="btn btn-custom text-white" style="background-color: #1a1a1a; border-color:#1a1a1a;">
+              VIEW ALL ORDERS
           </a>
-      </div>
+        </div>
+      <% } else { %>
+        <div class="empty-state">
+            <i class="fas fa-shopping-bag"></i>
+            <h3>Your Collection is Empty</h3>
+            <p class="text-muted">You have not placed any orders yet. Explore our latest collections.</p>
+            <a href="/shop" class="btn btn-custom text-white" style="background-color: #1a1a1a; border-color:#1a1a1a;">
+                DISCOVER THE COLLECTION
+            </a>
+        </div>
+      <% } %>
   <% } else { %>
-      <% orders.forEach(function(order) { %>
-          <div class="order-card">
-              <!-- Order Header -->
-              <div class="order-header d-flex justify-content-between align-items-center">
-                  <div>
-                      <h4 class="mb-1">ORDER #<%= order.orderNumber %></h4>
-                      <span class="text-muted">Placed on <%= order.orderDate %></span>
-                  </div>
-                  <span class="status-badge status-<%= order.status.toLowerCase().replace(' ', '-') %>">
-                      <i class="fas fa-circle me-1"></i> <%= order.status %>
-                  </span>
-              </div>
-
-              <!-- Order Content -->
-              <div class="order-content">
-                  <!-- Order Information -->
-                  <div class="order-info">
-                      <div class="info-item"><strong>Amount</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
-                      <div class="info-item"><strong>Payment Method</strong><br> <%= order.paymentMethod %></div>
-                      <div class="info-item"><strong>Total</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
-                      <div class="info-item"><strong>Shipping Address</strong><br> <%= order.address %></div>
+      <div id="ordersList">
+          <% orders.forEach(function(order) { %>
+              <div class="order-card">
+                  <!-- Order Header -->
+                  <div class="order-header d-flex justify-content-between align-items-center">
+                      <div>
+                          <h4 class="mb-1">ORDER #<%= order.orderNumber %></h4>
+                          <span class="text-muted">Placed on <%= order.orderDate %></span>
+                      </div>
+                      <span class="status-badge status-<%= order.status.toLowerCase().replace(' ', '-') %>">
+                          <i class="fas fa-circle me-1"></i> <%= order.status %>
+                      </span>
                   </div>
 
-                  <!-- Order Items -->
-                  <div class="products-list">
-                      <h5>Items</h5>
-                      <% order.products.forEach(function(product) { %>
-                          <div class="product-card">
-                              <img src="/uploads/product-images/<%= product.image %>" alt="<%= product.name %>" class="product-image">
-                              <div class="product-info">
-                                  <h5><%= product.name %></h5>
-                                  <p>
-                                      <span class="me-3">Quantity: <%= product.quantity %></span>
-                                      <span class="me-3">Price: ₹<%= product.price.toFixed(2) %></span>
-                                      <span>Size: <%= product.selectedSize %></span>
-                                  </p>
+                  <!-- Order Content -->
+                  <div class="order-content">
+                      <!-- Order Information -->
+                      <div class="order-info">
+                          <div class="info-item"><strong>Amount</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
+                          <div class="info-item"><strong>Payment Method</strong><br> <%= order.paymentMethod %></div>
+                          <div class="info-item"><strong>Total</strong><br> ₹<%= order.finalAmount.toFixed(2) %></div>
+                          <div class="info-item"><strong>Shipping Address</strong><br> <%= order.address %></div>
+                      </div>
 
-                                  <!-- Return Option for Delivered Orders -->
-                                  <% if (order.status === 'Delivered') { %>
-                                      <div class="return-section mt-2">
-                                          <select class="form-select return-reason-select" id="returnReason" aria-label="Select return reason">
-                                              <option value="" selected>Select Return Reason</option>
-                                              <option value="wrong_size">Wrong Size</option>
-                                              <option value="damaged">Product Damaged/Defective</option>
-                                              <option value="not_as_described">Product Not As Described</option>
-                                              <option value="wrong_item">Wrong Item Received</option>
-                                              <option value="quality_issues">Quality Issues</option>
-                                              <option value="other">Other</option>
-                                          </select>
-                                          <button class="btn btn-warning mt-2 btn-custom" 
-                                              onclick="initiateReturn('<%= order.orderId %>', '<%= product.id %>')">
-                                              <i class="fas fa-undo"></i> REQUEST RETURN
-                                          </button>
-                                      </div>
-                                  <% } %>
-                                  
+                      <!-- Order Items -->
+                      <div class="products-list">
+                          <h5>Items</h5>
+                          <% order.products.forEach(function(product) { %>
+                              <div class="product-card">
+                                  <img src="<%= product.image.replace('_', '_/')%>" alt="<%= product.name %>" class="product-image">
+                                  <div class="product-info">
+                                      <h5><%= product.name %></h5>
+                                      <p>
+                                          <span class="me-3">Quantity: <%= product.quantity %></span>
+                                          <span class="me-3">Price: ₹<%= product.price.toFixed(2) %></span>
+                                          <span>Size: <%= product.selectedSize %></span>
+                                      </p>
+
+                                      <!-- Return Option for Delivered Orders -->
+                                      <% if (order.status === 'Delivered') { %>
+                                          <div class="return-section mt-2">
+                                              <select class="form-select return-reason-select" id="returnReason" aria-label="Select return reason">
+                                                  <option value="" selected>Select Return Reason</option>
+                                                  <option value="wrong_size">Wrong Size</option>
+                                                  <option value="damaged">Product Damaged/Defective</option>
+                                                  <option value="not_as_described">Product Not As Described</option>
+                                                  <option value="wrong_item">Wrong Item Received</option>
+                                                  <option value="quality_issues">Quality Issues</option>
+                                                  <option value="other">Other</option>
+                                              </select>
+                                              <button class="btn btn-warning mt-2 btn-custom" 
+                                                  onclick="initiateReturn('<%= order.orderId %>', '<%= product.id %>')">
+                                                  <i class="fas fa-undo"></i> REQUEST RETURN
+                                              </button>
+                                          </div>
+                                      <% } %>
+                                      
+                                  </div>
                               </div>
-                          </div>
-                      <% }); %>
-                  </div>
+                          <% }); %>
+                      </div>
 
-                  <!-- Order Actions -->
-                  <div class="order-actions">
-                      <button class="btn btn-primary btn-custom" onclick="viewOrderDetails('<%= order.orderId %>')">
-                          <i class="fas fa-eye"></i> VIEW DETAILS
-                      </button>
-                      <button class="btn btn-primary btn-custom" onclick="downloadInvoice('<%= order.orderId %>')">
-                          <i class="fas fa-file-pdf"></i> DOWNLOAD INVOICE
-                      </button>
-
-                      <!-- Retry Payment Button for Pending Payments -->
-                      <% if (order.status === 'payment pending') { %>
-                          <button class="btn btn-warning btn-custom" 
-                                  onclick="retryPayment('<%= order.orderId %>', '<%= order.address._id %>', 'upi', '<%= order.finalAmount %>')">
-                              <i class="fas fa-redo"></i> RETRY PAYMENT
+                      <!-- Order Actions -->
+                      <div class="order-actions">
+                          <button class="btn btn-primary btn-custom" onclick="viewOrderDetails('<%= order.orderId %>')">
+                              <i class="fas fa-eye"></i> VIEW DETAILS
                           </button>
-                      <% } %>
-
-                      <!-- Cancel Order Option -->
-                      <% if (order.status === 'Pending') { %>
-                          <button class="btn btn-outline-danger btn-custom" onclick="cancelOrder('<%= order.orderId %>')">
-                              <i class="fas fa-times"></i> CANCEL ORDER
+                          <button class="btn btn-primary btn-custom" onclick="downloadInvoice('<%= order.orderId %>')">
+                              <i class="fas fa-file-pdf"></i> DOWNLOAD INVOICE
                           </button>
 
-                          <!-- Modify Items Option for Orders with Multiple Products -->
-                          <% if (order.products.length >= 2) { %>
-                              <div class="dropdown">
-                                  <button class="btn btn-outline-secondary btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
-                                      <i class="fas fa-edit"></i> MODIFY ITEMS
-                                  </button>
-                                  <ul class="dropdown-menu">
-                                      <% order.products.forEach(function(product) { %>
-                                          <li>
-                                              <a class="dropdown-item" href="#" onclick="cancelProduct('<%= order.orderId %>', '<%= product.id %>')">
-                                                  Cancel <%= product.name %>
-                                              </a>
-                                          </li>
-                                      <% }); %>
-                                  </ul>
-                              </div>
+                          <!-- Retry Payment Button for Pending Payments -->
+                          <% if (order.status === 'payment pending') { %>
+                              <button class="btn btn-warning btn-custom" 
+                                      onclick="retryPayment('<%= order.orderId %>', '<%= order.address._id %>', 'upi', '<%= order.finalAmount %>')">
+                                  <i class="fas fa-redo"></i> RETRY PAYMENT
+                              </button>
                           <% } %>
-                      <% } %>
+
+                          <!-- Cancel Order Option -->
+                          <% if (order.status === 'Pending') { %>
+                              <button class="btn btn-outline-danger btn-custom" onclick="cancelOrder('<%= order.orderId %>')">
+                                  <i class="fas fa-times"></i> CANCEL ORDER
+                              </button>
+
+                              <!-- Modify Items Option for Orders with Multiple Products -->
+                              <% if (order.products.length >= 2) { %>
+                                  <div class="dropdown">
+                                      <button class="btn btn-outline-secondary btn-custom dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                          <i class="fas fa-edit"></i> MODIFY ITEMS
+                                      </button>
+                                      <ul class="dropdown-menu">
+                                          <% order.products.forEach(function(product) { %>
+                                              <li>
+                                                  <a class="dropdown-item" href="#" onclick="cancelProduct('<%= order.orderId %>', '<%= product.id %>')">
+                                                      Cancel <%= product.name %>
+                                                  </a>
+                                              </li>
+                                          <% }); %>
+                                      </ul>
+                                  </div>
+                              <% } %>
+                          <% } %>
+                      </div>
                   </div>
               </div>
-          </div>
-      <% }); %>
+          <% }); %>
+      </div>
   <% } %>
 </div>
-
-
 
 <!-- Pagination -->
 <div class="pagination-container text-center mt-4">
@@ -433,7 +460,7 @@
               <!-- Previous Button -->
               <% if (currentPage > 1) { %>
                   <li class="page-item">
-                      <a class="page-link" href="?page=<%= currentPage - 1 %>">Previous</a>
+                      <a class="page-link" href="?page=<%= currentPage - 1 %><%= searchTerm ? '&search=' + searchTerm : '' %>">Previous</a>
                   </li>
               <% } else { %>
                   <li class="page-item disabled"><a class="page-link">Previous</a></li>
@@ -442,14 +469,14 @@
               <!-- Page Numbers -->
               <% for (let i = 1; i <= totalPages; i++) { %>
                   <li class="page-item <%= i === currentPage ? 'active' : '' %>">
-                      <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                      <a class="page-link" href="?page=<%= i %><%= searchTerm ? '&search=' + searchTerm : '' %>"><%= i %></a>
                   </li>
               <% } %>
 
               <!-- Next Button -->
               <% if (currentPage < totalPages) { %>
                   <li class="page-item">
-                      <a class="page-link" href="?page=<%= currentPage + 1 %>">Next</a>
+                      <a class="page-link" href="?page=<%= currentPage + 1 %><%= searchTerm ? '&search=' + searchTerm : '' %>">Next</a>
                   </li>
               <% } else { %>
                   <li class="page-item disabled"><a class="page-link">Next</a></li>

@@ -546,203 +546,402 @@ h1, h2, h3, h4, h5 {
     }
 }
 </style>
-
-<!-- Header Section -->
-<div class="checkout-header">
-    <div class="progress-container">
-        <div class="progress-bar">
-            <div class="progress-bar-fill"></div>
-        </div>
-        <div class="steps-container">
-            <% 
-            const steps = [
-                { id: 1, label: 'Shopping Bag', status: 'completed' },
-                { id: 2, label: 'Shipping', status: 'completed' },
-                { id: 3, label: 'Payment', status: 'active' },
-                { id: 4, label: 'Confirmation', status: 'pending' }
-            ];
-            %>
-            <% steps.forEach(step => { %>
-                <div class="step <%= step.status %>">
-                    <div class="step-circle">
-                        <% if (step.status === 'completed') { %>
-                            ✓
-                        <% } else { %>
-                            <%= step.id %>
-                        <% } %>
-                    </div>
-                    <span class="step-label"><%= step.label %></span>
-                </div>
-            <% }); %>
-        </div>
-    </div>
-</div>
-
-<!-- Payment Section -->
-<div class="payment-container">
-    <div class="payment-section">
-        <h1 class="payment-title">Select Payment Method</h1>
-        
-        <div class="payment-methods">
-            <% 
-            const paymentMethods = [
-                { id: 'upi', icon: '🔹', label: 'Bank Transfer' },
-                { id: 'wallet', icon: '💳', label: 'Credit Card' },
-                { id: 'Cash on Delivery', icon: '📦', label: 'Cash On Delivery', active: true }
-            ];
-            %>
-
-            <% paymentMethods.forEach(method => { %>
-                <label class="payment-option <%= method.active ? 'active' : '' %>">
-                    <input 
-                        type="radio" 
-                        name="payment" 
-                        value="<%= method.id %>" 
-                        <%= method.active ? 'checked' : '' %>
-                        style="margin-right: 1rem;"
-                    >
-                    <span class="payment-icon"><%= method.icon %></span>
-                    <span class="payment-label"><%= method.label %></span>
-                </label>
-            <% }); %>
-
-            <div class="cod-section">
-                <p class="cod-info">
-                    A handling fee of ₹ <%= cashCollectionCharge %> will be added to your order for Cash on Delivery.
-                </p>
-                <!-- Hidden Payment Amount for JavaScript -->
-                <p id="paymentAmount" style="display: none;"><%= total.toFixed(2) %></p>
-                <button class="pay-button text-white" id="pay-btn">Complete Order ₹<%= total.toFixed(2) %></button>
+    <!-- header section -->
+    <div class="checkout-header">
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-bar-fill"></div>
             </div>
-
-            <div class="divider">or</div>
-
-            <div class="save-offer">
-                Choose bank transfer or credit card to avoid handling charges
-                <div>
-                    Save ₹ <%= cashCollectionCharge %> with online payment
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="summary-section">
-        <div class="order-summary">
-            <div class="delivery-header">
-                <span>Delivering to <%= customerName %></span>
-                <span class="delivery-tag"><%= deliveryType %></span>
-            </div>
-
-            <div class="items-section">
-                <h4>Your Selection (<%= itemCount %>)</h4>
-                <% item.forEach(item => { %>
-                    <div class="price-row">
-                        <span><%= item.name %> × <%= item.quantity %></span>
-                        <span>₹<%= item.totalPrice.toFixed(2) %></span>
+            <div class="steps-container">
+                <% 
+                const steps = [
+                    { id: 1, label: 'Cart', status: 'completed' },
+                    { id: 2, label: 'Shipping', status: 'completed' },
+                    { id: 3, label: 'Payment', status: 'active' },
+                    { id: 4, label: 'Confirmation', status: 'pending' }
+                ];
+                %>
+                <% steps.forEach(step => { %>
+                    <div class="step <%= step.status %>">
+                        <div class="step-circle">
+                            <% if (step.status === 'completed') { %>
+                                ✓
+                            <% } else { %>
+                                <%= step.id %>
+                            <% } %>
+                        </div>
+                        <span class="step-label"><%= step.label %></span>
                     </div>
                 <% }); %>
             </div>
+        </div>
+    </div>
+    <!-- header section end -->
+    <div class="payment-container">
+        <div class="payment-section">
+            <h1 class="payment-title">Choose Your Payment Method</h1>
             
-            <h5>Order Details</h5>
-            <div class="price-row">
-                <span>Total MRP (Incl. taxes)</span>
-                <span>₹<%= totalMRP.toFixed(2) %></span>
-            </div>
-            <%if(offerPrice>0){%>
-            <div class="price-row">
-                <span>Discount</span>
-                <span class="price-discount" style="color: var(--error);">-₹<%=offerPrice%></span>
-            </div>
-            <%}%>
-            <div class="price-row">
-                <span>Shipping</span>
-                <span>₹<%=delivery%></span>
-            </div>
-            <div class="price-row price-total">
-                <span>Total</span>
-                <span>₹<%= total.toFixed(2) %></span> 
-            </div>
+            <div class="payment-methods">
+                <% 
+                const paymentMethods = [
+                    { id: 'upi', icon: '📱', label: 'Online' },
+                    { id: 'wallet', icon: '💳', label: 'Wallet' },
+                    { id: 'Cash on Delivery', icon: '💵', label: 'Cash On Delivery', active: true }
+                ];
+                %>
 
-            <div class="trust-badges">
-                <div class="trust-badge">
-                    ✓<br>Secure Payment
+                <% paymentMethods.forEach(method => { %>
+                    <label class="payment-option <%= method.active ? 'active' : '' %>">
+                        <input 
+                            type="radio" 
+                            name="payment" 
+                            value="<%= method.id %>" 
+                            <%= method.active ? 'checked' : '' %>
+                            style="margin-right: 1rem;"
+                        >
+                        <span class="payment-icon"><%= method.icon %></span>
+                        <span class="payment-label"><%= method.label %></span>
+                    </label>
+                <% }); %>
+
+                <div class="cod-section">
+                    <p class="cod-info">
+                        Additional cash collection charges of ₹ <%= cashCollectionCharge %> is applicable on this order.
+                    </p>
+                     <!-- Hidden Payment Amount for JavaScript -->
+                    <p id="paymentAmount" style="display: none;"><%= total.toFixed(2) %></p>
+                    <button class="pay-button text-white" id="pay-btn">PAY ₹<%= total.toFixed(2) %></button>
                 </div>
-                <div class="trust-badge">
-                    ↺<br>Complimentary Returns
+
+                <div class="divider">OR</div>
+
+                <div class="save-offer">
+                    Pay via **UPI, Wallet, or Card** and save handling charges
+                    <div style="color: var(--gray-700); font-weight: 600; margin-top: 0.5rem;">
+                        Pay now and save ₹ <%= cashCollectionCharge %>
+                    </div>
                 </div>
-                <div class="trust-badge">
-                    ★<br>Authenticity Guaranteed
+            </div>
+        </div>
+
+        <div class="summary-section">
+            <div class="order-summary">
+                <div class="delivery-header">
+                    <span>Delivering order to <%= customerName %></span>
+                    <span class="delivery-tag"><%= deliveryType %></span>
+                </div>
+
+                <div class="items-section">
+                    <h4 style="margin-bottom: 1rem;">Items (<%= itemCount %>)</h4>
+                    <% item.forEach(item => { %>
+                        <div class="price-row">
+                            <span><%= item.name %> (Qty: <%= item.quantity %>)</span>
+                            <span>₹<%= item.totalPrice.toFixed(2) %></span>
+                         </div>
+                    <% }); %>
+                </div>
+                
+
+                <h5 style="margin: 1.5rem 0 1rem;">PRICE SUMMARY</h5>
+                <div class="price-row">
+                    <span>Total MRP (Incl. of taxes)</span>
+                    <span>₹<%= totalMRP.toFixed(2) %></span>
+                </div>
+                <%if(offerPrice>0){%>
+                <div class="price-row">
+                    <span>Coupon discount</span>
+                    <span class="price-discount" style="color: red;">-₹<%=offerPrice%></span>
+                </div>
+                <%}%>
+                <div class="price-row">
+                    <span>Delivery Fee</span>
+                    <span class="price-discount">₹<%=delivery%></span>
+                </div>
+                <div class="price-row price-total">
+                    <span>Total</span>
+                    <span> ₹<%= total.toFixed(2) %> </span> 
+                </div>
+
+                <div class="trust-badges">
+                    <div class="trust-badge">
+                        ✓<br>100% SECURE
+                    </div>
+                    <div class="trust-badge">
+                        ↺<br>EASY RETURNS & REFUNDS
+                    </div>
+                    <div class="trust-badge">
+                        ★<br>100% GENUINE
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+
+        <!-- wallet modal -->
+        <div id="walletModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Pay with Wallet</h2>
+                    <button class="close-modal">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="wallet-info">
+                        <div class="wallet-balance">
+                            <span class="label">Available Balance</span>
+                            <span class="amount">₹<span id="walletBalance"> <%= walletBalance.toFixed(2) %> </span></span>
+                        </div>
+                        <div class="payment-amount">
+                            <span class="label">Payment Amount</span>
+                            <span class="amount">₹<span id="paymentAmount"> <%= total.toFixed(2) %> </span></span>
+                        </div>
+                        <div class="balance-after">
+                            <span class="label">Balance After Payment</span>
+                            <span class="amount">₹<span id="balanceAfter"> <%= balanceAfterPayment.toFixed(2) %> </span></span>
+                        </div>
+                    </div>
+                    <button id="confirmWalletPayment" class="confirm-payment-btn">
+                        Confirm Payment
+                    </button>
+                </div>
+            </div>
+        </div>
 
 <script>
-    document.getElementById("pay-btn").addEventListener("click", async function () {
-        const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-        const selectedAddressId = "<%= selectedAddressId %>"; 
-    
-        const paymentAmount = document.getElementById('paymentAmount').textContent.trim();
-    
-        console.log('payment amount on cash on delevery: ', paymentAmount);
-    
-        // if (paymentAmount >= 1000) {
-        //     Swal.fire({
-        //         icon: 'warning',
-        //         title: 'Cash on Delivery Unavailable',
-        //         text: 'Cash on Delivery is not available for orders exceeding ₹1000.',
-        //         confirmButtonText: 'Understood',
-        //         confirmButtonColor: '#1A1A1A',
-        //         background: '#fff',
-        //         customClass: {
-        //             title: 'swal-title',
-        //             content: 'swal-text'
-        //         }
-        //     });
+
+        document.getElementById("pay-btn").addEventListener("click", async function () {
+        
+            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+            const selectedAddressId = "<%= selectedAddressId %>"; 
+        
+            if (paymentMethod === "upi") {
+                try {
+                    const response = await fetch("/createOrder", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify({ amount: '<%= total %>', currency: "INR" }),
+                    });
+        
+                    const data = await response.json();
+                    if (!data.success) throw new Error("Failed to create order");
+        
+                    const options = {
+        
+                        key: "<%=razorpayKeyId%>",
+                        amount: data.order.amount,
+                        currency: data.order.currency,
+                        order_id: data.order.id,
+                        name: "Trendy Threads",
+                        description: "Test Transaction",
+                        handler: async function (response) {
+                            Swal.fire({
+                                title: "Payment Successful!",
+                                text: "Payment ID: " + response.razorpay_payment_id,
+                                icon: "success",
+                                confirmButtonColor: "#28a745",
+                                confirmButtonText: "OK",
+                            }).then(async () => {
+                                const orderResponse = await fetch('/orderPlaced', {
+                                    method: 'POST',
+                                    headers: { 'Content-type': 'application/json' },
+                                    body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
+                                });
+        
+                                const result = await orderResponse.json();
+        
+                                if (result.success) {
+                                    window.location.href = '/orderConformed';
+                                } else {
+                                    Swal.fire({
+                                        title: "Error while saving the order!",
+                                        text: result.message || 'Error happened!',
+                                        icon: "error",
+                                        confirmButtonColor: "#dc3545",
+                                        confirmButtonText: "Try Again",
+                                    });
+                                }
+                            });
+                        },
+                        prefill: {
+                            email: "test@example.com",
+                            contact: "9999999999",
+                        },
+                        theme: { color: "#3399cc" },
+                        modal: {
+                            ondismiss: async function () {
+        
+                                const amountInRupees = options.amount / 100;
+        
+                                const paymentFailResponse = await fetch('/orderPlaced', {
+                                    method: 'POST',
+                                    headers: { 'Content-type': 'application/json' },
+                                    body: JSON.stringify({ paymentMethod, addressId: selectedAddressId, snum: 'payment-fail' })
+                                });
+        
+                                const result = await paymentFailResponse.json() 
+        
+                                if (result.success) {
+                                    window.location.href = `/payment-failure?orderId=${data.order.id}&paymentMethod="upi"&addressId=${selectedAddressId}`;
+                                    return;
+                                }
+                                
+                            }
+                        }
+                    };
+        
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+        
+                } catch (error) {
+                    Swal.fire({
+                        title: "Payment Failed!",
+                        text: error.message,
+                        icon: "error",
+                        confirmButtonColor: "#dc3545",
+                        confirmButtonText: "Try Again",
+                    }).then(() => {
+        
+                       console.log('selected address id: ', selectedAddressId);  
+                       window.location.href = `/payment-failure?orderId=${data.order.id}&paymentMethod=RAZORPAY&addressId=${selectedAddressId}`;
+        
+                    });
+                }
+            } else if (paymentMethod === 'wallet') {
+        
+                const modal = document.getElementById('walletModal');
+                modal.style.display = 'block';
+                
+                document.querySelector('.close-modal').onclick = function() {
+                    modal.style.display = 'none';
+                };
+        
+                window.onclick = function(event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                };
+        
+                document.getElementById('confirmWalletPayment').onclick = async function() {
+        
+                    console.log('Processing wallet payment...');
             
-        //     return;
-        // }
-    
-        Swal.fire({
-            title: "Cash on Delivery Selected",
-            text: "Your order will be processed with payment on delivery.",
-            icon: "info",
-            confirmButtonColor: "#1A1A1A",
-            confirmButtonText: "Proceed",
-            background: '#fff',
-            customClass: {
-                title: 'swal-title',
-                content: 'swal-text'
-            }
-        }).then(async () => {
-            const response = await fetch('/orderPlaced', {
-                method: 'POST',
-                headers: { 'Content-type': 'application/json' },
-                body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
-            });
-    
-            const result = await response.json();
-    
-            if (result.success) {
-                window.location.href = '/orderConformed';
+                    this.innerHTML = 'Processing...';
+                    this.disabled = true;
+        
+                    setTimeout(() => {
+        
+                        modal.style.display = 'none';
+        
+                    }, 2000);
+        
+                    const paymentAmount = '<%= total %>'
+        
+                    const response = await fetch('/payWithWallet', {
+        
+                        method: 'POST',
+                        headers: {
+                            'Content-type': 'application/json'
+                        },
+                        body: JSON.stringify({ paymentAmount })
+                    })
+        
+                    const result = await response.json()
+        
+                    if (result.success) {
+        
+                        const walletResponse = await fetch('/orderPlaced', {
+        
+                            method: 'POST',
+                            headers: { 'Content-type': 'application/json' },
+                            body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
+        
+                        });
+        
+        
+                        const walletResult = await walletResponse.json()
+        
+                        if (walletResult.success) {
+                            Swal.fire({
+                                title: "Payment Successful!",
+                                text: "Your payment has been completed using your wallet.",
+                                icon: "success",
+                                confirmButtonText: "OK"
+                            }).then(() => {
+                                window.location.href = '/orderConformed';
+                            });
+                            return;
+                        }
+        
+        
+                        Swal.fire({
+                            title: "Error while saving the order!",
+                            text: walletResult.message || 'Error happened!',
+                            icon: "error",
+                            confirmButtonColor: "#dc3545",
+                            confirmButtonText: "Try Again",
+                        });
+        
+                        return;
+                    }
+        
+                    Swal.fire({
+                        title: "Payment Failed!",
+                        text: result.message,
+                        icon: "error",
+                        confirmButtonText: "Try Again"
+                    });
+        
+                };
+              
             } else {
+        
+                const paymentAmount = document.getElementById('paymentAmount').textContent.trim();
+        
+                console.log('payment amount on cash on delevery: ', paymentAmount);
+        
+                if (paymentAmount >= 1000) {
+                    
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'COD Not Available',
+                        text: 'Cash on Delivery is not available for orders above ₹1000.',
+                        confirmButtonText: 'OK'
+                    });
+                    
+                    return;
+                }
+        
                 Swal.fire({
-                    title: "Order Processing Error",
-                    text: result.message || 'We encountered an issue processing your order. Please try again.',
-                    icon: "error",
-                    confirmButtonColor: "#1A1A1A",
-                    confirmButtonText: "Try Again",
-                    background: '#fff',
-                    customClass: {
-                        title: 'swal-title',
-                        content: 'swal-text'
+                    title: "Cash on Delivery Selected!",
+                    text: "Your order will be placed with COD.",
+                    icon: "info",
+                    confirmButtonColor: "#007bff",
+                    confirmButtonText: "OK",
+                }).then(async () => {
+                    const response = await fetch('/orderPlaced', {
+                        method: 'POST',
+                        headers: { 'Content-type': 'application/json' },
+                        body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
+                    });
+        
+                    const result = await response.json();
+        
+                    if (result.success) {
+                        window.location.href = '/orderConformed';
+                    } else {
+                        Swal.fire({
+                            title: "Error while saving the order!",
+                            text: result.message || 'Error happened!',
+                            icon: "error",
+                            confirmButtonColor: "#dc3545",
+                            confirmButtonText: "Try Again",
+                        });
                     }
                 });
             }
         });
-    });
+        
 </script>
-
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <%- include("../../views/partials/user/footer") %>

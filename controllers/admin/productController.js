@@ -156,35 +156,22 @@ const getAllProducts = async (req, res) => {
 
 
 
-const addProductOffer = async (req, res) => {
+const addProductOffer = async(req,res)=>{
     try {
-        const { productId, percentage } = req.body;
-        if (!percentage || isNaN(percentage) || percentage <= 0) {
-            return res.status(400).json({ status: false, message: "Invalid offer percentage" });
-        }
-        const findProduct = await Product.findOne({ _id: productId });
-
-        if (!findProduct) {
-            return res.status(404).json({ status: false, message: "Product not found" });
-        }
-        if (!findProduct.regularPrice || isNaN(findProduct.regularPrice)) {
-            return res.status(400).json({ status: false, message: "Invalid regular price" });
-        }
-
-        const findCategory = await Category.findOne({ _id: findProduct.category });
-        if (findCategory && findCategory.categoryOffer > percentage) {
-            return res.json({ status: false, message: "This product already has a higher category offer" });
-        }
-        findProduct.salePrice = Math.floor(findProduct.regularPrice * (1 - percentage / 100));
-        findProduct.productOffer = percentage;
-        await findProduct.save();
-        res.json({ status: true, message: "Offer applied successfully" });
-
+        const {productId,percentage} = req.body
+        const findProduct = await Product.findOne({_id:productId})
+        const findCategory = await Category.findOne({_id:findProduct.category})
+        
+        const highestOffer = Math.max(parseInt(percentage),findCategory.categoryOffer)
+        findProduct.salePrice = findProduct.regularPrice - Math.floor(findProduct.regularPrice * (highestOffer / 100))
+        findProduct.productOffer = parseInt(percentage)
+        await findProduct.save()
+        res.json({status:true})
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ status: false, message: "Internal Server Error" });
+        res.redirect("/admin/pageError")
+        res.status(500).json({status:false ,message:"Intervel server error"})
     }
-};
+}
 
 
 const removeProductOffer = async (req, res) => {
