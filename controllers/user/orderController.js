@@ -270,8 +270,8 @@ const orderPlaced = async (req, res) => {
         console.log("dd",req.body)
         console.log(paymentMethod);
         
-        const userCart = await Cart.findOne({ userId }).populate('items.productId');
-        if (!userCart || userCart.items.length === 0) {
+        const userCart = await Cart.findOne({ userId }).populate('item.productId');
+        if (!userCart || userCart.item.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
         }
 
@@ -285,7 +285,7 @@ const orderPlaced = async (req, res) => {
             return res.status(400).json({ error: "Address not found" })
         }
 
-        const orderedItems = userCart.items.map(item => ({
+        const orderedItems = userCart.item.map(item => ({
             productId: item.productId._id, 
             productName:item.productId.productName,
             selectedSize:item.selectedSize,
@@ -326,7 +326,7 @@ const orderPlaced = async (req, res) => {
             
             await Cart.findOneAndUpdate(
                 { userId },
-                { $set: { items: [] } }
+                { $set: { item: [] } }
             )
 
             req.session.finalAmount = finalAmount
@@ -361,7 +361,7 @@ const orderPlaced = async (req, res) => {
         
         await Cart.findOneAndUpdate(
             { userId },
-            { $set: { items: [] } }
+            { $set: { item: [] } }
         )
 
         req.session.finalAmount = finalAmount

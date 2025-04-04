@@ -8,6 +8,7 @@ const productController = require("../controllers/user/productController");
 const cartController = require("../controllers/user/cartController");
 const orderController = require("../controllers/user/orderController");
 const wishlistController = require("../controllers/user/wishlistController");
+const couponController = require("../controllers/user/couponController");
 
 
 
@@ -94,6 +95,8 @@ router.post('/retryPaymentSuccess', userAuth,orderController.retryPayment);
 router.post('/create-retry-order', userAuth,orderController.createRetryOrder);
 
 
+router.post("/applyCoupon",userAuth,couponController.applyCoupon);
+router.patch('/removeCoupon',userAuth,couponController.removeCoupon)
 
 
 

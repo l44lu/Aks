@@ -6,6 +6,7 @@ const categoryController = require("../controllers/admin/categoryController");
 const orderController = require("../controllers/admin/orderController");
 const { userAuth, adminAuth } = require("../middlewares/auth");
 const productController = require("../controllers/admin/productController");
+const couponController = require("../controllers/admin/couponController");
 const multer = require("multer"); 
 const path = require("path");
 
@@ -63,6 +64,9 @@ router.post("/changeStatus",adminAuth, orderController.changeOrderStatus)
 router.post("/handleReturn",adminAuth,orderController.handleReturn)
 
 
+
+router.get("/coupon",adminAuth,couponController.loadCoupon);
+router.post("/createCoupon",adminAuth,couponController.createCoupon)
 
 
 
