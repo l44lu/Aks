@@ -536,31 +536,62 @@ const loadOrderDetails = async (req,res)=>{
 }
 
 
-const orderCancel = async (req,res)=>{
+const orderCancel = async (req, res) => {
     try {
         const orderId = req.params.id;
-        console.log("order is :",req.params.id);
-        const order  = await Order.findOne({orderId:orderId});
-        if(!order){
-            return res.status(404).json({success:"false",message:"order not found"});
+        const { reason } = req.body; 
+
+        console.log("Order ID:", orderId);
+        console.log("Cancellation Reason:", reason);
+
+        const order = await Order.findOne({ orderId });
+
+        if (!order) {
+            return res.status(404).json({ success: false, message: 'Order not found' });
         }
-        
-        for(let item of order.orderItems){
+
+
+        for (const item of order.orderItems) {
             await Product.updateOne(
-                {_id:item.productId,"sizes.size":item.selectedSize},
-                {$inc:{"sizes.$.quantity":item.quantity}}
+                { _id: item.productId, "sizes.size": item.selectedSize },
+                { $inc: { "sizes.$.quantity": item.quantity } } 
             );
         }
 
-        await Order.findOneAndDelete({ orderId: orderId });
+        if (order.paymentMethod === 'upi' || order.paymentMethod === 'wallet') {
+            const userWallet = await Wallet.findOne({ user: order.userId });
 
-        res.json({ success: true, message: 'Order cancelled and stock updated successfully' });
+            if (userWallet) {
+                userWallet.balance += order.finalAmount;
+
+                userWallet.transaction.push({
+                    amount: order.finalAmount,
+                    transactionId: order.orderId,
+                    productName: order.orderItems.map(item => item.productName),
+                    type: 'credit',
+                    method: "refund",
+                    reason:"cancel",
+                });
+                
+                await userWallet.save();
+            } else {
+                console.log('User wallet not found.');
+            }
+        }
+
+        await Order.findOneAndUpdate(
+            { orderId },
+            { $set: { status: "Cancelled", cancellationReason: reason } }
+        );
+
+        res.json({ success: true, message: 'Order cancelled successfully, and stock updated' });
 
     } catch (error) {
         console.error('Error while cancelling the order:', error);
         res.status(500).json({ success: false, message: 'Server error' });
     }
-}
+};
+
 
 const cancelProduct = async (req, res) => {
     try {
@@ -582,23 +613,18 @@ const cancelProduct = async (req, res) => {
 
         const canceledProduct = order.orderItems[productIndex];
 
-        
         const product = await Product.findById(productId);
-        
-        if (cancelProduct) {
-            
+        if (product) {
+
             product.quantity += canceledProduct.quantity;
-            
-            if (canceledProduct.selectedSize) {
-                const sizeIndex = product.sizes.findIndex(s => s.size === canceledProduct.selectedSize);
-                if (sizeIndex !== -1) {
-                    product.sizes[sizeIndex].quantity += canceledProduct.quantity;
-                }
+
+            if (canceledProduct.size && product.sizes.has(canceledProduct.size)) {
+                product.sizes.set(canceledProduct.size, (product.sizes.get(canceledProduct.size) || 0) + canceledProduct.quantity);
             }
+
             await product.save();
         }
         
-
         const productTotalPrice = canceledProduct.price * canceledProduct.quantity;
         order.finalAmount -= productTotalPrice;
         order.totalPrice -= productTotalPrice;
@@ -609,22 +635,22 @@ const cancelProduct = async (req, res) => {
         }
         
         const userWallet = await Wallet.findOne({ user: order.userId })
-        // if (userWallet) {
-        //     userWallet.balance += productTotalPrice
+        if (userWallet) {
+            userWallet.balance += productTotalPrice
             
-        //     userWallet.transaction.push({
-        //         amount: productTotalPrice,
-        //         transactionId: order.orderId,
-        //         productName: order.orderItems.map(item => item.productName),
-        //         type: 'credit',
-        //         method:"refund",
-        //     })
+            userWallet.transaction.push({
+                amount: productTotalPrice,
+                transactionId: order.orderId,
+                productName: order.orderItems.map(item => item.productName),
+                type: 'credit',
+                method:"refund",
+            })
             
-        //     await userWallet.save()
-        //     console.log('Refund added to wallet successfully.')
-        // } else {
-        //     console.log('User wallet not found.')
-        // }
+            await userWallet.save()
+            console.log('Refund added to wallet successfully.')
+        } else {
+            console.log('User wallet not found.')
+        }
         
         order.orderItems.splice(productIndex, 1)
         if (order.orderItems.length === 0) {
@@ -651,22 +677,22 @@ const returnOrder = async (req, res) => {
 
     try {
         const order = await Order.findOne({ orderId });
-
         if (!order) {
-            return res.status(404).json({ success: false, message: "Order not found" });
+            return res.status(404).json({ success: false, message: 'Order not found' });
         }
 
         if (!order.orderItems || order.orderItems.length === 0) {
-            return res.status(400).json({ success: false, message: "No products in the order" });
+            return res.status(400).json({ success: false, message: 'No products found in this order' });
         }
 
-        if (order.status !== "Delivered") {
-            return res.status(400).json({ success: false, message: "Return request is only allowed if the product is Delivered" });
+        if (order.status !== 'Delivered') {
+            return res.status(400).json({ success: false, message: 'Return request is only allowed for delivered orders' });
         }
+
         const productIndex = order.orderItems.findIndex(item => item.productId.toString() === productId);
 
         if (productIndex === -1) {
-            return res.status(400).json({ success: false, message: "Product not found in the order" });
+            return res.status(400).json({ success: false, message: 'Product not found in the order' });
         }
 
         if (!order.orderItems[productIndex].returnRequest) {
@@ -674,28 +700,28 @@ const returnOrder = async (req, res) => {
         }
 
         order.orderItems[productIndex].returnRequest = {
-            status: "Pending",
+            status: 'Pending',
             reason,
             requestDate: new Date(),
         };
 
         order.markModified(`orderItems.${productIndex}.returnRequest`);
 
-        const allProductsReturned = order.orderItems.every(item => item.returnRequest?.status === "Pending");
+        const allProductsReturned = order.orderItems.every(item => item.returnRequest?.status === 'Pending');
 
         if (allProductsReturned) {
-            order.status = "Return Request";
+            order.status = 'Return Request';
         }
 
         await order.save();
-        return res.status(200).json({ success: true, message: "Return request submitted successfully", order });
+
+        return res.status(200).json({ success: true, message: 'Return request submitted successfully', order });
 
     } catch (error) {
-        console.error(" Error while processing return request:", error);
-        return res.status(500).json({ success: false, message: "Internal server error" });
+        console.error('Error while processing return request:', error);
+        return res.status(500).json({ message: 'Internal server error' })
     }
 };
-
 
 
 const downloadInvoice = async (req, res) => {
@@ -966,20 +992,20 @@ const createRetryOrder = async (req, res) => {
 }
 
 module.exports={
-    loadOrders,
     getCheckoutPage,
-    addAddressInCheckout,
     loadPayment,
     orderPlaced,
-    createOrder,
     orderConformed,
+    loadOrders,
+    downloadInvoice,
+    returnOrder,
     loadOrderDetails,
     orderCancel,
     cancelProduct,
-    returnOrder,
-    downloadInvoice,
-    loadPaymentSuccess,
+    createOrder,
     paymentFailure,
-    retryPayment,
     createRetryOrder,
+    retryPayment,
+    loadPaymentSuccess,
+    addAddressInCheckout,
 }

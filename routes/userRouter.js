@@ -9,7 +9,7 @@ const cartController = require("../controllers/user/cartController");
 const orderController = require("../controllers/user/orderController");
 const wishlistController = require("../controllers/user/wishlistController");
 const couponController = require("../controllers/user/couponController");
-
+const walletController =require("../controllers/user/walletController");
 
 
 router.get("/",userController.loadHomepage);
@@ -39,6 +39,7 @@ router.get("/logout",userController.logout);
 
 router.get("/shop",userController.loadShoppingPage);
 router.get("/productDetails",productController.productDetails);
+router.post("/search",userController.searchProducts);
 
 
 
@@ -99,8 +100,10 @@ router.post("/applyCoupon",userAuth,couponController.applyCoupon);
 router.patch('/removeCoupon',userAuth,couponController.removeCoupon)
 
 
-
-
+router.get('/wallet', userAuth,walletController.loadWallet)
+router.post('/payWithWallet', userAuth,walletController.payWithWallet)
+router.post('/add-money', userAuth,walletController.createAddMoneyOrder)
+router.post('/verify-payment', userAuth,walletController.verifyAddMoneyPayment)
 
 
 

@@ -1,0 +1,365 @@
+<%- include("../../views/partials/user/header") %>
+
+<title>Aks - My Wallet</title>
+
+<!-- Tailwind CSS and custom styles -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+    body {
+        background-color: #f8f5f2;
+    }
+    .wallet-card {
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e9e2d9;
+        transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+        border-radius: 0;
+    }
+    .wallet-card:hover {
+        box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    }
+    .section-title {
+        letter-spacing: 0.5px;
+    }
+    .btn-luxury {
+        background: linear-gradient(to right, #9a8478, #73675b);
+        color: white;
+        transition: all 0.3s ease;
+        font-weight: 500;
+        letter-spacing: 1px;
+        border-radius: 0;
+    }
+    .btn-luxury:hover {
+        background: linear-gradient(to right, #73675b, #9a8478);
+        transform: translateY(-2px);
+    }
+    .transaction-row:hover {
+        background-color: #f5f2ee;
+    }
+    .modal-overlay {
+        background-color: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(3px);
+    }
+
+    .pagination-btn {
+        transition: all 0.3s ease;
+        border-radius: 0;
+    }
+    .pagination-btn:hover {
+        background-color: #9a8478;
+        color: white;
+    }
+    .quick-amount-btn {
+        border: 1px solid #e9e2d9;
+        transition: all 0.3s ease;
+        border-radius: 0;
+    }
+    .quick-amount-btn:hover {
+        background-color: #9a8478;
+        color: white;
+        border-color: #9a8478;
+    }
+    .luxury-input {
+        border-color: #e9e2d9;
+        transition: all 0.3s ease;
+        border-radius: 0;
+    }
+    .luxury-input:focus {
+        border-color: #9a8478;
+        box-shadow: 0 0 0 2px rgba(154, 132, 120, 0.2);
+    }
+    .wallet-balance-badge {
+        position: relative;
+        overflow: hidden;
+        border-radius: 0;
+    }
+    .wallet-balance-badge::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
+        z-index: 1;
+    }
+    /* Override any Tailwind border-radius classes */
+    .rounded, .rounded-lg, .rounded-xl, .rounded-md, .rounded-sm, .rounded-full, 
+    .rounded-t, .rounded-b, .rounded-l, .rounded-r,
+    .rounded-tl, .rounded-tr, .rounded-bl, .rounded-br,
+    .rounded-l-lg, .rounded-r-lg {
+        border-radius: 0 !important;
+    }
+</style>
+
+<div class="container mx-auto px-4 py-12">
+    <div class="max-w-2xl mx-auto">
+        <div class="bg-white wallet-card p-8">
+            <div class="flex items-center justify-between mb-8 border-b border-gray-100 pb-6">
+                <h1 class="text-3xl section-title text-gray-800">Your Exclusive Wallet</h1>
+                <div class="wallet-balance-badge bg-gradient-to-r from-gray-800 to-gray-700 px-6 py-3">
+                    <span class="text-xs uppercase tracking-wider text-gray-300">Balance</span>
+                    <div class="flex items-center">
+                        <svg class="w-5 h-5 text-yellow-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 100-4 2 2 0 000 4z"></path>
+                        </svg>
+                        <span class="text-2xl font-semibold text-white amount-display">₹<%= walletBalance %></span>
+                    </div>
+                </div>
+            </div>
+
+            <button id="addMoneyBtn" class="w-full btn-luxury py-4 px-4 uppercase text-sm tracking-wider hover:opacity-95 transition-all duration-300 mb-8 flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+                Add Funds to Your Wallet
+            </button>
+
+            <div class="bg-gray-50 p-6">
+                <h2 class="text-xl section-title text-gray-800 mb-6">Transaction History</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm text-gray-700">
+                        <thead>
+                            <tr class="border-b border-gray-200">
+                                <th class="py-4 px-4 text-left font-medium uppercase tracking-wider text-xs">Transaction</th>
+                                <th class="py-4 px-4 text-left font-medium uppercase tracking-wider text-xs">Date</th>
+                                <th class="py-4 px-4 text-right font-medium uppercase tracking-wider text-xs">Amount</th>
+                                <th class="py-4 px-4 text-right font-medium uppercase tracking-wider text-xs">Method</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% if (transactions && transactions.length > 0) { %>
+                                <% transactions.forEach(function(transaction) { %>
+                                    <% if(transaction.method !== "cod" || transaction.status !== "pending") { %>
+                                        <tr class="transaction-row border-b border-gray-100">
+                                            <td class="py-4 px-4 font-medium"><%= transaction.type %></td>
+                                            <td class="py-4 px-4 text-gray-500">
+                                                <%= new Date(transaction.createdAt).toLocaleString('en-IN', {
+                                                    weekday: 'short',
+                                                    year: 'numeric',
+                                                    month: 'short',
+                                                    day: '2-digit',
+                                                    hour: '2-digit',
+                                                    minute: '2-digit',
+                                                    hour12: true
+                                                }) %>
+                                            </td>
+                                            <td class="py-4 px-4 text-right <%= transaction.type.toLowerCase() === 'debit' ? 'text-red-600' : 'text-green-600' %> font-medium">
+                                                ₹<%= Math.abs(transaction.amount).toLocaleString() %>
+                                            </td>
+                                            <td class="py-4 px-4 text-right uppercase text-xs tracking-wider"><%= transaction.method %></td>
+                                        </tr>
+                                    <% } %>
+                                <% }); %>
+                            <% } else { %>
+                                <tr>
+                                    <td colspan="4" class="py-12 text-center text-gray-400 italic">No transactions available in your history</td>
+                                </tr>
+                            <% } %>
+                        </tbody>
+                    </table>
+                    <% if (transactions && transactions.length > 0) { %>
+                        <div class="flex justify-center mt-6">
+                            <% if (currentPage > 1) { %>
+                                <a href="?page=<%= currentPage - 1 %>" class="pagination-btn px-4 py-2 bg-gray-100 text-gray-700 border border-gray-200 hover:border-gray-300 font-medium text-sm">Previous</a>
+                            <% } %>
+                            <span class="px-4 py-2 bg-gray-50 text-gray-800 border-t border-b border-gray-200 text-sm font-medium">Page <%= currentPage %> of <%= totalPages %></span>
+                            <% if (currentPage < totalPages) { %>
+                                <a href="?page=<%= currentPage + 1 %>" class="pagination-btn px-4 py-2 bg-gray-100 text-gray-700 border border-gray-200 hover:border-gray-300 font-medium text-sm">Next</a>
+                            <% } %>
+                        </div>
+                    <% } %>                
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add Money Modal -->
+<div id="addMoneyModal" class="fixed inset-0 modal-overlay z-50 hidden flex items-center justify-center">
+    <div class="bg-white shadow-2xl max-w-md w-full mx-4 p-8 relative">
+        <button id="closeModal" class="absolute top-6 right-6 text-gray-400 hover:text-gray-800 transition-colors">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+        
+        <h3 class="text-2xl section-title text-gray-800 mb-6">Add Funds to Your Wallet</h3>
+        
+        <form id="addMoneyForm">
+            <label for="amount" class="block text-sm font-medium text-gray-700 mb-2 uppercase tracking-wider">Amount (₹)</label>
+            <input type="number" id="amount" name="amount" min="1" 
+                class="w-full px-4 py-3 border outline-none transition-all luxury-input" 
+                placeholder="Enter amount">
+            
+            <div class="flex justify-between mt-6 space-x-3">
+                <button type="button" class="quick-amount-btn flex-1 bg-gray-50 py-3 text-gray-700 font-medium" data-amount="100">₹100</button>
+                <button type="button" class="quick-amount-btn flex-1 bg-gray-50 py-3 text-gray-700 font-medium" data-amount="500">₹500</button>
+                <button type="button" class="quick-amount-btn flex-1 bg-gray-50 py-3 text-gray-700 font-medium" data-amount="1000">₹1000</button>
+            </div>
+            
+            <button type="submit" class="w-full mt-6 py-4 btn-luxury uppercase text-sm tracking-wider transition-all flex items-center justify-center">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 100-4 2 2 0 000 4z"></path>
+                </svg>
+                Proceed to Payment
+            </button>
+        </form>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Get modal elements
+        const addMoneyBtn = document.getElementById('addMoneyBtn');
+        const addMoneyModal = document.getElementById('addMoneyModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const quickAmountBtns = document.querySelectorAll('.quick-amount-btn');
+        const addMoneyForm = document.getElementById('addMoneyForm');
+        const amountInput = document.getElementById('amount'); 
+    
+        // Ensure modal is hidden initially
+        addMoneyModal.style.display = 'none';
+    
+        // Function to open modal
+        function openModal() {
+            addMoneyModal.style.display = 'flex';
+            setTimeout(() => {
+                addMoneyModal.classList.add('show');
+            }, 10); // Delay to ensure transition works
+        }
+    
+        // Function to close modal
+        function closeModal() {
+            addMoneyModal.classList.remove('show');
+            setTimeout(() => {
+                addMoneyModal.style.display = 'none';
+            }, 300); // Wait for animation to finish
+        }
+    
+        // Open modal on button click
+        addMoneyBtn.addEventListener('click', openModal);
+    
+        // Close modal when clicking close button
+        closeModalBtn.addEventListener('click', closeModal);
+    
+        // Close modal when clicking outside modal content
+        addMoneyModal.addEventListener('click', function(event) {
+            if (event.target === addMoneyModal) {
+                closeModal();
+            }
+        });
+    
+        // Quick amount buttons
+        quickAmountBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                amountInput.value = btn.getAttribute('data-amount');
+            });
+        });
+    
+        // Form submission with Razorpay
+        addMoneyForm.addEventListener('submit', async function(e) {
+            console.log("hit on addmoneyForm");
+            e.preventDefault();
+            let amount = amountInput.value.trim(); // Trim spaces
+    
+            // Validate amount
+            if (!amount || isNaN(amount) || amount <= 0) {
+                Swal.fire({
+                    title: 'Invalid Amount',
+                    text: 'Please enter a valid amount',
+                    icon: 'error',
+                    confirmButtonColor: '#9a8478'
+                });
+                return;
+            }
+    
+            try {
+                let response = await fetch('/add-money', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount })
+                });
+    
+                let data = await response.json();
+                console.log("dataL ",data)
+    
+                if (data.success) {
+                    let options = {
+                        key:data.key_id,
+                        amount: data.order.amount,
+                        currency: data.order.currency,
+                        name: "Wallet Recharge",
+                        description: "Adding Money to Wallet",
+                        order_id: data.order.id,
+                        handler: async function(response) {
+                            try {
+                                let verifyResponse = await fetch('/verify-payment', {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({
+                                        razorpay_payment_id: response.razorpay_payment_id,
+                                        razorpay_order_id: response.razorpay_order_id,
+                                        razorpay_signature: response.razorpay_signature
+                                    })
+                                });
+    
+                                let verifyData = await verifyResponse.json();
+    
+                                if (verifyData.success) {
+                                    Swal.fire({
+                                        title: 'Transaction Complete',
+                                        text: 'Funds have been added to your wallet',
+                                        icon: 'success',
+                                        confirmButtonColor: '#9a8478'
+                                    }).then(() => window.location.reload());
+                                } else {
+                                    Swal.fire({
+                                        title: 'Verification Failed',
+                                        text: 'Your payment could not be verified',
+                                        icon: 'error',
+                                        confirmButtonColor: '#9a8478'
+                                    });
+                                }
+                            } catch (verifyError) {
+                                console.error('Verification error:', verifyError);
+                                Swal.fire({
+                                        title: 'Error',
+                                        text: 'Payment verification failed',
+                                        icon: 'error',
+                                        confirmButtonColor: '#9a8478'
+                                    });
+                            }
+                        },
+                        theme: { color: "#9a8478" }
+                    };
+    
+                    let rzp = new Razorpay(options);
+                    rzp.open();
+                } else {
+                    Swal.fire({
+                        title: 'Error',
+                        text: data.message || 'Payment failed',
+                        icon: 'error',
+                        confirmButtonColor: '#9a8478'
+                    });
+                }
+            } catch (error) {
+                console.error('Payment error:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'Something went wrong, please try again later',
+                    icon: 'error',
+                    confirmButtonColor: '#9a8478'
+                });
+            }
+        });
+    });
+    
+</script>
+
+<%- include("../../views/partials/user/footer") %>

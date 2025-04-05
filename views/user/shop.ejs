@@ -90,7 +90,6 @@
     border: none;
     outline: none;
     background: transparent;
-    font-family: 'Cormorant Garamond', serif;
     letter-spacing: 2px;
     color: #ffffff;
   }
@@ -245,6 +244,8 @@
     color: #a11826;
   }
 
+
+
   .filter-button {
     display: block;
     width: 100%;
@@ -261,9 +262,13 @@
     font-family: 'Montserrat', sans-serif;
   }
 
+
+
   .filter-button:hover {
     color: #a11826;
   }
+
+
 
   .product-grid {
     display: grid;
@@ -272,6 +277,8 @@
     flex-grow: 1;
   }
 
+
+  
   .product-card {
     position: relative;
     background-color: transparent;
@@ -494,6 +501,49 @@
     color: #a11826;
   }
 
+  /* Global search styles */
+  .global-search-container {
+    width: 100%;
+    margin-bottom: 30px;
+  }
+  
+  .global-search-form {
+    display: flex;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+  
+  .global-search-form:focus-within {
+    border-color: #a11826;
+    box-shadow: 0 0 5px rgba(161, 24, 38, 0.2);
+  }
+  
+  .global-search-input {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: none;
+    outline: none;
+    background: #fff;
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  .global-search-button {
+    background-color: #000000;
+    color: #ffffff;
+    /* border: none; */
+    /* padding: 12px 4px; */
+    cursor: pointer;
+    /* font-size: 14px; */
+    /* transition: background-color 0.3s; */
+}
+  
+  .global-search-button:hover {
+    background-color: #a11826;
+  }
+
   @media (max-width: 1200px) {
     .product-grid {
       grid-template-columns: repeat(2, 1fr);
@@ -582,7 +632,18 @@
 
   <section class="shop-page">
     <div class="product-list-container">
+      
       <aside class="sidebar">
+        <!-- Global Search Feature -->
+        <div class="global-search-container">
+          <form action="/search" method="post" class="global-search-form">
+            <input type="text" name="query" placeholder="Search products..." class="global-search-input" />
+            <button type="submit" class="global-search-button">
+              <i class="fas fa-search"></i>
+            </button>
+          </form>
+        </div>
+      
         <h3>Categories</h3>
         <ul>
           <% if (category && category.length > 0) { %>
@@ -639,13 +700,13 @@
   <div class="pagination-container">
     <div class="pagination">
       <% if (currentPage > 1) { %>
-        <a href="/shop?page=<%= currentPage - 1 %>">Previous</a>
+        <a href="/shop?page=<%= currentPage - 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>">Previous</a>
       <% } %>
       <% for (let i = 1; i <= totalPage; i++) { %>
-        <a class="<%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %>"><%= i %></a>
+        <a class="<%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>"><%= i %></a>
       <% } %>
       <% if (currentPage < totalPage) { %>
-        <a href="/shop?page=<%= currentPage + 1 %>">Next</a>
+        <a href="/shop?page=<%= currentPage + 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>">Next</a>
       <% } %>
     </div>
   </div>
@@ -696,35 +757,79 @@ function addToWishlist(productId){
   });
 }
 
-
-
-
   document.querySelectorAll('.category-filter').forEach(item => {
     item.addEventListener('click', function (event) {
       event.preventDefault();
       const categoryId = this.dataset.category;
-      window.location.href = `/shop?category=${categoryId}`;
+      
+      // Preserve search parameter if it exists
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get('search');
+      
+      let newUrl = `/shop?category=${categoryId}`;
+      if (searchQuery) {
+        newUrl += `&search=${searchQuery}`;
+      }
+      
+      window.location.href = newUrl;
     });
   });
+  
   document.querySelectorAll('.price-filter').forEach(item => {
     item.addEventListener('click', function () {
       const min = this.dataset.min;
       const max = this.dataset.max || '';
-      window.location.href = `/shop?minPrice=${min}&maxPrice=${max}`;
+      
+      // Preserve search parameter if it exists
+      const urlParams = new URLSearchParams(window.location.search);
+      const searchQuery = urlParams.get('search');
+      const categoryId = urlParams.get('category');
+      
+      let newUrl = `/shop?minPrice=${min}&maxPrice=${max}`;
+      if (searchQuery) {
+        newUrl += `&search=${searchQuery}`;
+      }
+      if (categoryId) {
+        newUrl += `&category=${categoryId}`;
+      }
+      
+      window.location.href = newUrl;
     });
   });
 
-  document.getElementById('sortSelect').addEventListener('change', function () {
-    const sortValue = this.value;
-    const urlParams = new URLSearchParams(window.location.search);
-    urlParams.set('sort', sortValue);
-    window.location.search = urlParams.toString();
-  });
   document.getElementById('refreshCategories').addEventListener('click', function () {
-    window.location.href = "/shop";
+    // Preserve search parameter if it exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search');
+    
+    if (searchQuery) {
+      window.location.href = `/shop?search=${searchQuery}`;
+    } else {
+      window.location.href = "/shop";
+    }
   });
+  
   document.getElementById('refreshPrice').addEventListener('click', function () {
-    window.location.href = "/shop";
+    // Preserve search parameter if it exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const searchQuery = urlParams.get('search');
+    const categoryId = urlParams.get('category');
+    
+    let newUrl = "/shop";
+    const params = [];
+    
+    if (searchQuery) {
+      params.push(`search=${searchQuery}`);
+    }
+    if (categoryId) {
+      params.push(`category=${categoryId}`);
+    }
+    
+    if (params.length > 0) {
+      newUrl += "?" + params.join("&");
+    }
+    
+    window.location.href = newUrl;
   });
 
 function addToCart(productId){
