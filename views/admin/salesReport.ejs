@@ -1,0 +1,368 @@
+<%- include("../../views/partials/admin/header") %>
+    <title>Trendy Threads - Orders Report</title>
+    <style>
+        :root {
+            --bg-dark: #121212;
+            --bg-card: #1e1e1e;
+            --bg-hover: #2a2a2a;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --accent: #3d84f7;
+            --accent-hover: #2c6ed4;
+            --border: #333333;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --processing: #60a5fa;
+            --shipped: #a78bfa;
+            --delivered: #34d399;
+        }
+        
+        body {
+            font-family: 'Inter', 'Segoe UI', 'Helvetica', Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: var(--text-primary);
+            background-color: var(--bg-dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 20px;
+        }
+        
+        .card {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+        
+        .header {
+            margin-bottom: 30px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        
+        .title {
+            color: var(--accent);
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .subtitle {
+            color: var(--text-primary);
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+        
+        .divider {
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+            border-radius: 2px;
+            margin: 15px 0;
+        }
+        
+        .report-period {
+            font-size: 15px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-weight: 500;
+            margin-top: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .orders-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .orders-table th {
+            background-color: var(--accent);
+            padding: 16px 14px;
+            text-align: left;
+            font-size: 14px;
+            color: var(--text-primary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        .orders-table td {
+            padding: 16px 14px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .orders-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .orders-table tr:hover td {
+            background-color: var(--bg-hover);
+        }
+        
+        .amount {
+            text-align: right;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .status {
+            text-align: center;
+        }
+        
+        .date {
+            text-align: center;
+        }
+        
+        .status-pill {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .status-completed { background-color: rgba(74, 222, 128, 0.2); color: var(--success); }
+        .status-pending { background-color: rgba(251, 191, 36, 0.2); color: var(--warning); }
+        .status-cancelled { background-color: rgba(248, 113, 113, 0.2); color: var(--danger); }
+        .status-processing { background-color: rgba(96, 165, 250, 0.2); color: var(--processing); }
+        .status-shipped { background-color: rgba(167, 139, 250, 0.2); color: var(--shipped); }
+        .status-delivered { background-color: rgba(52, 211, 153, 0.2); color: var(--delivered); }
+        .status-return-request { background-color: rgba(251, 191, 36, 0.2); color: var(--warning); }
+        .status-return-accepted { background-color: rgba(74, 222, 128, 0.2); color: var(--success); }
+        .status-return-rejected { background-color: rgba(248, 113, 113, 0.2); color: var(--danger); }
+        .status-payment-pending { background-color: rgba(248, 113, 113, 0.2); color: var(--danger); }
+        
+        .summary-box {
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-top: 4px solid var(--accent);
+        }
+        
+        .summary-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .summary-title:before {
+            content: "";
+            width: 4px;
+            height: 20px;
+            background: var(--accent);
+            margin-right: 10px;
+            border-radius: 2px;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        
+        .summary-item {
+            background-color: rgba(255, 255, 255, 0.05);
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--border);
+        }
+        
+        .summary-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+        
+        .summary-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .filters {
+            margin-bottom: 30px;
+            background: var(--bg-card);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            padding: 20px;
+            border: 1px solid var(--border);
+        }
+        
+        .filters form {
+            display: flex;
+            gap: 15px;
+            align-items: flex-end;
+            flex-wrap: wrap;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            flex: 1;
+            min-width: 150px;
+        }
+        
+        .form-group label {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+        
+        .form-group input {
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-primary);
+        }
+        
+        .form-group input:focus {
+            border-color: var(--accent);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(61, 132, 247, 0.2);
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            background-color: var(--accent);
+            color: var(--text-primary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+            margin-right: 10px;
+        }
+        
+        .btn:hover {
+            background-color: var(--accent-hover);
+        }
+        
+        @media (max-width: 768px) {
+            .filters form {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+            
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+    <div class="container">
+        <div class="card">
+            <div class="header">
+                <h1 class="title">Aks</h1>
+                <div class="divider"></div>
+                <h2 class="subtitle">Orders Report</h2>
+                <p class="report-period"><%= startDate.toLocaleDateString() %> - <%= endDate.toLocaleDateString() %></p>
+            </div>
+
+            <div class="filters">
+                <form action="/admin/orders/report" method="GET">
+                    <div class="form-group">
+                        <label for="startDate">Start Date:</label>
+                        <input type="date" id="startDate" name="startDate" value="<%= startDate.toISOString().split('T')[0] %>">
+                    </div>
+                    <div class="form-group">
+                        <label for="endDate">End Date:</label>
+                        <input type="date" id="endDate" name="endDate" value="<%= endDate.toISOString().split('T')[0] %>">
+                    </div>
+                    <button type="submit" class="btn">Apply Filters</button>
+                </form>
+            </div>
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>USER NAME</th>
+                        <th class="amount">PRICE</th>
+                        <th class="amount">AMOUNT</th>
+                        <th class="status">STATUS</th>
+                        <th class="date">DATE</th>
+                        <th>PAYMENT METHOD</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% orders.forEach((order, index) => { %>
+                        <tr>
+                            <td><%= order.userId?.name || "Unknown" %></td>
+                            <td class="amount">₹<%= (order.totalPrice || 0).toFixed(2) %></td>
+                            <td class="amount">₹<%= (order.finalAmount || 0).toFixed(2) %></td>
+                            <td class="status">
+                                <% const statusClass = `status-${order.status.toLowerCase().replace(/\s+/g, '-')}` %>
+                                <span class="status-pill <%= statusClass %>"><%= order.status %></span>
+                            </td>
+                            <td class="date"><%= new Date(order.createdOn).toLocaleDateString() %></td>
+                            <td><%= order.paymentMethod || "N/A" %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="summary-box">
+            <h3 class="summary-title">Summary</h3>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <span class="summary-label">Total Orders</span>
+                    <span class="summary-value"><%= totalOrders %></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Items</span>
+                    <span class="summary-value"><%= totalItems %></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Base Amount</span>
+                    <span class="summary-value">₹<%= totalBaseAmount.toFixed(2) %></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Total Discount</span>
+                    <span class="summary-value">₹<%= totalDiscount.toFixed(2) %></span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Final Amount</span>
+                    <span class="summary-value">₹<%= totalFinalAmount.toFixed(2) %></span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <%- include("../../views/partials/admin/footer") %>

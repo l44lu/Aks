@@ -17,7 +17,6 @@ const razorpay = new Razorpay({
 })
 
 
-
 const getCheckoutPage = async (req, res) => {
     try {
         const userId = req.session.user
@@ -59,7 +58,6 @@ const getCheckoutPage = async (req, res) => {
         res.status(500).send("Internal Server Error")
     }
 }
-
 
 const loadPayment = async(req,res)=>{
     try {
@@ -114,7 +112,7 @@ const loadPayment = async(req,res)=>{
             cartItems: products,
             walletBalance,
             balanceAfterPayment,
-            razorpayKeyId: process.env.RAZORPAY_KEY || '',
+            razorpayKeyId: process.env.RAZORPAY_KEY_ID || '',
         })
     } catch (error) {
         console.log("error while loadPayment:",error)
@@ -122,57 +120,27 @@ const loadPayment = async(req,res)=>{
     }
 }
 
+
+
 const loadOrders = async (req, res) => {
     try {
-        const userId = req.session.user;
-        const userData = await User.findOne({ _id: userId });
-        const searchTerm = req.query.search?.trim(); 
-        
-        let page = parseInt(req.query.page) || 1;
-        let limit = 5;
+        const userId = req.session.user
+        const userData = await User.findOne({ _id: userId })
+        let page = parseInt(req.query.page) || 1
+        let limit = 5
         let skip = (page - 1) * limit;
-        
-        let query = { userId };
-        
-        let totalOrders;
-        let orders;
-        
-        if (searchTerm) {
-            const allOrders = await Order.find({ userId }).lean();
-            
-            const filteredOrderIds = allOrders
-                .filter(order => order._id.toString().slice(-6).includes(searchTerm))
-                .map(order => order._id);
-            
-            totalOrders = filteredOrderIds.length;
-            
-            orders = await Order.find({ 
-                _id: { $in: filteredOrderIds },
-                userId 
+        const totalOrders = await Order.countDocuments({ userId });
+
+        const orders = await Order.find({ userId })
+            .sort({ createdOn: -1 }) 
+            .skip(skip)
+            .limit(limit)
+            .populate({
+                path: 'orderItems.productId',
+                model: 'Product',
+                select: 'productName productImage salePrice '
             })
-                .sort({ createdOn: -1 })
-                .skip(skip)
-                .limit(limit)
-                .populate({
-                    path: 'orderItems.productId',
-                    model: 'Product',
-                    select: 'productName productImage salePrice '
-                })
-                .lean();
-        } else {
-            totalOrders = await Order.countDocuments({ userId });
-            
-            orders = await Order.find(query)
-                .sort({ createdOn: -1 })
-                .skip(skip)
-                .limit(limit)
-                .populate({
-                    path: 'orderItems.productId',
-                    model: 'Product',
-                    select: 'productName productImage salePrice '
-                })
-                .lean();
-        }
+            .lean();
 
         const formattedOrders = orders.map(order => ({
             orderId: order.orderId,
@@ -182,7 +150,7 @@ const loadOrders = async (req, res) => {
             finalAmount: order.finalAmount,
             status: order.status,
             paymentMethod: order.paymentMethod,
-            // couponApplied: order.couponApplied,
+            couponApplied: order.couponApplied,
             products: order.orderItems
                 ?.filter(item => item.productId)
                 .map(item => ({
@@ -202,8 +170,7 @@ const loadOrders = async (req, res) => {
             orders: formattedOrders,
             user: userData,
             currentPage: page,
-            totalPages: Math.ceil(totalOrders / limit),
-            searchTerm: searchTerm || '' 
+            totalPages: Math.ceil(totalOrders / limit)
         });
 
     } catch (error) {
@@ -211,7 +178,6 @@ const loadOrders = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 };
-
 
 
 
@@ -926,7 +892,7 @@ const paymentFailure = async (req, res) => {
             orderId: orderId || 'N/A',
             amount: finalAmount,
             paymentMethod: paymentMethod || 'N/A',
-            razorpayKeyId: process.env.RAZORPAY_KEY || '', 
+            razorpayKeyId: process.env.RAZORPAY_KEY_ID || '', 
             addressId: addressId || 'N/A',
             userEmail: req.user?.email || '',
             userPhone: req.user?.phone || ''

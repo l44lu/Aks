@@ -1,9 +1,929 @@
 <%-include("../partials/admin/header")%>
 
-<section class="content-main">
-    <div class="content-header">
-        <h2 class="content-title">Dashboard</h2>
-    </div>
-</section>
+<title>Dashboard</title>
+<!-- CSS Libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
+<style>
+
+/* ============================= */
+/* GLOBAL STYLES */
+/* ============================= */
+body {
+  background-color: #121212;
+  font-family: 'Inter', 'Segoe UI', sans-serif;
+  color: #e0e0e0;
+  line-height: 1.6;
+}
+
+/* ============================= */
+/* DASHBOARD LAYOUT */
+/* ============================= */
+.dashboard-container {
+  padding: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #ffffff;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #2a2a2a;
+}
+
+.section-title {
+  color: #ffffff;
+  font-size: 1.4rem;
+  margin: 1.5rem 0 1rem;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
+
+.section-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 20px;
+  background-color: #5a78ff;
+  margin-right: 10px;
+  border-radius: 4px;
+}
+
+/* ============================= */
+/* CARD STYLING */
+/* ============================= */
+.stats-card {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  height: 100%;
+  transition: all 0.3s ease;
+  overflow: hidden;
+  border: 1px solid #2a2a2a;
+}
+
+.stats-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+}
+
+.card-header {
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 1rem 1.25rem;
+  color: #b8b8b8;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  align-items: center;
+}
+
+.card-header::before {
+  content: '';
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+.bg-light-blue .card-header::before { background-color: #5a78ff; }
+.bg-light-green .card-header::before { background-color: #10b981; }
+.bg-light-yellow .card-header::before { background-color: #f59e0b; }
+.bg-light-red .card-header::before { background-color: #ef4444; }
+.bg-light-purple .card-header::before { background-color: #9d71ff; }
+
+.card-body {
+  padding: 1.25rem;
+  display: flex;
+  align-items: center;
+}
+
+.card-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.25rem;
+}
+
+.card-percentage {
+  font-size: 0.9rem;
+  color: #a0a0a0;
+  display: flex;
+  align-items: center;
+}
+
+.card-percentage.positive::before {
+  content: '↑';
+  color: #10b981;
+  margin-right: 4px;
+}
+
+.card-percentage.negative::before {
+  content: '↓';
+  color: #ef4444;
+  margin-right: 4px;
+}
+
+.icon-container {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+}
+
+.icon {
+  font-size: 1.5rem;
+}
+
+/* ============================= */
+/* COLOR SCHEMES */
+/* ============================= */
+.bg-light-blue { background-color: #1a2030; }
+.bg-light-green { background-color: #132c1f; }
+.bg-light-yellow { background-color: #2c2815; }
+.bg-light-red { background-color: #2c1616; }
+.bg-light-purple { background-color: #231a2d; }
+
+.icon-blue { background-color: #1d2c5a; color: #5a78ff; }
+.icon-green { background-color: #0c3620; color: #10b981; }
+.icon-yellow { background-color: #332811; color: #f59e0b; }
+.icon-red { background-color: #331515; color: #ef4444; }
+.icon-purple { background-color: #251a38; color: #9d71ff; }
+
+/* ============================= */
+/* FILTER SECTION */
+/* ============================= */
+.filters-section {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  padding: 1.25rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  border: 1px solid #2a2a2a;
+}
+
+.btn-filter {
+  padding: 0.5rem 1rem;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  margin-right: 6px;
+  color: #b8b8b8;
+}
+
+.btn-filter:hover {
+  background-color: #333333;
+}
+
+.btn-filter.active {
+  background-color: #5a78ff;
+  color: white;
+  border-color: #5a78ff;
+}
+
+.date-input {
+  border: 1px solid #3a3a3a;
+  border-radius: 8px;
+  padding: 0.5rem;
+  color: #b8b8b8;
+  transition: all 0.2s ease;
+  background-color: #2a2a2a;
+}
+
+.date-input:focus {
+  border-color: #5a78ff;
+  box-shadow: 0 0 0 3px rgba(90, 120, 255, 0.2);
+  outline: none;
+}
+
+/* ============================= */
+/* REPORT BUTTONS */
+/* ============================= */
+.report-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  border: none;
+}
+
+.report-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 10px;
+}
+
+.excel-btn {
+  background-color: #0d8a63;
+  color: white;
+  min-width: 120px;
+}
+
+.excel-btn:hover {
+  background-color: #0f9d72;
+  transform: translateY(-2px);
+}
+
+.pdf-btn {
+  background-color: #c73a3a;
+  color: white;
+  min-width: 120px;
+}
+
+.pdf-btn:hover {
+  background-color: #d94242;
+  transform: translateY(-2px);
+}
+
+.report-btn[style*="background-color: blue"] {
+  background-color: #3152d4 !important;
+}
+
+.report-btn[style*="background-color: blue"]:hover {
+  background-color: #3a5aea !important;
+  transform: translateY(-2px);
+}
+
+.report-btn i {
+  font-size: 1rem;
+}
+
+/* ============================= */
+/* TABLE STYLING */
+/* ============================= */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.data-table th {
+  background-color: #232323;
+  color: #a0a0a0;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  padding: 1rem;
+  letter-spacing: 0.05em;
+  text-align: left;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.data-table td {
+  padding: 1rem;
+  border-bottom: 1px solid #2a2a2a;
+  vertical-align: middle;
+  color: #e0e0e0;
+}
+
+.data-table tbody tr {
+  transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover {
+  background-color: #252525;
+}
+
+.table-container {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  margin-bottom: 2rem;
+  border: 1px solid #2a2a2a;
+}
+
+.table-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid #2a2a2a;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.table-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin: 0;
+}
+
+/* ============================= */
+/* CHARTS STYLING */
+/* ============================= */
+.chart-container {
+  background-color: #1e1e1e;
+  border-radius: 16px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  height: 100%;
+  border: 1px solid #2a2a2a;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #ffffff;
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid #2a2a2a;
+}
+
+.chart-wrapper {
+  position: relative;
+  height: 250px;
+}
+
+/* Chart.js modifications for dark theme */
+canvas {
+  filter: brightness(0.95) contrast(1.1);
+}
+
+/* ============================= */
+/* RESPONSIVE DESIGN */
+/* ============================= */
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 1rem;
+  }
+  
+  .report-buttons {
+    justify-content: flex-start;
+    margin-top: 1rem;
+  }
+  
+  .chart-container {
+    height: auto;
+  }
+  
+  canvas {
+    max-height: 250px;
+  }
+  
+  .card-header, .card-body {
+    padding: 0.75rem 1rem;
+  }
+  
+  .table-header {
+    padding: 1rem;
+  }
+  
+  .data-table th, .data-table td {
+    padding: 0.75rem;
+  }
+  
+  .dashboard-title {
+    font-size: 1.6rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .report-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .report-btn {
+    width: 100%;
+    justify-content: center;
+    padding: 0.75rem;
+  }
+  
+  .filters-section .row {
+    flex-direction: column;
+  }
+  
+  .btn-group {
+    margin-bottom: 1rem;
+    display: flex;
+    width: 100%;
+  }
+  
+  .btn-filter {
+    flex: 1;
+    margin-right: 4px;
+    margin-left: 4px;
+    padding: 0.5rem 0.25rem;
+    font-size: 0.9rem;
+  }
+  
+  .date-input-group {
+    margin-bottom: 1rem;
+    flex-direction: column;
+  }
+  
+  .date-input-group .mx-2 {
+    margin: 0.5rem 0;
+    text-align: center;
+    color: #e0e0e0;
+  }
+  
+  .date-input {
+    width: 100%;
+  }
+}
+
+/* ============================= */
+/* ACCESSIBILITY IMPROVEMENTS */
+/* ============================= */
+.btn-filter:focus, 
+.date-input:focus, 
+.report-btn:focus {
+  outline: 2px solid #5a78ff;
+  outline-offset: 2px;
+}
+
+.btn-filter:focus:not(:focus-visible), 
+.date-input:focus:not(:focus-visible), 
+.report-btn:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Make table rows more distinct on hover */
+.data-table tbody tr:hover td {
+  background-color: #252525;
+}
+
+/* Improve chart tooltips */
+.chartjs-tooltip {
+  background-color: rgba(30, 30, 30, 0.95) !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  padding: 8px 12px !important;
+  color: #e0e0e0 !important;
+  border: 1px solid rgba(60, 60, 60, 0.5) !important;
+}
+
+/* Improve form controls */
+.form-control {
+  border-radius: 8px;
+  padding: 0.5rem 0.75rem;
+  transition: all 0.2s ease;
+  background-color: #2a2a2a;
+  border: 1px solid #3a3a3a;
+  color: #e0e0e0;
+}
+
+.form-control:focus {
+  border-color: #5a78ff;
+  box-shadow: 0 0 0 3px rgba(90, 120, 255, 0.2);
+}
+
+/* Better loading indicators */
+.loading-spinner {
+  border: 3px solid #333333;
+  border-top: 3px solid #5a78ff;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Modern scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a1a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #3a3a3a;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #4a4a4a;
+}
+</style>
+
+<div class="dashboard-container">
+  <!-- Dashboard Header -->
+  <div class="row">
+    <div class="col-md-8">
+      <h1 class="dashboard-title">Dashboard</h1>
+    </div>
+  </div>
+
+  <!-- Filters Section -->
+  <div class="row">
+    <div class="col-12">
+      <div class="filters-section">
+        <div class="row align-items-center">
+          <div class="col-md-4">
+            <div class="btn-group" role="group">
+              <% ['all', '1day', '1week', '1month'].forEach(period => { %>
+                <button type="button" class="btn btn-filter <%= data.selectedPeriod === period ? 'active' : '' %>" data-period="<%= period %>">
+                  <%= period === 'all' ? 'All Time' : period.replace('1', '1 ') %>
+                </button>
+              <% }); %>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="d-flex align-items-center date-input-group">
+              <input type="date" class="form-control date-input" value="<%= data.startDate %>">
+              <span class="mx-2">to</span>
+              <input type="date" class="form-control date-input" value="<%= data.endDate %>">
+            </div>
+          </div>
+          <span></span>
+          <div class="col-md-4">
+            <div class="report-buttons">
+              <button class="report-btn excel-btn">
+                <i class="fas fa-file-excel"></i> Excel Report
+              </button>
+              <button class="report-btn pdf-btn">
+                <i class="fas fa-file-pdf"></i> PDF Report
+              </button>
+            </div>
+          </div>
+          <a href="/admin/orders/report" style="margin-top: 10px; margin-left: 50px;"> <button class="report-btn pdf-btn" style="background-color: blue;">
+            <i class="fas fa-chart-line"></i> salesReport
+          </button></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales Overview Charts - Moved up -->
+  <h2 class="section-title">Sales Overview</h2>
+  <div class="row mb-4">
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h3 class="chart-title">Monthly Sales</h3>
+        <div class="chart-wrapper">
+          <canvas id="salesChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-6 mb-4">
+      <div class="chart-container">
+        <h3 class="chart-title">Order Status Distribution</h3>
+        <div class="chart-wrapper">
+          <canvas id="orderStatusChart"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sales & Orders Overview -->
+  <div class="row mb-4">
+    <% const stats = [
+      { title: 'Total Sales', value: data.totalSales, growth: data.totalSalesGrowth, icon: 'fas fa-chart-line', color: 'green' },
+      { title: 'Total Orders', value: data.totalOrders, icon: 'fas fa-shopping-bag', color: 'blue' },
+      { title: 'Cancelled Orders', value: data.cancelledOrders, extra: `₹${data.cancelledAmount.toLocaleString()} (${data.cancelledPercentage}%)`, icon: 'fas fa-times-circle', color: 'red' },
+      { title: 'Pending Orders', value: data.pendingOrders, extra: `₹${data.pendingAmount.toLocaleString()} (${data.pendingPercentage}%)`, icon: 'fas fa-clock', color: 'yellow' }
+    ]; %>
+
+    <% stats.forEach(stat => { %>
+      <div class="col-lg-3 col-md-6 mb-4">
+        <div class="stats-card bg-light-<%= stat.color %>">
+          <div class="card-header"><%= stat.title %></div>
+          <div class="card-body">
+            <div>
+              <h2 class="card-value"><%= stat.title === 'Total Sales' ? `₹${stat.value.toLocaleString()}` : stat.value.toLocaleString() %></h2>
+              <% if (stat.extra) { %><span class="card-percentage"><%= stat.extra %></span><% } %>
+            </div>
+            <div class="icon-container icon-<%= stat.color %>">
+              <i class="<%= stat.icon %> icon"></i>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% }); %>
+  </div>
+
+  <!-- Order Status -->
+  <div class="row mb-4">
+    <% const orderStatus = [
+      { title: 'Processing Orders', value: data.processingOrders, extra: `₹${data.processingAmount.toLocaleString()} (${data.processingPercentage}%)`, icon: 'fas fa-truck', color: 'blue' },
+      { title: 'Delivered Orders', value: data.deliveredOrders, extra: `₹${data.deliveredAmount.toLocaleString()} (${data.deliveredPercentage}%)`, icon: 'fas fa-check-circle', color: 'green' },
+      { title: 'Total Users', value: data.totalUsers, extra: 'Active users', icon: 'fas fa-users', color: 'purple' }
+    ]; %>
+
+    <% orderStatus.forEach(status => { %>
+      <div class="col-lg-4 col-md-4 mb-4">
+        <div class="stats-card bg-light-<%= status.color %>">
+          <div class="card-header"><%= status.title %></div>
+          <div class="card-body">
+            <div>
+              <h2 class="card-value"><%= status.value.toLocaleString() %></h2>
+              <% if (status.extra) { %><span class="card-percentage"><%= status.extra %></span><% } %>
+            </div>
+            <div class="icon-container icon-<%= status.color %>">
+                <i class="<%= status.icon %> icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  
+    <!-- Discounts & Coupons -->
+    <div class="row mb-4">
+      <% const couponStats = [
+        { title: 'Total Discounts', value: `₹${data.totalDiscounts.toLocaleString()}`, extra: `${data.discountPercentage}% of total sales`, icon: 'fas fa-tags', color: 'purple' },
+        { title: 'Active Coupons', value: data.activeCoupons, extra: 'Currently Active', icon: 'fas fa-ticket-alt', color: 'green' },
+        { title: 'Expired Coupons', value: data.expiredCoupons, extra: 'Inactive', icon: 'fas fa-ban', color: 'red' },
+        { title: 'Coupon Usage', value: data.totalCouponUsage, extra: 'Orders with coupons', icon: 'fas fa-percentage', color: 'blue' }
+      ]; %>
+  
+      <% couponStats.forEach(coupon => { %>
+        <div class="col-lg-3 col-md-6 mb-4">
+          <div class="stats-card bg-light-<%= coupon.color %>">
+            <div class="card-header"><%= coupon.title %></div>
+            <div class="card-body">
+              <div>
+                <h2 class="card-value"><%= coupon.value %></h2>
+                <span class="card-percentage"><%= coupon.extra %></span>
+              </div>
+              <div class="icon-container icon-<%= coupon.color %>">
+                <i class="<%= coupon.icon %> icon"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      <% }); %>
+    </div>
+  
+    <!-- Top 10 Best Selling Products -->
+    <h2 class="section-title">Best Selling Products (Top 10)</h2>
+    <div class="table-container mb-4">
+      <div class="table-header">
+        <h3 class="table-title">Products Performance</h3>
+      </div>
+      <div class="table-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Product Name</th>
+                <th>Category</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+                <th>Order Count</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topProducts.forEach(product => { %>
+                <tr>
+                  <td><%= product.productName %></td>
+                  <td><%= product.categoryInfo.name %></td>
+                  <td><%= product.totalQuantitySold.toLocaleString() %></td>
+                  <td>₹<%= product.totalRevenue.toLocaleString() %></td>
+                  <td><%= product.orderCount.toLocaleString() %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  
+    <!-- Top 5 Best-Selling Categories -->
+    <h2 class="section-title">Top 5 Best-Selling Categories</h2>
+    <div class="table-container mb-4">
+      <div class="table-header">
+        <h3 class="table-title">Category Performance</h3>
+      </div>
+      <div class="table-body">
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Category Name</th>
+                <th>Total Quantity Sold</th>
+                <th>Total Revenue</th>
+              </tr>
+            </thead>
+            <tbody>
+              <% topCategories.forEach(category => { %>
+                <tr>
+                  <td><%= category.categoryInfo.name %></td>
+                  <td><%= category.totalQuantitySold.toLocaleString() %></td>
+                  <td>₹<%= category.totalRevenue.toLocaleString() %></td>
+                </tr>
+              <% }); %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    
+  
+    <%- include("../../views/partials/admin/footer") %>
+
+  
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    const orderStatusCtx = document.getElementById('orderStatusChart').getContext('2d');
+
+    const salesData = {
+        pending: '<%= data.pendingAmount || 0 %>',
+        processing: '<%= data.processingAmount || 0 %>',
+        delivered: '<%= data.deliveredAmount || 0 %>',
+        cancelled: '<%= data.cancelledAmount || 0 %>'
+    };
+
+    const orderCounts = {
+        pending: '<%= data.pendingOrders || 0 %>',
+        processing: '<%= data.processingOrders || 0 %>',
+        delivered: '<%= data.deliveredOrders || 0 %>',
+        cancelled: '<%= data.cancelledOrders || 0 %>'
+    };
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Pending', 'Processing', 'Delivered', 'Cancelled'],
+            datasets: [{
+                label: 'Total Sales (₹)',
+                data: [salesData.pending, salesData.processing, salesData.delivered, salesData.cancelled],
+                backgroundColor: ['#f39c12', '#3498db', '#2ecc71', '#e74c3c'],
+                borderColor: ['#d68910', '#2874a6', '#28b463', '#c0392b'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function (value) {
+                            return value >= 1000 ? (value / 1000) + 'K' : value;  
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Sales Amount (₹)',
+                        font: { weight: 'bold' }
+                    }
+                },
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Order Status',
+                        font: { weight: 'bold' }
+                    }
+                }
+            }
+        }
+    });
+
+    new Chart(orderStatusCtx, {
+        type: 'doughnut',
+        data: {
+            labels: ['Pending', 'Processing', 'Delivered', 'Cancelled'],
+            datasets: [{
+                label: 'Order Count',
+                data: [orderCounts.pending, orderCounts.processing, orderCounts.delivered, orderCounts.cancelled],
+                backgroundColor: ['#f39c12', '#3498db', '#2ecc71', '#e74c3c'],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'top'
+                }
+            }
+        }
+    });
+
+    // Date filtering functionality
+    const filterButtons = document.querySelectorAll('.btn-filter');
+    
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            const period = this.getAttribute('data-period');
+            
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            this.classList.add('active');
+            
+            window.location.href = `/admin?period=${period}`;
+        });
+    });
+
+    // Date range picker functionality
+    const startDateInput = document.querySelector(".date-input:first-of-type");
+    const endDateInput = document.querySelector(".date-input:last-of-type");
+    const excelButton = document.querySelector(".excel-btn");
+    const pdfButton = document.querySelector(".pdf-btn");
+
+    function updateDateRange(days) {
+        const today = new Date();
+        const startDate = new Date();
+        startDate.setDate(today.getDate() - days);
+
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        startDateInput.value = formatDate(startDate);
+        endDateInput.value = formatDate(today);
+    }
+
+    filterButtons.forEach((button) => {
+        button.addEventListener("click", function () {
+            const period = this.getAttribute('data-period');
+            
+            if (period === '1day') updateDateRange(1);
+            else if (period === '1week') updateDateRange(7);
+            else if (period === '1month') updateDateRange(30);
+        });
+    });
+
+    function getSelectedDates() {
+        let startDate = startDateInput.value;
+        let endDate = endDateInput.value;
+
+        if (!startDate || !endDate) {
+            Swal.fire({
+                icon: "warning",
+                title: "Invalid Date Selection",
+                text: "Please select valid dates before downloading the report.",
+                confirmButtonColor: "#3085d6",
+                confirmButtonText: "OK"
+            });
+            return null;
+        }
+
+        startDate = new Date(startDate).toISOString().split("T")[0]; 
+        endDate = new Date(endDate).toISOString().split("T")[0];
+
+        return { startDate, endDate };
+    }
+
+    excelButton.addEventListener("click", function () {
+        const dates = getSelectedDates();
+        
+        if (dates) {
+            const startDate = new Date(dates.startDate);
+            const endDate = new Date(dates.endDate);
+
+            if (startDate > endDate) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Date Range",
+                    text: "Start date cannot be later than the end date. Please select a valid range!",
+                    confirmButtonColor: "#d33",
+                });
+                return; 
+            }
+
+            window.location.href = `/admin/orders/download/excel?startDate=${dates.startDate}&endDate=${dates.endDate}`;
+        }
+    });
+
+    pdfButton.addEventListener("click", function () {
+        const dates = getSelectedDates();
+        
+        if (dates) {
+            const startDate = new Date(dates.startDate);
+            const endDate = new Date(dates.endDate);
+
+            if (startDate > endDate) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Invalid Date Range",
+                    text: "Start date cannot be later than the end date. Please select a valid range!",
+                    confirmButtonColor: "#d33",
+                });
+                return; 
+            }
+
+            window.location.href = `/admin/orders/download/pdf?startDate=${dates.startDate}&endDate=${dates.endDate}`;
+        }
+    });
+});
+</script>
 <%-include("../partials/admin/footer")%>

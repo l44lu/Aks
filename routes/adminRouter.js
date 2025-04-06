@@ -7,9 +7,9 @@ const orderController = require("../controllers/admin/orderController");
 const { userAuth, adminAuth } = require("../middlewares/auth");
 const productController = require("../controllers/admin/productController");
 const couponController = require("../controllers/admin/couponController");
+const dashboardController = require("../controllers/admin/dashboardController");
 const multer = require("multer"); 
 const path = require("path");
-
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -67,6 +67,16 @@ router.post("/handleReturn",adminAuth,orderController.handleReturn)
 
 router.get("/coupon",adminAuth,couponController.loadCoupon);
 router.post("/createCoupon",adminAuth,couponController.createCoupon)
+// 
+router.delete("deleteCoupon",adminAuth,couponController.deleteCoupon);
+
+
+
+router.get("/orders/filter",adminAuth,dashboardController.filterOrder);
+router.get("/orders/report",adminAuth,dashboardController.getOrdersReport);
+router.get("/orders/download/excel",adminAuth,dashboardController.downloadExcelReport);
+router.get("/orders/download/pdf",adminAuth,dashboardController.downloadPdfReport);
+
 
 
 

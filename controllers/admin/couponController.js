@@ -62,8 +62,45 @@ const createCoupon = async (req, res) => {
     }
 }
 
+// const getCouponDetails = async (req, res) => {
+//     try {
+//         const { couponName } = req.params
+        
+//         const coupon = await Coupon.findOne({ name: couponName })
+//         if (!coupon) {
+//             return res.status(404).json({ success: false, message: "Coupon not found." })
+//         }
+//         res.status(200).json(coupon)
+//     } catch (error) {
+//         console.error("Error fetching coupon details:", error)
+//         res.status(500).json({ success: false, message: "Internal server error." })
+//     }
+// }
+
+
+const deleteCoupon = async(req,res)=>{
+    try {
+        const{couponName}=req.body;
+        if(!couponName){
+            return res.status(400).json({success:false,message:"Coupon name is required."})
+        }
+        const deletedCoupon =  await Coupon.findOneAndDelete({name:couponName});
+
+        if(!deletedCoupon){
+            return res.status(404).json({success:false,message:"Coupon cannot be deleted "});
+        }
+        res.status(200).json({success:false,message:"the"})
+    } catch (error) {
+        
+    }
+}
+
+
 
 module.exports  ={
     loadCoupon,
     createCoupon,
+    // getCouponDetails,
+    deleteCoupon,
+    
 }
