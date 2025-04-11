@@ -900,17 +900,17 @@ h1, h2, h3, h4, h5 {
         
                 console.log('payment amount on cash on delevery: ', paymentAmount);
         
-                // if (paymentAmount >= 1000) {
+                if (paymentAmount >= 1000) {
                     
-                //     Swal.fire({
-                //         icon: 'warning',
-                //         title: 'COD Not Available',
-                //         text: 'Cash on Delivery is not available for orders above ₹1000.',
-                //         confirmButtonText: 'OK'
-                //     });
+                    Swal.fire({
+                        icon: 'warning',
+                        title: 'COD Not Available',
+                        text: 'Cash on Delivery is not available for orders above ₹1000.',
+                        confirmButtonText: 'OK'
+                    });
                     
-                //     return;
-                // }
+                    return;
+                }
         
                 Swal.fire({
                     title: "Cash on Delivery Selected!",

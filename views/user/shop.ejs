@@ -2,15 +2,16 @@
 
 <style>
   body {
-    background-color: #f8f8f8;
-    color: #000000;
+    background-color: #fafafa;
+    color: #111;
     margin: 0;
     padding: 0;
+    font-family: 'Cormorant Garamond', serif;
     letter-spacing: 0.5px;
   }
 
   .main-container {
-    max-width: 1600px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 40px;
   }
@@ -20,8 +21,8 @@
     justify-content: space-between;
     align-items: center;
     padding: 30px 0;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    margin-bottom: 40px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    margin-bottom: 0;
   }
 
   .brand-logo {
@@ -123,9 +124,9 @@
 
   .collection-banner {
     position: relative;
-    height: 400px;
-    margin-bottom: 80px;
-    background-color: #0f403f;
+    height: 500px;
+    margin-bottom: 60px;
+    background-color: #0f0f0f;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -137,7 +138,10 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
-    opacity: 0.7;
+    opacity: 0.8;
+    background-image: url('/api/placeholder/1400/500');
+    background-size: cover;
+    background-position: center;
   }
 
   .banner-content {
@@ -157,49 +161,50 @@
 
   .collection-title {
     font-size: 72px;
-    letter-spacing: 6px;
+    letter-spacing: 8px;
     text-transform: uppercase;
     margin: 0;
-    font-weight: 300;
+    color: aliceblue;
+    font-weight: 100;
   }
 
-  .filter-bar {
+  .sort-options {
     display: flex;
-    justify-content: space-between;
     align-items: center;
+    justify-content: flex-end;
     padding: 20px 0;
-    margin-bottom: 50px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
   }
 
-  .filter-toggle {
-    cursor: pointer;
+  .sort-options label {
+    font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Montserrat', sans-serif;
-    display: flex;
-    align-items: center;
-    gap: 8px;
+    letter-spacing: 1px;
+    margin-right: 15px;
+    color: #333;
   }
 
-  .filter-toggle i {
-    font-size: 16px;
-  }
-
-  .product-count {
-    font-size: 14px;
-    font-family: 'Montserrat', sans-serif;
-    color: #555;
-  }
-
-  .sorting-options {
+  #sortSelect {
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
     border: none;
     background: transparent;
-    padding: 8px 20px;
+    padding: 10px 30px 10px 15px;
     cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 5px center;
+    background-size: 15px;
+    border-bottom: 1px solid #ddd;
+    transition: all 0.3s;
+  }
+
+  #sortSelect:focus {
+    outline: none;
+    border-color: #000;
   }
 
   .product-list-container {
@@ -208,9 +213,8 @@
   }
 
   .sidebar {
-    width: 280px;
+    width: 260px;
     padding-right: 40px;
-    border-right: 1px solid rgba(0, 0, 0, 0.1);
     font-family: 'Montserrat', sans-serif;
   }
 
@@ -218,15 +222,27 @@
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin-bottom: 25px;
+    margin: 0 0 25px;
     color: #000000;
     font-weight: 500;
+    position: relative;
+    padding-bottom: 12px;
+  }
+
+  .sidebar h3::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 1px;
+    background-color: #000;
   }
 
   .sidebar ul {
     list-style: none;
     padding: 0;
-    margin-bottom: 20pxpx;
+    margin: 0 0 30px;
   }
 
   .sidebar ul li {
@@ -238,13 +254,13 @@
     text-decoration: none;
     font-size: 14px;
     transition: color 0.3s;
+    display: block;
+    padding: 5px 0;
   }
 
   .sidebar ul li a:hover {
     color: #a11826;
   }
-
-
 
   .filter-button {
     display: block;
@@ -262,23 +278,39 @@
     font-family: 'Montserrat', sans-serif;
   }
 
-
-
   .filter-button:hover {
     color: #a11826;
   }
 
+  .refresh-button {
+    display: inline-block;
+    background-color: transparent;
+    color: #333;
+    border: 1px solid #333;
+    padding: 8px 15px;
+    font-size: 10px;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 5px 0 30px;
+    transition: all 0.3s;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-family: 'Montserrat', sans-serif;
+  }
 
+  .refresh-button:hover {
+    background-color: #000;
+    color: #fff;
+    transform: translateY(-2px);
+  }
 
   .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 40px;
+    gap: 30px;
     flex-grow: 1;
   }
 
-
-  
   .product-card {
     position: relative;
     background-color: transparent;
@@ -286,15 +318,16 @@
     text-align: left;
     transition: transform 0.4s;
     overflow: hidden;
+    margin-bottom: 15px;
   }
 
   .product-card:hover {
-    transform: translateY(-10px);
+    transform: translateY(-5px);
   }
 
   .product-card img {
     width: 100%;
-    height: 450px;
+    height: 400px;
     object-fit: cover;
     transition: all 0.8s;
   }
@@ -306,31 +339,34 @@
   .product-card a {
     text-decoration: none;
     color: inherit;
+    display: block;
   }
 
   .product-info {
-    padding: 10px 20px;
+    padding: 15px 5px;
   }
 
   .product-card h4 {
-    font-size: 20px;
-    font-weight: 350;
-    margin-bottom: 8px;
+    font-size: 18px;
+    font-weight: 400;
+    margin: 0 0 8px;
     color: #000000;
+    font-family: 'Cormorant Garamond', serif;
   }
 
   .product-card p {
     font-family: 'Montserrat', sans-serif;
     font-size: 14px;
-    font-weight: 300;
-    margin-bottom: 0;
+    font-weight: 400;
+    margin: 0;
     color: #555;
   }
 
   .product-card p strike {
-    color: #8f1010;
+    color: #a11826;
     margin-left: 10px;
     font-size: 13px;
+    opacity: 0.8;
   }
 
   .wishlist-btn {
@@ -340,7 +376,7 @@
     font-size: 16px;
     cursor: pointer;
     color: #ffffff;
-    background: rgba(0, 0, 0, 0.5);
+    background: rgba(0, 0, 0, 0.6);
     border-radius: 50%;
     width: 40px;
     height: 40px;
@@ -350,6 +386,7 @@
     transition: all 0.3s;
     z-index: 10;
     opacity: 0;
+    border: none;
   }
 
   .product-card:hover .wishlist-btn {
@@ -357,7 +394,7 @@
   }
 
   .wishlist-btn:hover {
-    background: #75242c;
+    background: #a11826;
   }
 
   .product-hover-overlay {
@@ -372,6 +409,7 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
+    z-index: 5;
   }
 
   .product-card:hover .product-hover-overlay {
@@ -385,18 +423,23 @@
     border: 1px solid #000000;
     padding: 12px 15px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 11px;
     text-transform: uppercase;
     letter-spacing: 2px;
     width: 100%;
     transition: all 0.3s;
     font-family: 'Montserrat', sans-serif;
+    font-weight: 500;
   }
 
   .add-to-cart-btn {
     background-color: #000000;
     color: #ffffff;
     border: 1px solid #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
   .quick-view-btn:hover {
@@ -410,30 +453,31 @@
   }
 
   .pagination-container {
-    padding: 80px 0 40px;
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
-    margin-top: 80px;
+    padding: 60px 0 40px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    margin-top: 60px;
   }
 
   .pagination {
     display: flex;
     justify-content: center;
-    gap: 10px;
+    gap: 5px;
     font-family: 'Montserrat', sans-serif;
   }
 
   .pagination a {
-    padding: 12px 18px;
+    padding: 8px 15px;
     background-color: transparent;
     color: #000000;
     text-decoration: none;
     transition: all 0.3s;
-    font-size: 14px;
-    font-weight: 300;
+    font-size: 13px;
+    font-weight: 400;
+    border: 1px solid transparent;
   }
 
   .pagination .active {
-    border-bottom: 1px solid #000000;
+    border: 1px solid #000000;
     font-weight: 500;
   }
 
@@ -441,67 +485,7 @@
     color: #a11826;
   }
 
-  .newsletter-section {
-    background-color: #f0f0f0;
-    padding: 80px 0;
-    margin-top: 80px;
-    text-align: center;
-  }
-
-  .newsletter-content {
-    max-width: 600px;
-    margin: 0 auto;
-  }
-
-  .newsletter-title {
-    font-family: 'Cormorant Garamond', serif;
-    font-size: 32px;
-    font-weight: 400;
-    margin-bottom: 15px;
-  }
-
-  .newsletter-text {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 14px;
-    margin-bottom: 30px;
-    color: #555;
-  }
-
-  .newsletter-form {
-    display: flex;
-    border-bottom: 1px solid #000000;
-    max-width: 400px;
-    margin: 0 auto;
-  }
-
-  .newsletter-input {
-    flex: 1;
-    padding: 12px 0;
-    font-size: 14px;
-    border: none;
-    outline: none;
-    background: transparent;
-    font-family: 'Montserrat', sans-serif;
-  }
-
-  .newsletter-button {
-    background-color: transparent;
-    color: #000000;
-    border: none;
-    padding: 12px 0;
-    cursor: pointer;
-    font-size: 14px;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-family: 'Montserrat', sans-serif;
-    transition: color 0.3s;
-  }
-
-  .newsletter-button:hover {
-    color: #a11826;
-  }
-
-  /* Global search styles */
+  /* Global search styles - improved */
   .global-search-container {
     width: 100%;
     margin-bottom: 30px;
@@ -510,20 +494,18 @@
   .global-search-form {
     display: flex;
     border: 1px solid #ddd;
-    border-radius: 4px;
     overflow: hidden;
     transition: all 0.3s ease;
   }
   
   .global-search-form:focus-within {
     border-color: #a11826;
-    box-shadow: 0 0 5px rgba(161, 24, 38, 0.2);
   }
   
   .global-search-input {
     flex: 1;
     padding: 12px 15px;
-    font-size: 14px;
+    font-size: 13px;
     border: none;
     outline: none;
     background: #fff;
@@ -533,12 +515,12 @@
   .global-search-button {
     background-color: #000000;
     color: #ffffff;
-    /* border: none; */
-    /* padding: 12px 4px; */
+    border: none;
+    padding: 0 15px;
     cursor: pointer;
-    /* font-size: 14px; */
-    /* transition: background-color 0.3s; */
-}
+    font-size: 14px;
+    transition: background-color 0.3s;
+  }
   
   .global-search-button:hover {
     background-color: #a11826;
@@ -547,6 +529,10 @@
   @media (max-width: 1200px) {
     .product-grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .main-container {
+      padding: 0 30px;
     }
   }
 
@@ -571,41 +557,21 @@
     .collection-title {
       font-size: 40px;
     }
+    
+    .main-container {
+      padding: 0 20px;
+    }
   }
-  .refresh-button {
-    display: inline-block;
-    background-color: transparent;
-    color: #494949;
-    border: 2px solid #585858;
-    padding: 12px 24px;
-    font-size: 10px;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    margin-bottom: 75px;
-    padding: 11px;
-    transition: all 0.3sease -in-out;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    outline: none;
-}
-.refresh-button:hover {
-  border-color: #d49100;
-  color: #000000;
-  transform: translateY(-2px);
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-
 </style>
+
 <div class="main-container">
   <div class="search-container" id="search-popup">
     <button class="close-search" id="close-search">
       <i class="fas fa-times"></i>
     </button>
     <div class="search-popup">
-      <form action="" method="GET" class="search-form">
-        <input type="text" name="query" placeholder="Search the collection..." class="search-input" />
+      <form action="/search" method="GET" class="search-form">
+        <input type="text" name="query" placeholder="Search our collection..." class="search-input" />
         <button type="submit" class="search-button">
           <i class="fas fa-search"></i>
         </button>
@@ -617,18 +583,18 @@
     <div class="banner-image"></div>
     <div class="banner-content">
       <p class="collection-subtitle">Discover the latest</p>
-      <h1 class="collection-title" style="color: #cacaca;">Fall/Winter</h1>
+      <h1 class="collection-title">Fall/Winter Collection</h1>
     </div>
   </div>
-<!-- 
+
   <div class="sort-options">
-    <label for="sortSelect" style="margin-left: 2px;"> Sort By:</label>
+    <label for="sortSelect">Sort By:</label>
     <select id="sortSelect" onchange="applySort()">
-        <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
-        <option value="priceLowHigh" <%= sort === 'priceLowHigh' ? 'selected' : '' %>>Price: Low to High</option>
-        <option value="priceHighLow" <%= sort === 'priceHighLow' ? 'selected' : '' %>>Price: High to Low</option>
-    </select>
-  </div> -->
+      <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
+      <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
+      <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: High to Low</option>
+  </select>
+  </div>
 
   <section class="shop-page">
     <div class="product-list-container">
@@ -658,7 +624,7 @@
             <li>No categories available</li>
           <% } %>
         </ul>
-        <button class="refresh-button" id="refreshCategories">Refresh</button> 
+        <button class="refresh-button" id="refreshCategories">Reset Categories</button> 
 
         <h3>Price Range</h3>
         <div>
@@ -667,7 +633,7 @@
           <button class="filter-button price-filter" data-min="10000" data-max="15000">₹10,000 - ₹15,000</button>
           <button class="filter-button price-filter" data-min="15000">Above ₹15,000</button>
         </div>
-        <button class="refresh-button" id="refreshPrice">Refresh</button>
+        <button class="refresh-button" id="refreshPrice">Reset Filters</button>
       </aside>
 
       <main class="product-grid" id="product-grid">
@@ -680,7 +646,7 @@
                     <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" />
                     <div class="product-hover-overlay">
                         <button class="quick-view-btn">Quick View</button>
-                        <button class="action-btn add-to-cart-btn" onclick="addToCart('<%=product[i]._id%>')">
+                        <button class="add-to-cart-btn" onclick="addToCart('<%=product[i]._id%>')">
                           <i class="fas fa-shopping-cart"></i>
                           Add to Cart
                         </button>
@@ -692,21 +658,20 @@
                 </div>
             </div>
         <% } %>
-    </main>
-    
+      </main>
     </div>
   </section>
 
   <div class="pagination-container">
     <div class="pagination">
       <% if (currentPage > 1) { %>
-        <a href="/shop?page=<%= currentPage - 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>">Previous</a>
+        <a href="/shop?page=<%= currentPage - 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %><%= locals.sort ? '&sort=' + sort : '' %>">Previous</a>
       <% } %>
       <% for (let i = 1; i <= totalPage; i++) { %>
-        <a class="<%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>"><%= i %></a>
+        <a class="<%= currentPage === i ? 'active' : '' %>" href="/shop?page=<%= i %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %><%= locals.sort ? '&sort=' + sort : '' %>"><%= i %></a>
       <% } %>
       <% if (currentPage < totalPage) { %>
-        <a href="/shop?page=<%= currentPage + 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %>">Next</a>
+        <a href="/shop?page=<%= currentPage + 1 %><%= locals.search ? '&search=' + search : '' %><%= locals.category ? '&category=' + category : '' %><%= locals.minPrice ? '&minPrice=' + minPrice : '' %><%= locals.maxPrice ? '&maxPrice=' + maxPrice : '' %><%= locals.sort ? '&sort=' + sort : '' %>">Next</a>
       <% } %>
     </div>
   </div>
@@ -720,56 +685,55 @@
       window.location.href = window.location.pathname + "?" + urlParams.toString();
   }
 
-function addToWishlist(productId){
-  $.ajax({
-    url:"/addToWishlist",
-    method:"POST",
-    data:{productId:productId},
-    success:(response)=>{
-      Swal.close();
-
-      Swal.fire({
-        title:response.status ? " Added to Wishlist <3" : "!!Already in Wishlist!",
-        text: response.status 
-          ? "This product has been successfully added to your wishlist."
-          : response.message || "This product is already in your wishlist.",      
+  function addToWishlist(productId) {
+    $.ajax({
+      url: "/addToWishlist",
+      method: "POST",
+      data: {productId: productId},
+      success: (response) => {
+        Swal.fire({
+          title: response.status ? "Added to Wishlist" : "Already in Wishlist",
+          text: response.status 
+            ? "This item has been added to your wishlist."
+            : response.message || "This item is already in your wishlist.",      
           icon: response.status ? "success" : "info",
-        showConfirmButton: false,
-        timer: 2000,
-        toast: true,
-        position: "top-end",
-        iconColor: response.status ? "#ff6b81" : "#ffcc00",
-        customClass: response.status ? "swal-success" : "swal-warning",  
-      });
-
-    },
-    error:()=>{
-      Swal.close();
-      Swal.fire({
-        title: "Something went wrong!",
-        text: "Failed to add the product to wishlist. Please try again later.",
-        icon: "error",
-        confirmButtonText: "OK",
-        iconColor: "#ff4b5c",
-        customClass: "swal-error",
-      });
-    },
-  });
-}
-
+          showConfirmButton: false,
+          timer: 2000,
+          toast: true,
+          position: "top-end",
+          iconColor: response.status ? "#a11826" : "#777",
+          customClass: response.status ? "swal-success" : "swal-warning",  
+        });
+      },
+      error: () => {
+        Swal.fire({
+          title: "Something went wrong",
+          text: "Unable to add this item to your wishlist",
+          icon: "error",
+          confirmButtonText: "OK",
+          iconColor: "#a11826",
+          customClass: "swal-error",
+        });
+      },
+    });
+  }
 
   document.querySelectorAll('.category-filter').forEach(item => {
     item.addEventListener('click', function (event) {
       event.preventDefault();
       const categoryId = this.dataset.category;
       
-      // Preserve search parameter if it exists
+      // Preserve existing parameters
       const urlParams = new URLSearchParams(window.location.search);
       const searchQuery = urlParams.get('search');
+      const sortValue = urlParams.get('sort');
       
       let newUrl = `/shop?category=${categoryId}`;
       if (searchQuery) {
         newUrl += `&search=${searchQuery}`;
+      }
+      if (sortValue) {
+        newUrl += `&sort=${sortValue}`;
       }
       
       window.location.href = newUrl;
@@ -781,10 +745,11 @@ function addToWishlist(productId){
       const min = this.dataset.min;
       const max = this.dataset.max || '';
       
-      // Preserve search parameter if it exists
+      // Preserve existing parameters
       const urlParams = new URLSearchParams(window.location.search);
       const searchQuery = urlParams.get('search');
       const categoryId = urlParams.get('category');
+      const sortValue = urlParams.get('sort');
       
       let newUrl = `/shop?minPrice=${min}&maxPrice=${max}`;
       if (searchQuery) {
@@ -793,28 +758,51 @@ function addToWishlist(productId){
       if (categoryId) {
         newUrl += `&category=${categoryId}`;
       }
+      if (sortValue) {
+        newUrl += `&sort=${sortValue}`;
+      }
       
       window.location.href = newUrl;
     });
   });
 
   document.getElementById('refreshCategories').addEventListener('click', function () {
-    // Preserve search parameter if it exists
+    // Preserve search parameter and sort if they exist
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
+    const sortValue = urlParams.get('sort');
+    const minPrice = urlParams.get('minPrice');
+    const maxPrice = urlParams.get('maxPrice');
+    
+    let newUrl = "/shop";
+    const params = [];
     
     if (searchQuery) {
-      window.location.href = `/shop?search=${searchQuery}`;
-    } else {
-      window.location.href = "/shop";
+      params.push(`search=${searchQuery}`);
     }
+    if (sortValue) {
+      params.push(`sort=${sortValue}`);
+    }
+    if (minPrice) {
+      params.push(`minPrice=${minPrice}`);
+    }
+    if (maxPrice) {
+      params.push(`maxPrice=${maxPrice}`);
+    }
+    
+    if (params.length > 0) {
+      newUrl += "?" + params.join("&");
+    }
+    
+    window.location.href = newUrl;
   });
   
   document.getElementById('refreshPrice').addEventListener('click', function () {
-    // Preserve search parameter if it exists
+    // Preserve search parameter, category and sort if they exist
     const urlParams = new URLSearchParams(window.location.search);
     const searchQuery = urlParams.get('search');
     const categoryId = urlParams.get('category');
+    const sortValue = urlParams.get('sort');
     
     let newUrl = "/shop";
     const params = [];
@@ -825,6 +813,9 @@ function addToWishlist(productId){
     if (categoryId) {
       params.push(`category=${categoryId}`);
     }
+    if (sortValue) {
+      params.push(`sort=${sortValue}`);
+    }
     
     if (params.length > 0) {
       newUrl += "?" + params.join("&");
@@ -833,60 +824,75 @@ function addToWishlist(productId){
     window.location.href = newUrl;
   });
 
-function addToCart(productId){
-  $.ajax({
-    url:"/addToCart",
-    method:"POST",
-    data:{productId:productId},
-    success:(response)=>{
-      if(response.status){
-        Swal.fire({
-          title:"Added to Cart",
-          text:response.message,
-          icon:"success",
-          showCancelButtonText:"Cart",
-          cancelButtonText:"OK",
-          timer:2000
-        }).then((result)=>{
-          if(result.isConfirmed){
-            windows.location.href="/cart";
-          }else{
-            location.reload();
-          }
-        });
-      }else{
-        
-        Swal.fire({
-          title:"Error",
-          text:response.message||"Unable to add this to Cart",
-          icon:"error",
-          timer:2000,
-          showConfirmButton:false
-        });
+  function addToCart(productId) {
+    $.ajax({
+      url: "/addToCart",
+      method: "POST",
+      data: {productId: productId},
+      success: (response) => {
+        if(response.status) {
+          Swal.fire({
+            title: "Added to Cart",
+            text: response.message,
+            icon: "success",
+            showConfirmButton: true,
+            confirmButtonText: "View Cart",
+            showCancelButton: true,
+            cancelButtonText: "Continue Shopping",
+            confirmButtonColor: "#000",
+            cancelButtonColor: "#555",
+          }).then((result) => {
+            if(result.isConfirmed) {
+              window.location.href="/cart";
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Notice",
+            text: response.message || "Unable to add this item to your cart",
+            icon: "info",
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
+      },
+      error: (xhr) => {
+        if(xhr.status === 401) {
+          Swal.fire({
+            title: "Sign In Required",
+            text: "Please sign in to add items to your cart",
+            icon: "info",
+            confirmButtonText: "Sign In",
+            confirmButtonColor: "#000",
+            showCancelButton: true,
+            cancelButtonText: "Cancel",
+          }).then((result) => {
+            if(result.isConfirmed) {
+              window.location.href = "/login";
+            }
+          });
+        } else {
+          Swal.fire({
+            title: "Notice",
+            text: "You've reached the maximum limit for this item",
+            icon: "info",
+            timer: 2000,
+            showConfirmButton: false
+          });
+        }
       }
-    },
-    error:(xhr)=>{
-      if(xhr.status===401){
-        handleAuthError(
-          "Not logged In",
-          "You need to log in to add item to your cart."
-        );
-      }else{
-        Swal.fire({
-          title:"Error",
-          text:"Stock limit reached ot maximum 5 item per user",
-          icon:"error",
-          timer:2000,
-          showConfirmButton:false
-        });
-      }
-    }
-  });
-}
+    });
+  }
 
+  // Show/hide search popup
+  document.getElementById('open-search').addEventListener('click', function() {
+    document.getElementById('search-popup').style.display = 'flex';
+  });
+  
+  document.getElementById('close-search').addEventListener('click', function() {
+    document.getElementById('search-popup').style.display = 'none';
+  });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-
 
 <%- include("../../views/partials/user/footer") %>

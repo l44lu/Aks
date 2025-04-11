@@ -8,6 +8,7 @@ const { userAuth, adminAuth } = require("../middlewares/auth");
 const productController = require("../controllers/admin/productController");
 const couponController = require("../controllers/admin/couponController");
 const dashboardController = require("../controllers/admin/dashboardController");
+const walletAdminController = require("../controllers/admin/walletAdminController");
 const multer = require("multer"); 
 const path = require("path");
 
@@ -54,7 +55,7 @@ router.post("/removeProductOffer", adminAuth, productController.removeProductOff
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct); 
-router.post("/editProduct/:id", adminAuth, uploads.array("image", 4), productController.editProduct)
+router.post("/editProduct/:id", adminAuth, uploads.any(), productController.editProduct)
 router.post("/delete-image", productController.deleteSingleImage)
 
 
@@ -64,18 +65,21 @@ router.post("/changeStatus",adminAuth, orderController.changeOrderStatus)
 router.post("/handleReturn",adminAuth,orderController.handleReturn)
 
 
-
 router.get("/coupon",adminAuth,couponController.loadCoupon);
 router.post("/createCoupon",adminAuth,couponController.createCoupon)
-// 
 router.delete("deleteCoupon",adminAuth,couponController.deleteCoupon);
-
 
 
 router.get("/orders/filter",adminAuth,dashboardController.filterOrder);
 router.get("/orders/report",adminAuth,dashboardController.getOrdersReport);
 router.get("/orders/download/excel",adminAuth,dashboardController.downloadExcelReport);
 router.get("/orders/download/pdf",adminAuth,dashboardController.downloadPdfReport);
+
+
+router.get('/transactions',adminAuth,walletAdminController.renderTransactionsPage);
+router.get('/transaction/:transactionId',adminAuth,walletAdminController.renderTransactionDetailsPage)
+router.get('/wallet/:userId',adminAuth, walletAdminController.renderWalletPage)
+
 
 
 

@@ -203,8 +203,7 @@ const blockProduct = async(req,res)=>{
         await Product.updateOne({_id:id},{$set:{isBlocked:true}});
         res.redirect("/admin/products");
     } catch (error) {
-        res.redirect("/pageerror")
-        
+        res.redirect("/pageerror")   
     }
 }
 
@@ -219,27 +218,30 @@ const unblockProduct = async(req,res)=>{
 }
 
 
+
 const getEditProduct = async (req, res) => {
     try {
         const id = req.query.id;        
         const product = await Product.findOne({ _id: id });
-        
+
         if (!product) {
             return res.redirect('/admin/products?error=Product not found');
         }
-        
+
 
         const categories = await Category.find({});
-        
         res.render("edit-product", {
             product: product,
             cat: categories,
         });
+
+
     } catch (error) {
         console.error('Error in getEditProduct:', error);
         res.redirect("/admin/error?message=Failed to load edit product page");
     }
 };
+
 
 
 const editProduct = async (req, res) => {
@@ -256,8 +258,8 @@ const editProduct = async (req, res) => {
                 sizes = JSON.parse(data.sizesWithQuantities).filter(size => size.quantity > 0)
             }
         } catch (parseError) {
-            console.error("Error parsing sizesWithQuantities:", parseError)
-            return res.redirect("/admin/pageError")
+            console.error("Error parsing sizesWithQuantities:", parseError);
+            return res.redirect("/admin/pageError");
         }
         if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ error: "Invalid product ID" });
@@ -285,39 +287,50 @@ const editProduct = async (req, res) => {
             return res.status(400).json({ error: "Category not found" });
         }
 
-        // Process images
         let productImages = [];
-        
+
         // Handle existing images
         if (data.existingImages) {
             const existingImages = Array.isArray(data.existingImages) 
                 ? data.existingImages 
                 : [data.existingImages];
             
-            existingImages.forEach(img => {
-                if (img && img.trim() !== '') {
-                    productImages.push(img);
-                }
-            });
+            // Clean up the paths by removing any double slashes
+            productImages = existingImages
+                .filter(img => img && img.trim() !== '')
+                .map(img => img.replace(/\/+/g, '/'));
         }
         
+        
         // Process new images if any
-        if (files && files.image) {
-            const imageFiles = Array.isArray(files.image) ? files.image : [files.image];
-            
-            for (const file of imageFiles) {
-                if (file.size > 0) {
-                    // Process and save the image
-                    const imagePath = `/uploads/products/${Date.now()}-${file.originalname}`;
-                    await sharp(file.buffer)
-                        .resize(800, 800, { fit: 'contain' })
-                        .jpeg({ quality: 90 })
-                        .toFile(`./public${imagePath}`);
+        if (files) {
+            for (let i = 1; i <= 5; i++) {
+                const fieldName = `image${i}`;
+                
+                if (files[fieldName] && files[fieldName][0]) {
+                    const file = files[fieldName][0];
                     
-                    productImages.push(imagePath);
+                    if (file.size > 0) {
+                        const imageName = `${Date.now()}-${file.originalname}`;
+                        const imagePath = `/uploads/resized/${imageName}`;
+                        
+                        try {
+                            await sharp(file.buffer)
+                                .resize(800, 800, { fit: 'contain' })
+                                .jpeg({ quality: 90 })
+                                .toFile(`./public${imagePath}`);
+                            
+                            productImages.push(imagePath);
+                            console.log('New image saved:', imagePath);
+                        } catch (err) {
+                            console.error('Error processing image:', err);
+                        }
+                    }
                 }
             }
         }
+
+
 
         // Handle variants
         let variants = [];
@@ -365,11 +378,11 @@ const editProduct = async (req, res) => {
             productName: data.productName,
             description: data.description,
             category: category._id,
-            regularPrice: data.regularPrice,
-            salePrice: data.salePrice || null,
+            regularPrice: parseFloat(data.regularPrice),
+            salePrice: parseFloat(data.salePrice) || null,
             color: data.color || null,
-            sizes:sizes,
-            images: productImages.length > 0 ? productImages : product.images,
+            sizes: sizes,
+            productImage: productImages // Changed from images to productImage
         };
 
         // Add quantity only for products without variants

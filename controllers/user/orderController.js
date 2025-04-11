@@ -124,14 +124,39 @@ const loadPayment = async(req,res)=>{
 
 const loadOrders = async (req, res) => {
     try {
-        const userId = req.session.user
-        const userData = await User.findOne({ _id: userId })
-        let page = parseInt(req.query.page) || 1
-        let limit = 5
+        const userId = req.session.user;
+        const userData = await User.findOne({ _id: userId });
+        let page = parseInt(req.query.page) || 1;
+        let limit = 5;
         let skip = (page - 1) * limit;
-        const totalOrders = await Order.countDocuments({ userId });
+        
+        // Add search functionality
+        const searchTerm = req.query.search || '';
+        let query = { userId };
+        
+        // If search term exists, try to find orders that contain the search term in orderNumber
+        if (searchTerm) {
+            // First, do the normal search for orders by userId
+            const allOrders = await Order.find({ userId }).lean();
+            
+            // Then filter those orders whose _id.toString().slice(-6) (orderNumber) contains the search term
+            const matchingOrderIds = allOrders
+                .filter(order => order._id.toString().slice(-6).includes(searchTerm))
+                .map(order => order._id);
+            
+            // Add the matching order IDs to our query
+            if (matchingOrderIds.length > 0) {
+                query = {
+                    userId,
+                    _id: { $in: matchingOrderIds }
+                };
+            }
+        }
+        
+        // Count documents with the query
+        const totalOrders = await Order.countDocuments(query);
 
-        const orders = await Order.find({ userId })
+        const orders = await Order.find(query)
             .sort({ createdOn: -1 }) 
             .skip(skip)
             .limit(limit)
@@ -170,7 +195,8 @@ const loadOrders = async (req, res) => {
             orders: formattedOrders,
             user: userData,
             currentPage: page,
-            totalPages: Math.ceil(totalOrders / limit)
+            totalPages: Math.ceil(totalOrders / limit),
+            searchTerm: searchTerm // Add this line to pass the search term to the template
         });
 
     } catch (error) {
@@ -178,7 +204,6 @@ const loadOrders = async (req, res) => {
         res.redirect('/pageNotFound');
     }
 };
-
 
 
 

@@ -58,13 +58,10 @@ const userSchema = new Schema({
 
     
 
-    wallet : {
-        type : Schema.Types.ObjectId ,
-        
-    } ,
-
     wallet: {
-        type: Number, 
+        type: Schema.Types.ObjectId,
+        ref: "Wallet",  // Add a reference to the Wallet model
+        default: null
     },
 
     wishlist : [{

@@ -4,11 +4,12 @@ const { Schema } = mongoose;
 const walletSchema = new Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User"
+        ref: "User",
+        required:true
     },
     balance: {
         type: Number,
-        default: null
+        default: 0
 
     },
     transaction: [{

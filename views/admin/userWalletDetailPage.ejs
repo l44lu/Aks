@@ -1,0 +1,516 @@
+<%- include("../../views/partials/admin/header") %>
+
+<style>
+    /* Dark Theme Color Palette */
+    :root {
+        --bg-dark: #121212;
+        --bg-card: #1e1e1e;
+        --bg-element: #252525;
+        --bg-hover: #2d2d2d;
+        --primary-color: #3d7cf4;
+        --primary-dark: #2563eb;
+        --success-color: #10b981;
+        --danger-color: #ef4444;
+        --warning-color: #f59e0b;
+        --text-primary: #f3f4f6;
+        --text-secondary: #a1a1aa;
+        --text-muted: #71717a;
+        --border-color: #333333;
+        --border-light: #3f3f46;
+        --border-radius: 0.5rem;
+        --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+    }
+
+    body {
+        background-color: var(--bg-dark);
+        color: var(--text-primary);
+    }
+
+    /* Layout & Container */
+    .wallet-details-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1.5rem;
+    }
+
+    /* Card Styling */
+    .wallet-card {
+        border: none;
+        border-radius: var(--border-radius);
+        box-shadow: var(--box-shadow);
+        background-color: var(--bg-card);
+        overflow: hidden;
+    }
+
+    .wallet-header {
+        background: linear-gradient(135deg, #2563eb, #1e40af);
+        padding: 1.75rem;
+        color: white;
+        position: relative;
+    }
+
+    .wallet-header h2 {
+        font-weight: 700;
+        margin-bottom: 0;
+        font-size: 1.6rem;
+    }
+
+    .wallet-header-icon {
+        background-color: rgba(255, 255, 255, 0.15);
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    /* User Info Section */
+    .user-info-section {
+        padding: 1.5rem;
+        background-color: var(--bg-element);
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .balance-display {
+        background-color: var(--bg-card);
+        border-radius: var(--border-radius);
+        padding: 1.25rem;
+        text-align: center;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        border: 1px solid var(--border-light);
+    }
+
+    .balance-label {
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        color: var(--text-secondary);
+        margin-bottom: 0.5rem;
+    }
+
+    .wallet-balance {
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--success-color);
+        line-height: 1.2;
+    }
+
+    .user-details {
+        display: flex;
+        align-items: center;
+    }
+
+    .user-avatar {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+    margin-bottom: 15px;
+}
+
+    .user-text {
+        flex: 1;
+    }
+
+    .user-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.25rem;
+    }
+    .user-email {
+        color: var(--text-secondary);
+        margin-bottom: 10px;
+    }
+
+    /* Transaction Section */
+    .transaction-section {
+        padding: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid var(--border-color);
+    }
+
+    /* Table Styling */
+    .transactions-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        margin-bottom: 1.5rem;
+    }
+
+    .transactions-table th {
+        background-color: var(--bg-element);
+        color: var(--text-secondary);
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 0.5px;
+        padding: 1rem;
+        text-align: left;
+        border-bottom: 1px solid var(--border-color);
+    }
+
+    .transactions-table td {
+        padding: 1rem;
+        border-bottom: 1px solid var(--border-color);
+        vertical-align: middle;
+        color: var(--text-primary);
+    }
+
+    .transactions-table tbody tr:hover {
+        background-color: var(--bg-hover);
+    }
+
+    .transactions-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    /* Transaction Badges */
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 50px;
+        font-weight: 500;
+        font-size: 0.75rem;
+        display: inline-block;
+    }
+
+    .badge-credit {
+        background-color: rgba(16, 185, 129, 0.15);
+        color: var(--success-color);
+    }
+
+    .badge-debit {
+        background-color: rgba(239, 68, 68, 0.15);
+        color: var(--danger-color);
+    }
+
+    .badge-method {
+        background-color: rgba(61, 124, 244, 0.15);
+        color: var(--primary-color);
+    }
+
+    /* Transaction Amount */
+    .amount-credit {
+        color: var(--success-color);
+        font-weight: 600;
+    }
+
+    .amount-debit {
+        color: var(--danger-color);
+        font-weight: 600;
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.5rem 1.25rem;
+        border-radius: 50px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+
+    .btn-view-transaction {
+        background-color: var(--bg-element);
+        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+    }
+
+    .btn-view-transaction:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .btn-back {
+        background-color: var(--bg-element);
+        color: var(--text-primary);
+        border: 1px solid var(--border-light);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+    }
+
+    .btn-back:hover {
+        background-color: var(--bg-hover);
+        color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.25rem;
+        margin-top: 2rem;
+    }
+
+    .pagination .page-item .page-link {
+        padding: 0.5rem 1rem;
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-light);
+        color: var(--text-primary);
+        background-color: var(--bg-element);
+    }
+
+    .pagination .page-item.active .page-link {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-color);
+    }
+
+    .pagination .page-item .page-link:hover {
+        background-color: var(--bg-hover);
+        border-color: var(--primary-color);
+    }
+
+    /* Empty State */
+    .empty-state {
+        padding: 3rem 2rem;
+        text-align: center;
+        background-color: var(--bg-element);
+        border-radius: var(--border-radius);
+        border: 1px solid var(--border-light);
+    }
+
+    .empty-state-icon {
+        font-size: 2.5rem;
+        color: var(--text-muted);
+        margin-bottom: 1rem;
+    }
+
+    .empty-state-text {
+        font-size: 1.1rem;
+        color: var(--text-secondary);
+    }
+
+    /* Status Indicator */
+    .status-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        display: inline-block;
+        margin-right: 0.5rem;
+    }
+
+    .status-active {
+        background-color: var(--success-color);
+        box-shadow: 0 0 10px var(--success-color);
+    }
+
+    /* Transaction ID Monospace */
+    .transaction-id {
+        font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        letter-spacing: 0.5px;
+    }
+
+    /* Date Display */
+    .date-display {
+        line-height: 1.4;
+    }
+
+    .date-primary {
+        color: var(--text-primary);
+    }
+
+    .date-secondary {
+        color: var(--text-muted);
+        font-size: 0.85rem;
+    }
+
+    /* Responsive Adjustments */
+    @media (max-width: 991px) {
+        .user-info-section .row {
+            flex-direction: column-reverse;
+        }
+        
+        .balance-display {
+            margin-bottom: 1.5rem;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .wallet-header h2 {
+            font-size: 1.4rem;
+        }
+        
+        .transactions-table {
+            display: block;
+            overflow-x: auto;
+        }
+        
+        .wallet-balance {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            font-size: 1.2rem;
+        }
+    }
+</style>
+
+<div class="wallet-details-container">
+    <div class="wallet-card">
+        <!-- Header -->
+        <div class="wallet-header d-flex align-items-center">
+            <div class="wallet-header-icon">
+                <i class="fas fa-wallet fa-lg"></i>
+            </div>
+            <h2>Wallet Dashboard</h2>
+        </div>
+        
+        <!-- User Info Section -->
+        <div class="user-info-section">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <div class="user-details">
+                        <div class="user-avatar">
+                            <%= wallet.user.name.charAt(0).toUpperCase() %>
+                        </div>
+                        <div class="user-text">
+                            <div class="user-name">
+                                <span class="status-indicator status-active"></span>
+                                <%= wallet.user.name %>
+                            </div>
+                            <div class="user-email"><i class="far fa-envelope mr-1"></i> <%= wallet.user.email %></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-5">
+                    <div class="balance-display">
+                        <div class="balance-label">Available Balance</div>
+                        <div class="wallet-balance">
+                            <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(wallet.balance.toFixed(2)) %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Transactions Section -->
+        <div class="transaction-section">
+            <h3 class="section-title">
+                <i class="fas fa-exchange-alt mr-2"></i>
+                Recent Transactions
+            </h3>
+            
+            <% if (transactions.length > 0) { %>
+                <div class="table-responsive">
+                    <table class="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Date & Time</th>
+                                <th>Type</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% transactions.forEach(t => { %>
+                                <tr>
+                                    <td>
+                                        <div class="transaction-id">
+                                            <%= t.transactionId %>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <div class="date-display">
+                                            <div class="date-primary"><%= new Date(t.createdAt).toLocaleDateString('en-IN', {day: 'numeric', month: 'short', year: 'numeric'}) %></div>
+                                            <div class="date-secondary"><%= new Date(t.createdAt).toLocaleTimeString('en-IN', {hour: '2-digit', minute: '2-digit'}) %></div>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <span class="badge <%= t.type === 'credit' ? 'badge-credit' : 'badge-debit' %>">
+                                            <i class="fas <%= t.type === 'credit' ? 'fa-arrow-down' : 'fa-arrow-up' %> mr-1"></i>
+                                            <%= t.type.charAt(0).toUpperCase() + t.type.slice(1) %>
+                                        </span>
+                                    </td>
+                                    <td class="<%= t.type === 'credit' ? 'amount-credit' : 'amount-debit' %>">
+                                        <%= t.type === 'credit' ? '+' : '-' %> <%= new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR' }).format(t.amount) %>
+                                    </td>
+                                    <td>
+                                        <span class="badge badge-method">
+                                            <i class="fas <%= t.method === 'card' ? 'fa-credit-card' : t.method === 'upi' ? 'fa-mobile-alt' : 'fa-university' %> mr-1"></i>
+                                            <%= t.method.toUpperCase() %>
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <a href="/admin/transaction/<%= t.transactionId %>" class="btn btn-sm btn-view-transaction">
+                                            <i class="fas fa-eye mr-1"></i> View
+                                        </a>
+                                    </td>
+                                </tr>
+                            <% }) %>
+                        </tbody>
+                    </table>
+                </div>
+                
+                <!-- Pagination -->
+                <% if (totalPages > 1) { %>
+                    <nav aria-label="Transaction navigation">
+                        <ul class="pagination">
+                            <% if (currentPage > 1) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                </li>
+                            <% } %>
+
+                            <% for (let i = 1; i <= totalPages; i++) { %>
+                                <li class="page-item <%= i === currentPage ? 'active' : '' %>">
+                                    <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                                </li>
+                            <% } %>
+
+                            <% if (currentPage < totalPages) { %>
+                                <li class="page-item">
+                                    <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                <% } %>
+                
+            <% } else { %>
+                <div class="empty-state">
+                    <div class="empty-state-icon">
+                        <i class="fas fa-receipt"></i>
+                    </div>
+                    <div class="empty-state-text">
+                        No transactions found for this wallet
+                    </div>
+                </div>
+            <% } %>
+            
+            <div class="text-center mt-4">
+                <a href="/admin/transactions" class="btn btn-back">
+                    <i class="fas fa-arrow-left"></i>
+                    Back to All Transactions
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../../views/partials/admin/footer") %>
