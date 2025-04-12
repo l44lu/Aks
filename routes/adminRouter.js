@@ -21,7 +21,28 @@ const storage = multer.diskStorage({
     }
 });
 
-const uploads = multer({ storage: storage });
+const uploadFields = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+}).fields([
+    { name: 'image0', maxCount: 1 },
+    { name: 'image1', maxCount: 1 },
+    { name: 'image2', maxCount: 1 },
+    { name: 'image3', maxCount: 1 },
+    { name: 'image4', maxCount: 1 }
+]);
+
+const uploadArray = multer({
+    storage: storage,
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5MB limit
+    }
+});
+
+
+
 
 router.get("/pageerror", adminController.pageerror); 
 router.get("/login", adminController.loadlogin);
@@ -48,14 +69,14 @@ router.post("/editCategory", adminAuth, categoryController.editCategory);
 
 
 router.get("/addProducts", adminAuth, productController.getProductAddPage);
-router.post("/addProduct", adminAuth, uploads.array("image", 4), productController.addProducts);
+router.post("/addProduct", adminAuth, uploadArray.array("image", 4), productController.addProducts);
 router.get("/products",adminAuth,productController.getAllProducts);
 router.post("/addProductOffer",adminAuth,productController.addProductOffer);
 router.post("/removeProductOffer", adminAuth, productController.removeProductOffer);
 router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct); 
-router.post("/editProduct/:id", adminAuth, uploads.any(), productController.editProduct)
+router.post("/editProduct/:id", adminAuth, uploadFields, productController.editProduct);
 router.post("/delete-image", productController.deleteSingleImage)
 
 

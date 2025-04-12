@@ -838,7 +838,7 @@
     }
     
     // Function to add image upload field
-    function addImageUploadField(index) {
+        function addImageUploadField(index) {
         const container = document.getElementById("image-container");
         
         const imageUploadDiv = document.createElement("div");
@@ -846,7 +846,10 @@
         imageUploadDiv.setAttribute("id", `image-upload-${index}`);
         imageUploadDiv.innerHTML = `
             <label class="form-label">Image ${index}</label>
-            <input class="form-control" type="file" name="image${index}" id="input${index}" accept="image/png, image/jpeg, image/jpg">
+            <input class="form-control" type="file" 
+                name="image${index}"
+                id="input${index}" 
+                accept="image/png, image/jpeg, image/jpg">
             <div class="image-preview">
                 <img src="" alt="" id="imgView${index}">
                 <button type="button" class="edit-preview-btn" onclick="editImage(${index})">Edit</button>

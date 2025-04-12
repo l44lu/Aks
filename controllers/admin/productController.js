@@ -114,7 +114,7 @@ const addProducts = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
-        
+
         const search = req.query.search || "";
         const page = parseInt(req.query.page) || 1;
         const limit = 4;
@@ -243,19 +243,47 @@ const getEditProduct = async (req, res) => {
 };
 
 
-
 const editProduct = async (req, res) => {
+
     try {
+
         const id = req.params.id;
         const data = req.body;
-        const files = req.files; 
+        const files = req.files;
 
-        console.log('data of the editProduct: ', data);
 
-        let sizes = []
+        console.log('Files received:', files);
+        console.log('Request body:', data);
+
+        let sizes = [];
+
+        if (!files || Object.keys(files).length === 0) {
+            console.log('No files were uploaded');
+        } else {
+            console.log('Number of files received:', Object.keys(files).length);
+        }
+
+        // Modified file validation to handle array format
+        if (files && Array.isArray(files)) {
+            console.log('Number of files received:', files.length);
+            
+            // Validate file types
+            for (const file of files) {
+                if (!file.mimetype || !file.mimetype.startsWith('image/')) {
+                    return res.status(400).json({ 
+                        error: `Invalid file type. Only images are allowed.` 
+                    });
+                }
+            }
+        } else {
+            console.log('No files were uploaded');
+        }
+
+
+        // Parse sizes
         try {
             if (data.sizesWithQuantities) {
-                sizes = JSON.parse(data.sizesWithQuantities).filter(size => size.quantity > 0)
+                sizes = JSON.parse(data.sizesWithQuantities).filter(size => size.quantity > 0);
             }
         } catch (parseError) {
             console.error("Error parsing sizesWithQuantities:", parseError);
@@ -265,6 +293,8 @@ const editProduct = async (req, res) => {
             return res.status(400).json({ error: "Invalid product ID" });
         }
 
+       
+        // Get existing product
         const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ error: "Product not found" });
@@ -287,50 +317,42 @@ const editProduct = async (req, res) => {
             return res.status(400).json({ error: "Category not found" });
         }
 
-        let productImages = [];
+        let productImages = [...(product.productImage || [])];
 
         // Handle existing images
         if (data.existingImages) {
-            const existingImages = Array.isArray(data.existingImages) 
+            productImages = Array.isArray(data.existingImages) 
                 ? data.existingImages 
                 : [data.existingImages];
-            
-            // Clean up the paths by removing any double slashes
-            productImages = existingImages
-                .filter(img => img && img.trim() !== '')
-                .map(img => img.replace(/\/+/g, '/'));
         }
-        
-        
-        // Process new images if any
+
+        // Process new images
         if (files) {
-            for (let i = 1; i <= 5; i++) {
-                const fieldName = `image${i}`;
-                
-                if (files[fieldName] && files[fieldName][0]) {
-                    const file = files[fieldName][0];
+            const uploadDir = path.join(__dirname, '../../public/uploads/resized_');
+            
+            if (!fs.existsSync(uploadDir)) {
+                fs.mkdirSync(uploadDir, { recursive: true });
+            }
+        
+            for (const fieldName in files) {
+                const file = files[fieldName][0];
+                try {
+                    const imageName = `${Date.now()}-${file.originalname}`;
+                    const imagePath = `/uploads/resized_/${imageName}`;
                     
-                    if (file.size > 0) {
-                        const imageName = `${Date.now()}-${file.originalname}`;
-                        const imagePath = `/uploads/resized/${imageName}`;
-                        
-                        try {
-                            await sharp(file.buffer)
-                                .resize(800, 800, { fit: 'contain' })
-                                .jpeg({ quality: 90 })
-                                .toFile(`./public${imagePath}`);
-                            
-                            productImages.push(imagePath);
-                            console.log('New image saved:', imagePath);
-                        } catch (err) {
-                            console.error('Error processing image:', err);
-                        }
-                    }
+                    // Use file.path instead of file.buffer
+                    await sharp(file.path)
+                        .resize(800, 800, { fit: 'contain' })
+                        .jpeg({ quality: 90 })
+                        .toFile(path.join(uploadDir, imageName));
+                    
+                    productImages.push(imagePath);
+                    console.log('New image saved:', imagePath);
+                } catch (err) {
+                    console.error('Error processing image:', err);
                 }
             }
         }
-
-
 
         // Handle variants
         let variants = [];
@@ -373,16 +395,16 @@ const editProduct = async (req, res) => {
             }
         }
 
-        // Prepare update fields
+        // Update the product
         const updateFields = {
             productName: data.productName,
             description: data.description,
             category: category._id,
             regularPrice: parseFloat(data.regularPrice),
-            salePrice: parseFloat(data.salePrice) || null,
-            color: data.color || null,
+            salePrice: parseFloat(data.salePrice) || data.regularPrice,
+            color: data.color,
             sizes: sizes,
-            productImage: productImages // Changed from images to productImage
+            productImage: productImages
         };
 
         // Add quantity only for products without variants
@@ -401,13 +423,14 @@ const editProduct = async (req, res) => {
 
         // Update the product
         await Product.findByIdAndUpdate(id, updateFields, { new: true });
+        return res.redirect("/admin/products?success=Product updated successfully");
 
-        res.redirect("/admin/products?success=Product updated successfully");
     } catch (error) {
         console.error('Error in editProduct:', error);
-        res.status(500).json({ error: "Failed to update product" });
+        return res.status(500).json({ error: "Failed to update product" });
     }
 };
+
 
 
 const deleteSingleImage = async (req, res) => {
