@@ -367,7 +367,6 @@ const editProduct = async (req, res) => {
             }
 
             if (data.variants) {
-                // Process variants data
                 Object.keys(data.variants).forEach(key => {
                     const variant = data.variants[key];
                     if (variant) {

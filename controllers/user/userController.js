@@ -326,10 +326,12 @@ const loadShoppingPage = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let filterQuery = {
+
             isBlocked: false,
             category: selectedCategory ? selectedCategory : { $in: categoryIds },
-   
+
         };
+        
 
         if (maxPrice !== null) {
             filterQuery.salePrice = { $gte: minPrice, $lte: maxPrice };
