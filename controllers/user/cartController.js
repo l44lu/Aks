@@ -6,56 +6,74 @@ const mongoose = require("mongoose");
 
 
 const getCartPage = async (req, res) => {
-    try {
-      if (!req.session || !req.session.user) {
-        return res.redirect('/');
-      }
-  
-      const userId = req.session.user;
-      const page = parseInt(req.query.page) || 1;
-      const limit = 5;
-      const skip = (page - 1) * limit;
-  
-      let cart = await Cart.findOne({ userId }).populate('item.productId');
-  
-      if (!cart) {
-        cart = new Cart({ userId, item: [] });
-      } else if (!Array.isArray(cart.item)) {
-        cart.item = [];
-      }
-  
-      cart.item = cart.item.filter(item => item.productId && !item.productId.isBlocked);
-  
-      const totalItems = cart.item.length;
-      const totalPages = Math.ceil(totalItems / limit);
-      const paginatedItems = cart.item.slice(skip, skip + limit);
-      cart.item = paginatedItems;
-  
-      let subtotal = cart.item.reduce((sum, item) => sum + (item.totalPrice || 0), 0);
-      let total = subtotal;
-  
-      cart.subtotal = subtotal;
-      cart.total = total;
-  
-      const userData = await User.findById(userId) || {};
-  
-      console.log('User ID:', userId);
-      console.log('Cart Data:', cart);
-      console.log('User Data:', userData);
-      console.log('Total Pages:', totalPages);
-  
-      res.render('cart', {
-        cart: cart,
-        user: userData,
-        currentPage: page,
-        totalPages
-      });
-  
-    } catch (error) {
-      console.error('Error while loading the cart page:', error);
-      res.redirect('/pageNotFound');
+  try {
+    if (!req.session || !req.session.user) {
+      return res.redirect('/');
     }
-  };
+
+    const userId = req.session.user;
+    const page = parseInt(req.query.page) || 1;
+    const limit = 5;
+    const skip = (page - 1) * limit;
+    const unavailableItems = req.session.unavailableItems || [];
+    req.session.unavailableItems = null;
+
+
+
+    let cart = await Cart.findOne({ userId }).populate({
+      path: 'item.productId',
+      populate: { path: 'category', model: 'Category' } 
+    });
+
+    if (!cart) {
+      cart = new Cart({
+        userId,
+        item: []
+      });
+    }
+
+    cart.item = cart.item.map(item => {
+      if (!item.productId || item.productId.isBlocked || !item.productId.category?.isListed) {
+        return null; 
+      }
+
+      const selectedSizeData = item.productId.sizes.find(s => s.size === item.selectedSize);
+      item.isUnavailable = selectedSizeData ? selectedSizeData.quantity === 0 : true;
+
+      return item;
+    }).filter(item => item !== null);
+
+    const totalItems = cart.item.length;
+    const totalPages = Math.ceil(totalItems / limit);
+    const paginatedItems = cart.item.slice(skip, skip + limit);
+    cart.item = paginatedItems;
+
+    let subtotal = cart.item.reduce((sum, item) => {
+      return sum + (!item.isUnavailable ? item.price * item.quantity : 0);
+    }, 0);
+
+    let total = subtotal;
+
+    cart.subtotal = subtotal;
+    cart.total = total;
+
+    const userData = await User.findById(userId);
+
+    res.render('cart', {
+      cart,
+      user: userData,
+      currentPage: page,
+      totalPages,
+      unavailableItems,
+      showUnavailableMessage: req.query.unavailableItems === "true",
+    });
+
+  } catch (error) {
+    console.error('Error while loading the cart page', error);
+    res.redirect('/pageNotFound');
+  }
+};
+
   
 
 const addToCart = async (req, res) => {
