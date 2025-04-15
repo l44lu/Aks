@@ -263,11 +263,9 @@ const editProduct = async (req, res) => {
             console.log('Number of files received:', Object.keys(files).length);
         }
 
-        // Modified file validation to handle array format
         if (files && Array.isArray(files)) {
             console.log('Number of files received:', files.length);
             
-            // Validate file types
             for (const file of files) {
                 if (!file.mimetype || !file.mimetype.startsWith('image/')) {
                     return res.status(400).json({ 

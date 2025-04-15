@@ -594,37 +594,54 @@ body {
                 </div>
             </div>
             <div class="row product__filter">
-                <% for(let i = product.length-1 ; i>=0; i--) { %>
-                <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
-                    <div class="product-cart-wrap">
-                        <div class="product-img-action-wrap">
-                            <div class="product-img product-img-zoom">
-                                <a href="/productDetails?id=<%= product[i]._id %>">
-                                    <img class="default-img" 
-                                    src="<%= product[i].productImage[0].replace('_',   '_/') %>"
-                                    alt="<%= product[i].productName %>">
-                                </a>
-                            </div>
-                        </div>
-                        <h6><%= product[i].productName %></h6>
-                        <div class="for-addWishlist">
-                            <button onclick="addToWishlist('<%=product[i]._id%>')" class="add-wishlist">+ Add To Wishlist</button>
-                        </div>
-
-                        <div class="rating">
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                        </div>
-                        <h5><span style="text-decoration: line-through; "><%= product[i].regularPrice %></span> <%= product[i].discountedPrice %></h5>
-                        <h5><%= product[i].salePrice %></h5>
- 
-                    </div>
-                </div>
-                <% } %>
-            </div>
+              <% if (product && product.length > 0) { %>
+                  <% for(let i = 0; i < product.length; i++) { %>
+                      <div class="col-lg-3 col-md-6 col-sm-6 mix new-arrivals">
+                          <div class="product-cart-wrap">
+                              <div class="product-img-action-wrap">
+                                  <div class="product-img product-img-zoom">
+                                      <a href="/productDetails?id=<%= product[i]._id %>">
+                                          <% if (product[i].productImage && product[i].productImage.length > 0) { %>
+                                              <img class="default-img" 
+                                                  src="<%= product[i].productImage[0].replace('_', '_/') %>"
+                                                  alt="<%= product[i].productName %>">
+                                          <% } else { %>
+                                              <img class="default-img" src="/img/default-product.jpg" alt="<%= product[i].productName %>">
+                                          <% } %>
+                                      </a>
+                                  </div>
+                              </div>
+                              <h6><%= product[i].productName %></h6>
+                              <div class="for-addWishlist">
+                                  <button onclick="addToWishlist('<%= product[i]._id %>')" class="add-wishlist">+ Add To Wishlist</button>
+                              </div>
+          
+                              <div class="rating">
+                                  <i class="fa fa-star-o"></i>
+                                  <i class="fa fa-star-o"></i>
+                                  <i class="fa fa-star-o"></i>
+                                  <i class="fa fa-star-o"></i>
+                                  <i class="fa fa-star-o"></i>
+                              </div>
+                              
+                              <% if (product[i].productOffer > 0) { %>
+                                  <h5>
+                                      <span style="text-decoration: line-through;">₹<%= product[i].regularPrice %></span> 
+                                      ₹<%= product[i].salePrice %>
+                                      <small>(<%= product[i].productOffer %>% off)</small>
+                                  </h5>
+                              <% } else { %>
+                                  <h5>₹<%= product[i].salePrice %></h5>
+                              <% } %>
+                          </div>
+                      </div>
+                  <% } %>
+              <% } else { %>
+                  <div class="col-12 text-center">
+                      <p>No new arrivals available at the moment.</p>
+                  </div>
+              <% } %>
+          </div>
         </div>
     </section>
     <script>

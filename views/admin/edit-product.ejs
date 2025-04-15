@@ -651,6 +651,7 @@
 </div>
 
 <%- include("../../views/partials/admin/footer") %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 
 <script>
@@ -810,6 +811,26 @@
             isValid = false;
         }
         
+        // Validate file types
+        const imageInputs = document.querySelectorAll('input[type="file"]');
+        for (let i = 0; i < imageInputs.length; i++) {
+            if (imageInputs[i].files && imageInputs[i].files[0]) {
+                const file = imageInputs[i].files[0];
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                
+                if (!validTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File Type',
+                        text: `Please upload only JPEG, JPG or PNG image files.`,
+                        confirmButtonColor: '#3085d6'
+                    });
+                    isValid = false;
+                    break;
+                }
+            }
+        }
+        
         return isValid;
     }
     
@@ -838,7 +859,7 @@
     }
     
     // Function to add image upload field
-        function addImageUploadField(index) {
+    function addImageUploadField(index) {
         const container = document.getElementById("image-container");
         
         const imageUploadDiv = document.createElement("div");
@@ -879,12 +900,31 @@
             viewImage(event, index);
         });
     }
-    // Function to view image
+    
+    // Function to view image with file type validation
     function viewImage(event, index) {
         const input = event.target;
         const imgView = document.getElementById(`imgView${index}`);
         
         if (input.files && input.files[0]) {
+            const file = input.files[0];
+            
+            // Check file type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+            if (!validTypes.includes(file.type)) {
+                // Clear the file input
+                input.value = '';
+                
+                // Show error using SweetAlert
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Invalid File Type',
+                    text: 'Please upload only JPEG, JPG or PNG image files.',
+                    confirmButtonColor: '#3085d6'
+                });
+                return;
+            }
+            
             const reader = new FileReader();
             
             reader.onload = function(e) {
@@ -892,7 +932,7 @@
                 imgView.style.display = 'block';
             };
             
-            reader.readAsDataURL(input.files[0]);
+            reader.readAsDataURL(file);
         }
     }
     
@@ -1038,35 +1078,35 @@
     
     // Initialize the page
     document.addEventListener('DOMContentLoaded', function() {
-
+        // Update hidden size field on load
+        updateSizesHiddenField();
+        
+        // Add image field if needed
         if (countExistingImages() < maxImageCount) {
             addImageUploadField(++imageCount);
         }
+        
+        // Add listeners for size inputs
+        document.querySelectorAll('.size-quantity').forEach(input => {
+            input.addEventListener('input', updateSizesHiddenField);
+        });
     });
-</script>
-<script>
-    window.onload = function () {
-    updateSizesHiddenField(); 
-
+    
+    // Function to update sizes hidden field
     function updateSizesHiddenField() {
         let sizes = document.querySelectorAll('.size-quantity');
         let sizeData = [];
 
         sizes.forEach(input => {
-            let sizeLabel = input.previousElementSibling.textContent.trim(); 
+            let size = input.id.split('-')[1]; // Extract size from the input id
             let quantity = parseInt(input.value) || 0;
 
             if (quantity > 0) {  
-                sizeData.push({ size: sizeLabel, quantity: quantity });
+                sizeData.push({ size: size, quantity: quantity });
             }
         });
 
         document.getElementById('sizesWithQuantities').value = JSON.stringify(sizeData);
         console.log("Updated Sizes Data:", sizeData); // Debugging
     }
-
-    document.querySelectorAll('.size-quantity').forEach(input => {
-        input.addEventListener('input', updateSizesHiddenField);
-    });
-};
 </script>

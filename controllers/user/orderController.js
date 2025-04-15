@@ -505,26 +505,27 @@ const orderConformed = async(req,res)=>{
 }
 
 
-
-const loadOrderDetails = async (req,res)=>{
+const loadOrderDetails = async (req, res) => {
     try {
         const orderId = req.params.id;
-        const order  = await Order.findOne({orderId})
+        const order = await Order.findOne({ orderId })
             .populate({
-                path:"orderItems.productId",
-                model:"Product",
-                select:"name price image",
+                path: "orderItems.productId",
+                model: "Product",
+                select: "name price image",
+            })
+            .populate({
+                path: "userId",
+                model: "User",
+                select: "email",
+            })
+            .lean();
 
-            }).populate({
-                path:"userId",
-                model:"User",
-                select:"email",
-            }).lean();
-
-
-        if(!order){
+        if (!order) {
             return res.redirect("/pageNotFound");
         }
+
+        console.log("Order items:", order.orderItems);
 
         const formattedOrder = {
             orderId: order.orderId,
@@ -544,20 +545,25 @@ const loadOrderDetails = async (req,res)=>{
             shippingCost: 88,
             discount: order.discount,
             finalAmount: order.finalAmount,
-            products: order.orderItems.map(item => ({
-                name: item.productId.name,
-                price: item.price,
-                quantity: item.quantity,
-            })),
-        };
-        res.render("orderDetails",{order:formattedOrder})
+            products: order.orderItems.map(item => {
+                const productName = item.productId && item.productId.name ? item.productId.name : item.productName || 'Product Name Not Available';
 
+                return {
+                    name: productName,
+                    price: item.price || 0,
+                    quantity: item.quantity || 0,
+                };
+            }),
+        };
+
+        console.log("Formatted products:", formattedOrder.products); // Add this for debugging
+        
+        res.render("orderDetails", { order: formattedOrder });
     } catch (error) {
-        console.error("Error while loading the order details page:",error);
+        console.error("Error while loading the order details page:", error);
         res.redirect("/pageNotFound");
     }
-}
-
+};
 
 const orderCancel = async (req, res) => {
     try {

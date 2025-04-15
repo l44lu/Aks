@@ -591,8 +591,8 @@
     <label for="sortSelect">Sort By:</label>
     <select id="sortSelect" onchange="applySort()">
       <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
-      <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
-      <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: High to Low</option>
+      <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: High to Low</option>
+      <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: Low to High</option>
   </select>
   </div>
 
@@ -637,8 +637,8 @@
       </aside>
 
       <main class="product-grid" id="product-grid">
-        <% for (let i = product.length-1; i >= 0; i--) { %>
-            <div class="product-card">
+        <% for (let i = 0; i < product.length; i++) { %>
+          <div class="product-card">
               <button class="wishlist-btn" data-product-id="<%= product[i]._id %>" onclick="addToWishlist('<%=product[i]._id%>')">
                 <i class="fas fa-heart"></i>
               </button>           

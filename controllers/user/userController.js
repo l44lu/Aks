@@ -4,7 +4,7 @@ const env = require("dotenv").config();
 const bcrypt = require("bcrypt")
 const Category = require("../../models/categorySchema");
 const Product = require("../../models/productSchema");
-
+const mongoose = require("mongoose");
 
 
 const pageNotFound = async (req, res) => {
@@ -21,30 +21,34 @@ const pageNotFound = async (req, res) => {
 
 const loadHomepage = async (req, res) => {
     try {
-        const user=req.session.user;
-        const categories = await Category.find({isListed:true});
-        let productData = await Product.find(
-            {isBlocked:false,
-                category:{$in:categories.map(category=>category._id)},quantity:{$gt:0}
-            }
+        const user = req.session.user;
+        const categories = await Category.find({isListed: true});
+        
+        let productData = await Product.find({
+            isBlocked: false,
+            category: {$in: categories.map(category => category._id)},
+            status: 'Available' 
+        });
+        
+        console.log(`Found ${productData.length} products that match criteria`);
+        
 
-        )
-        productData.sort((a,b)=>new Date(b.createdOn)-new Date(a.createdOn));
-        productData = productData.slice(0,8);
-        if(user){
-            const userData = await User.findOne({_id:user});
-            return res.render("home",{user:userData,product:productData});
-        }else{
-            return res.render("home",{product:productData});
+        productData.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+        productData = productData.slice(0, 8);
+        
+        if (user) {
+            const userData = await User.findOne({_id: user});
+            return res.render("home", {user: userData, product: productData});
+        } else {
+            return res.render("home", {product: productData});
         }  
     } catch (error) {
-        console.error("Home page not found:", error);
+        console.error("Home page error:", error);
         if (!res.headersSent) {
             res.status(500).send("Server error");
         }
     }
 };
-
 
 const loadSignup = async (req, res) => {
     try {
@@ -316,7 +320,7 @@ const loadShoppingPage = async (req, res) => {
         const category = await Category.find({ isListed: true });
         const categoryIds = category.map(cat => cat._id.toString());
 
-        const selectedCategory = req.query.category;
+        const selectedCategoryId = req.query.category;
         const minPrice = parseInt(req.query.minPrice) || 0;
         const maxPrice = req.query.maxPrice ? parseInt(req.query.maxPrice) : null;
         const sort = req.query.sort || 'newest';
@@ -326,12 +330,15 @@ const loadShoppingPage = async (req, res) => {
         const skip = (page - 1) * limit;
 
         let filterQuery = {
-
-            isBlocked: false,
-            category: selectedCategory ? selectedCategory : { $in: categoryIds },
-
+            isBlocked: false
         };
         
+        // Properly handle the category filter
+        if (selectedCategoryId && mongoose.Types.ObjectId.isValid(selectedCategoryId)) {
+            filterQuery.category = selectedCategoryId;
+        } else {
+            filterQuery.category = { $in: categoryIds };
+        }
 
         if (maxPrice !== null) {
             filterQuery.salePrice = { $gte: minPrice, $lte: maxPrice };
@@ -339,11 +346,21 @@ const loadShoppingPage = async (req, res) => {
             filterQuery.salePrice = { $gte: minPrice };
         }
 
-        let sortQuery = { createdOn: -1 }; 
+        let sortQuery = { createdAt: -1 }; 
         if (sort === 'low') sortQuery = { salePrice: 1 };
         if (sort === 'high') sortQuery = { salePrice: -1 };
 
+        // Log the filter and sort queries for debugging
+        console.log("Filter Query:", filterQuery);
+        console.log("Sort Query:", sortQuery);
+
         const product = await Product.find(filterQuery).sort(sortQuery).skip(skip).limit(limit);
+        
+        // Log a few products with their dates for debugging
+        console.log("Products sample with dates:");
+        product.slice(0, 3).forEach(p => {
+            console.log(`${p.productName}: ${p.createdOn}, ID: ${p._id}`);
+        });
 
         const totalProducts = await Product.countDocuments(filterQuery);
         const totalPage = Math.ceil(totalProducts / limit);
@@ -354,7 +371,10 @@ const loadShoppingPage = async (req, res) => {
             category: category,
             currentPage: page,
             totalPage: totalPage,
-            sort:sort
+            sort: sort,
+            selectedCategoryId: selectedCategoryId, 
+            minPrice: minPrice,
+            maxPrice: maxPrice
         });
 
     } catch (error) {
@@ -362,6 +382,7 @@ const loadShoppingPage = async (req, res) => {
         res.redirect("pageNotFound");
     }
 };
+
 
 const searchProducts = async (req, res) => {
     try {

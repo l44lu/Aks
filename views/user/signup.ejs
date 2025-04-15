@@ -288,15 +288,40 @@
 
         function phoneValidateCheking(e){
             const phoneval = phoneid.value;
+            // Check for empty input
             if(phoneval.trim()===""){
                 error3.style.display = "block";
                 error3.innerHTML = "Please enter your phone number";
-            }else if(phoneval.length>10 || phoneval.length<10){
+                return false;
+            }
+            // Check for exactly 10 digits
+            else if(phoneval.length !== 10){
                 error3.style.display = "block";
                 error3.innerHTML = "Phone number must be 10 digits";
-            }else{
+                return false;
+            }
+            // Check if input contains only digits
+            else if(!/^\d+$/.test(phoneval)){
+                error3.style.display = "block";
+                error3.innerHTML = "Phone number must contain only digits";
+                return false;
+            }
+            // Check if phone number is all zeros
+            else if(/^0+$/.test(phoneval)){
+                error3.style.display = "block";
+                error3.innerHTML = "Please enter a valid phone number";
+                return false;
+            }
+            // Check if phone starts with 6, 7, 8, or 9
+            else if(!/^[6-9]/.test(phoneval)){
+                error3.style.display = "block";
+                error3.innerHTML = "Phone number must start with 6, 7, 8, or 9";
+                return false;
+            }
+            else{
                 error3.style.display="none";
                 error3.innerHTML="";
+                return true;
             }
         }
 

@@ -468,7 +468,6 @@
         }
     }
 </style>
-
 <div class="container-fluid wallet-dashboard">
     <div class="row">
         <div class="col-12">
@@ -497,47 +496,69 @@
                 
                 <div class="card-body">
                     <!-- Filter and Search Controls -->
-                    <div class="transactions-controls">
-                        <div class="filter-group">
-                            <select class="form-control" id="typeFilter">
-                                <option value="">All Transaction Types</option>
-                                <option value="credit">Credit Only</option>
-                                <option value="debit">Debit Only</option>
-                            </select>
-                        </div>
-                        
-                        <div class="filter-group">
-                            <select class="form-control" id="dateFilter">
-                                <option value="">All Time</option>
-                                <option value="today">Today</option>
-                                <option value="week">This Week</option>
-                                <option value="month">This Month</option>
-                                <option value="quarter">Last 3 Months</option>
-                            </select>
-                        </div>
-                        
-                        <div class="search-group">
-                            <div class="input-group">
-                                <input type="text" class="form-control" placeholder="Search by user name, email or transaction ID" id="searchInput">
-                                <div class="input-group-append">
-                                    <button class="btn btn-primary" type="button" id="searchBtn">
-                                        <i class="fas fa-search"></i>
-                                    </button>
+                    <form id="searchFilterForm" action="" method="GET">
+                        <div class="transactions-controls">
+                            <div class="filter-group">
+                                <select class="form-control" id="typeFilter" name="type">
+                                    <option value="">All Transaction Types</option>
+                                    <option value="credit" <%= type === 'credit' ? 'selected' : '' %>>Credit Only</option>
+                                    <option value="debit" <%= type === 'debit' ? 'selected' : '' %>>Debit Only</option>
+                                </select>
+                            </div>
+                            
+                            <div class="filter-group">
+                                <select class="form-control" id="dateFilter" name="dateFilter">
+                                    <option value="">All Time</option>
+                                    <option value="today">Today</option>
+                                    <option value="week">This Week</option>
+                                    <option value="month">This Month</option>
+                                    <option value="quarter">Last 3 Months</option>
+                                </select>
+                            </div>
+                            
+                            <div class="search-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="Search by user name, email or transaction ID" 
+                                           id="searchInput" name="search" value="<%= search || '' %>">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="submit" id="searchBtn">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
+                            <!-- Hidden fields for sorting -->
+                            <input type="hidden" name="sortField" id="sortField" value="<%= sortField || 'transaction.createdAt' %>">
+                            <input type="hidden" name="sortOrder" id="sortOrder" value="<%= sortOrder || 'desc' %>">
+                            <input type="hidden" name="page" id="pageInput" value="<%= currentPage %>">
                         </div>
-                    </div>
+                    </form>
 
                     <!-- Transactions Table -->
                     <div class="table-responsive">
                         <table class="table transactions-table">
                             <thead>
                                 <tr>
-                                    <th width="15%">Transaction ID</th>
-                                    <th width="15%">Date & Time</th>
-                                    <th width="25%">User Details</th>
-                                    <th width="15%">Transaction Type</th>
-                                    <th width="15%">Amount</th>
+                                    <th width="15%" class="sortable" data-field="transaction.transactionId">
+                                        Transaction ID
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th width="15%" class="sortable" data-field="transaction.createdAt">
+                                        Date & Time
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th width="25%" class="sortable" data-field="user.name">
+                                        User Details
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th width="15%" class="sortable" data-field="transaction.type">
+                                        Transaction Type
+                                        <i class="fas fa-sort"></i>
+                                    </th>
+                                    <th width="15%" class="sortable" data-field="transaction.amount">
+                                        Amount
+                                        <i class="fas fa-sort"></i>
+                                    </th>
                                     <th width="15%">Actions</th>
                                 </tr>
                             </thead>
@@ -597,6 +618,7 @@
                                             </td>
                                         </tr>
                                     <% }); %>
+                                    
                                 <% } else { %>
                                     <tr>
                                         <td colspan="6">
@@ -624,12 +646,12 @@
                                 <ul class="pagination justify-content-md-start justify-content-center mb-0">
                                     <% if (currentPage > 1) { %>
                                         <li class="page-item">
-                                            <a class="page-link" href="?page=1" aria-label="First">
+                                            <a class="page-link" href="javascript:void(0)" onclick="navigateToPage(1)" aria-label="First">
                                                 <span aria-hidden="true"><i class="fas fa-angle-double-left"></i></span>
                                             </a>
                                         </li>
                                         <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage - 1 %>" aria-label="Previous">
+                                            <a class="page-link" href="javascript:void(0)" onclick="navigateToPage(<%= currentPage - 1 %>)" aria-label="Previous">
                                                 <span aria-hidden="true"><i class="fas fa-angle-left"></i></span>
                                             </a>
                                         </li>
@@ -643,12 +665,12 @@
 
                                     <% if (currentPage < totalPages) { %>
                                         <li class="page-item">
-                                            <a class="page-link" href="?page=<%= currentPage + 1 %>" aria-label="Next">
+                                            <a class="page-link" href="javascript:void(0)" onclick="navigateToPage(<%= currentPage + 1 %>)" aria-label="Next">
                                                 <span aria-hidden="true"><i class="fas fa-angle-right"></i></span>
                                             </a>
                                         </li>
                                         <li class="page-item">
-                                            <a class="page-link" href="?page=<%= totalPages %>" aria-label="Last">
+                                            <a class="page-link" href="javascript:void(0)" onclick="navigateToPage(<%= totalPages %>)" aria-label="Last">
                                                 <span aria-hidden="true"><i class="fas fa-angle-double-right"></i></span>
                                             </a>
                                         </li>
@@ -679,13 +701,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="dateRangeStart">Date Range (Start)</label>
-                                <input type="date" class="form-control" id="dateRangeStart">
+                                <input type="date" class="form-control" id="dateRangeStart" name="startDate">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="dateRangeEnd">Date Range (End)</label>
-                                <input type="date" class="form-control" id="dateRangeEnd">
+                                <input type="date" class="form-control" id="dateRangeEnd" name="endDate">
                             </div>
                         </div>
                     </div>
@@ -698,7 +720,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">₹</span>
                                     </div>
-                                    <input type="number" class="form-control" id="amountMin" min="0">
+                                    <input type="number" class="form-control" id="amountMin" name="minAmount" min="0">
                                 </div>
                             </div>
                         </div>
@@ -709,7 +731,7 @@
                                     <div class="input-group-prepend">
                                         <span class="input-group-text">₹</span>
                                     </div>
-                                    <input type="number" class="form-control" id="amountMax" min="0">
+                                    <input type="number" class="form-control" id="amountMax" name="maxAmount" min="0">
                                 </div>
                             </div>
                         </div>
@@ -719,13 +741,13 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="userFilter">User</label>
-                                <input type="text" class="form-control" id="userFilter" placeholder="Name or Email">
+                                <input type="text" class="form-control" id="userFilter" name="user" placeholder="Name or Email">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label for="transactionIdFilter">Transaction ID</label>
-                                <input type="text" class="form-control" id="transactionIdFilter" placeholder="Transaction ID">
+                                <input type="text" class="form-control" id="transactionIdFilter" name="transactionId" placeholder="Transaction ID">
                             </div>
                         </div>
                     </div>
@@ -745,32 +767,94 @@
     $(function () {
         $('[data-toggle="tooltip"]').tooltip();
         
-        // Filter handling
-        $('#typeFilter, #dateFilter').change(function() {
-            applyFilters();
+        // Set previously selected filter values
+        if ('<%= search %>') {
+            $('#searchInput').val('<%= search %>');
+        }
+        
+        if ('<%= type %>') {
+            $('#typeFilter').val('<%= type %>');
+        }
+        
+        // Handle sorting
+        $('.sortable').click(function() {
+            const field = $(this).data('field');
+            const currentSortField = $('#sortField').val();
+            const currentSortOrder = $('#sortOrder').val();
+            
+            // Toggle sort order if clicking on the same field
+            let newSortOrder = 'desc';
+            if (field === currentSortField) {
+                newSortOrder = currentSortOrder === 'desc' ? 'asc' : 'desc';
+            }
+            
+            $('#sortField').val(field);
+            $('#sortOrder').val(newSortOrder);
+            
+            // Submit the form
+            $('#searchFilterForm').submit();
         });
         
-        $('#searchBtn').click(function() {
-            applyFilters();
+        // Apply visual indicator to current sort column
+        const currentSortField = $('#sortField').val();
+        const currentSortOrder = $('#sortOrder').val();
+        if (currentSortField) {
+            const $th = $(`.sortable[data-field="${currentSortField}"]`);
+            $th.find('i').removeClass('fa-sort').addClass(currentSortOrder === 'asc' ? 'fa-sort-up' : 'fa-sort-down');
+        }
+        
+        // Filter handling
+        $('#typeFilter, #dateFilter').change(function() {
+            $('#searchFilterForm').submit();
+        });
+        
+        $('#searchBtn').click(function(e) {
+            e.preventDefault();
+            $('#searchFilterForm').submit();
         });
         
         $('#searchInput').keypress(function(e) {
             if(e.which === 13) {
-                applyFilters();
+                e.preventDefault();
+                $('#searchFilterForm').submit();
             }
         });
         
         // Reset filters
         $('#resetFiltersBtn').click(function() {
-            $('#typeFilter').val('');
-            $('#dateFilter').val('');
-            $('#searchInput').val('');
-            applyFilters();
+            window.location.href = window.location.pathname;
         });
         
         // Advanced filters
         $('#applyFiltersBtn').click(function() {
-            applyAdvancedFilters();
+            const formData = $('#advancedFilterForm').serializeArray();
+            let url = new URL(window.location.href);
+            
+            // Clear existing query parameters except pagination
+            const params = url.searchParams;
+            [...params.keys()].forEach(key => {
+                if (key !== 'page') {
+                    params.delete(key);
+                }
+            });
+            
+            // Add form values to URL
+            formData.forEach(item => {
+                if (item.value) {
+                    params.set(item.name, item.value);
+                }
+            });
+            
+            // Add regular filters
+            const type = $('#typeFilter').val();
+            const search = $('#searchInput').val();
+            if (type) params.set('type', type);
+            if (search) params.set('search', search);
+            
+            // Reset to first page
+            params.set('page', 1);
+            
+            window.location.href = url.toString();
             $('#filterModal').modal('hide');
         });
         
@@ -782,65 +866,12 @@
         $('#exportBtn').click(function() {
             alert('Export functionality will be implemented. This would export the current filtered view to CSV/Excel.');
         });
-        
-        // Helper functions
-        function applyFilters() {
-            // In a real implementation, this would submit the form or make an AJAX request
-            let url = new URL(window.location.href);
-            let params = url.searchParams;
-            
-            const type = $('#typeFilter').val();
-            const date = $('#dateFilter').val();
-            const search = $('#searchInput').val();
-            
-            if (type) params.set('type', type);
-            else params.delete('type');
-            
-            if (date) params.set('date', date);
-            else params.delete('date');
-            
-            if (search) params.set('search', search);
-            else params.delete('search');
-            
-            params.set('page', 1); // Reset to first page
-            
-            window.location.href = url.toString();
-        }
-        
-        function applyAdvancedFilters() {
-            let url = new URL(window.location.href);
-            let params = url.searchParams;
-            
-            const startDate = $('#dateRangeStart').val();
-            const endDate = $('#dateRangeEnd').val();
-            const minAmount = $('#amountMin').val();
-            const maxAmount = $('#amountMax').val();
-            const user = $('#userFilter').val();
-            const transactionId = $('#transactionIdFilter').val();
-            
-            if (startDate) params.set('startDate', startDate);
-            else params.delete('startDate');
-            
-            if (endDate) params.set('endDate', endDate);
-            else params.delete('endDate');
-            
-            if (minAmount) params.set('minAmount', minAmount);
-            else params.delete('minAmount');
-            
-            if (maxAmount) params.set('maxAmount', maxAmount);
-            else params.delete('maxAmount');
-            
-            if (user) params.set('user', user);
-            else params.delete('user');
-            
-            if (transactionId) params.set('transactionId', transactionId);
-            else params.delete('transactionId');
-            
-            params.set('page', 1); // Reset to first page
-            
-            window.location.href = url.toString();
-        }
     });
+    
+    // Function to navigate between pages
+    function navigateToPage(pageNum) {
+        const url = new URL(window.location.href);
+        url.searchParams.set('page', pageNum);
+        window.location.href = url.toString();
+    }
 </script>
-
-<%- include("../../views/partials/admin/footer") %>

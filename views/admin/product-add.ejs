@@ -599,6 +599,7 @@
         </div>
     </div>
 </section>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/cropperjs/dist/cropper.min.css">
 <script>
@@ -610,6 +611,22 @@
         
         const file = event.target.files[0];
         const imgView = document.getElementById(`imgView${index}`);
+        
+        // Check file type
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            // Clear the file input
+            event.target.value = '';
+            
+            // Show error using SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid File Type',
+                text: 'Please upload only JPEG, JPG or PNG image files.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
         
         // Store the original file for reference
         originalImages[index] = file;
@@ -723,7 +740,32 @@
             isValid = false;
         }
         
-        // Validate main image
+        // Validate image files - check for all image inputs
+        const imageInputs = [
+            document.getElementById('input1'),
+            document.getElementById('input2'),
+            document.getElementById('input3'),
+            document.getElementById('input4')
+        ];
+        
+        for (let i = 0; i < imageInputs.length; i++) {
+            if (imageInputs[i].files && imageInputs[i].files[0]) {
+                const file = imageInputs[i].files[0];
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+                
+                if (!validTypes.includes(file.type)) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Invalid File Type',
+                        text: `Image ${i+1}: Please upload only JPEG, JPG or PNG files.`,
+                        confirmButtonColor: '#3085d6'
+                    });
+                    return; // Stop form submission
+                }
+            }
+        }
+        
+        // Validate main image existence
         const mainImage = document.getElementById('input1').files;
         if (!mainImage || mainImage.length === 0) {
             errors['images'] = 'Main product image is required';
@@ -738,28 +780,27 @@
         }
         
         // Validate Size Selection & Quantities
- const selectedSizes = document.querySelectorAll(".size-btn.selected");
-    if (selectedSizes.length === 0) {
-        displayErrorMessage("size-error", "Please select at least one size.");
-        isValid = false;
-    } else {
-        let allQuantitiesValid = true;
-        selectedSizes.forEach(button => {
-            const size = button.getAttribute("data-size");
-            const quantityInput = document.getElementById(`sizeQuantity-${size}`);
-
-            if (!quantityInput || quantityInput.value.trim() === "" || parseInt(quantityInput.value, 10) <= 0) {
-                allQuantitiesValid = false;
-            }
-        });
-
-        if (!allQuantitiesValid) {
-            displayErrorMessage("size-error", "Each selected size must have a valid quantity (≥1).");
+        const selectedSizes = document.querySelectorAll(".size-btn.selected");
+        if (selectedSizes.length === 0) {
+            displayErrorMessage("size-error", "Please select at least one size.");
             isValid = false;
+        } else {
+            let allQuantitiesValid = true;
+            selectedSizes.forEach(button => {
+                const size = button.getAttribute("data-size");
+                const quantityInput = document.getElementById(`sizeQuantity-${size}`);
+
+                if (!quantityInput || quantityInput.value.trim() === "" || parseInt(quantityInput.value, 10) <= 0) {
+                    allQuantitiesValid = false;
+                }
+            });
+
+            if (!allQuantitiesValid) {
+                displayErrorMessage("size-error", "Each selected size must have a valid quantity (≥1).");
+                isValid = false;
+            }
         }
-    }
      
-        
         // Display errors if any
         if (!isValid) {
             Object.keys(errors).forEach(key => {
@@ -779,65 +820,64 @@
             errorElement.style.display = 'block';
         }
     }
-</script>
-<script>
+
+    // Initialize size selection functionality
     document.addEventListener("DOMContentLoaded", function () {
-    const sizeButtons = document.querySelectorAll(".size-btn");
-    const sizeQuantitiesContainer = document.getElementById("sizeQuantities");
-    const sizesWithQuantitiesInput = document.getElementById("sizesWithQuantities");
+        const sizeButtons = document.querySelectorAll(".size-btn");
+        const sizeQuantitiesContainer = document.getElementById("sizeQuantities");
+        const sizesWithQuantitiesInput = document.getElementById("sizesWithQuantities");
 
-    sizeButtons.forEach(button => {
-        button.addEventListener("click", function () {
-            this.classList.toggle("selected");
-            handleSizeSelection(this);
+        sizeButtons.forEach(button => {
+            button.addEventListener("click", function () {
+                this.classList.toggle("selected");
+                handleSizeSelection(this);
+            });
         });
-    });
 
-    function handleSizeSelection(button) {
-        const size = button.getAttribute("data-size");
-        let existingInput = document.getElementById(`sizeQuantity-${size}`);
+        function handleSizeSelection(button) {
+            const size = button.getAttribute("data-size");
+            let existingInput = document.getElementById(`sizeQuantity-${size}`);
 
-        if (button.classList.contains("selected")) {
-            // Add input field if not existing
-            if (!existingInput) {
-                const inputField = document.createElement("div");
-                inputField.classList.add("size-input-wrapper");
-                inputField.innerHTML = `
-                    <div class="mb-3">
-                        <label class="form-label">Quantity for ${size}</label>
-                        <input type="number" id="sizeQuantity-${size}" name="sizeQuantities[${size}]" 
-                               class="form-control size-quantity" min="1" required>
-                    </div>
-                `;
-                sizeQuantitiesContainer.appendChild(inputField);
+            if (button.classList.contains("selected")) {
+                // Add input field if not existing
+                if (!existingInput) {
+                    const inputField = document.createElement("div");
+                    inputField.classList.add("size-input-wrapper");
+                    inputField.innerHTML = `
+                        <div class="mb-3">
+                            <label class="form-label">Quantity for ${size}</label>
+                            <input type="number" id="sizeQuantity-${size}" name="sizeQuantities[${size}]" 
+                                class="form-control size-quantity" min="1" required>
+                        </div>
+                    `;
+                    sizeQuantitiesContainer.appendChild(inputField);
 
-                // Listen for input changes
-                inputField.querySelector("input").addEventListener("input", updateHiddenField);
+                    // Listen for input changes
+                    inputField.querySelector("input").addEventListener("input", updateHiddenField);
+                }
+            } else {
+                // Remove input field when size is deselected
+                if (existingInput) {
+                    existingInput.closest(".size-input-wrapper").remove();
+                }
             }
-        } else {
-            // Remove input field when size is deselected
-            if (existingInput) {
-                existingInput.closest(".size-input-wrapper").remove();
-            }
+
+            updateHiddenField();
         }
 
-        updateHiddenField();
-    }
+        function updateHiddenField() {
+            const selectedSizes = {};
+            document.querySelectorAll(".size-btn.selected").forEach(btn => {
+                const size = btn.getAttribute("data-size");
+                const quantityInput = document.getElementById(`sizeQuantity-${size}`);
+                
+                if (quantityInput && quantityInput.value.trim() !== "" && parseInt(quantityInput.value) > 0) {
+                    selectedSizes[size] = quantityInput.value;
+                }
+            });
 
-    function updateHiddenField() {
-        const selectedSizes = {};
-        document.querySelectorAll(".size-btn.selected").forEach(btn => {
-            const size = btn.getAttribute("data-size");
-            const quantityInput = document.getElementById(`sizeQuantity-${size}`);
-            
-            if (quantityInput && quantityInput.value.trim() !== "" && parseInt(quantityInput.value) > 0) {
-                selectedSizes[size] = quantityInput.value;
-            }
-        });
-
-        sizesWithQuantitiesInput.value = JSON.stringify(selectedSizes);
-    }
-});
+            sizesWithQuantitiesInput.value = JSON.stringify(selectedSizes);
+        }
+    });
 </script>
-
 <%- include("../../views/partials/admin/footer") %>
