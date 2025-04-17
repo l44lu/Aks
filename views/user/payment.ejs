@@ -708,105 +708,112 @@ h1, h2, h3, h4, h5 {
 
 <script>
 
-        document.getElementById("pay-btn").addEventListener("click", async function () {
+document.getElementById("pay-btn").addEventListener("click", async function () {
+    const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
+    const selectedAddressId = "<%= selectedAddressId %>"; 
+    
+    if (paymentMethod === "upi") {
+        let orderId; // Define orderId in a wider scope
         
-            const paymentMethod = document.querySelector('input[name="payment"]:checked').value;
-            const selectedAddressId = "<%= selectedAddressId %>"; 
-        
-            if (paymentMethod === "upi") {
-                try {
-                    const response = await fetch("/createOrder", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({ amount: '<%= total %>', currency: "INR" }),
-                    });
-        
-                    const data = await response.json();
-                    if (!data.success) throw new Error("Failed to create order");
-        
-                    const options = {
-        
-                        key: "<%=razorpayKeyId%>",
-                        amount: data.order.amount,
-                        currency: data.order.currency,
-                        order_id: data.order.id,
-                        name: "Aks-Fashion",
-                        description: "Test Transaction",
-                        handler: async function (response) {
-                            Swal.fire({
-                                title: "Payment Successful!",
-                                text: "Payment ID: " + response.razorpay_payment_id,
-                                icon: "success",
-                                confirmButtonColor: "#28a745",
-                                confirmButtonText: "OK",
-                            }).then(async () => {
-                                const orderResponse = await fetch('/orderPlaced', {
-                                    method: 'POST',
-                                    headers: { 'Content-type': 'application/json' },
-                                    body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
-                                });
-        
-                                const result = await orderResponse.json();
-        
-                                if (result.success) {
-                                    window.location.href = '/orderConformed';
-                                } else {
-                                    Swal.fire({
-                                        title: "Error while saving the order!",
-                                        text: result.message || 'Error happened!',
-                                        icon: "error",
-                                        confirmButtonColor: "#dc3545",
-                                        confirmButtonText: "Try Again",
-                                    });
-                                }
-                            });
-                        },
-                        prefill: {
-                            email: "test@example.com",
-                            contact: "9999999999",
-                        },
-                        theme: { color: "#3399cc" },
-                        modal: {
-                            ondismiss: async function () {
-        
-                                const amountInRupees = options.amount / 100;
-        
-                                const paymentFailResponse = await fetch('/orderPlaced', {
-                                    method: 'POST',
-                                    headers: { 'Content-type': 'application/json' },
-                                    body: JSON.stringify({ paymentMethod, addressId: selectedAddressId, snum: 'payment-fail' })
-                                });
-        
-                                const result = await paymentFailResponse.json() 
-        
-                                if (result.success) {
-                                    window.location.href = `/payment-failure?orderId=${data.order.id}&paymentMethod="upi"&addressId=${selectedAddressId}`;
-                                    return;
-                                }
-                                
-                            }
-                        }
-                    };
-        
-                    const rzp = new Razorpay(options);
-                    rzp.open();
-        
-                } catch (error) {
+        try {
+            const response = await fetch("/createOrder", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ amount: '<%= total %>', currency: "INR" }),
+            });
+    
+            const data = await response.json();
+            if (!data.success) throw new Error("Failed to create order");
+            
+            // Store orderId in wider scope so it can be accessed in catch block
+            orderId = data.order.id;
+            
+            const options = {
+                key: "<%=razorpayKeyId%>",
+                amount: data.order.amount,
+                currency: data.order.currency,
+                order_id: data.order.id,
+                name: "Aks-Fashion",
+                description: "Test Transaction",
+                handler: async function (response) {
                     Swal.fire({
-                        title: "Payment Failed!",
-                        text: error.message,
-                        icon: "error",
-                        confirmButtonColor: "#dc3545",
-                        confirmButtonText: "Try Again",
-                    }).then(() => {
-        
-                       console.log('selected address id: ', selectedAddressId);  
-                       window.location.href = `/payment-failure?orderId=${data.order.id}&paymentMethod=RAZORPAY&addressId=${selectedAddressId}`;
-        
+                        title: "Payment Successful!",
+                        text: "Payment ID: " + response.razorpay_payment_id,
+                        icon: "success",
+                        confirmButtonColor: "#28a745",
+                        confirmButtonText: "OK",
+                    }).then(async () => {
+                        const orderResponse = await fetch('/orderPlaced', {
+                            method: 'POST',
+                            headers: { 'Content-type': 'application/json' },
+                            body: JSON.stringify({ paymentMethod, addressId: selectedAddressId })
+                        });
+    
+                        const result = await orderResponse.json();
+    
+                        if (result.success) {
+                            window.location.href = '/orderConformed';
+                        } else {
+                            Swal.fire({
+                                title: "Error while saving the order!",
+                                text: result.message || 'Error happened!',
+                                icon: "error",
+                                confirmButtonColor: "#dc3545",
+                                confirmButtonText: "Try Again",
+                            });
+                        }
                     });
+                },
+                prefill: {
+                    email: "test@example.com",
+                    contact: "9999999999",
+                },
+                theme: { color: "#3399cc" },
+                modal: {
+                    ondismiss: async function () {
+                        try {
+                            const paymentFailResponse = await fetch('/orderPlaced', {
+                                method: 'POST',
+                                headers: { 'Content-type': 'application/json' },
+                                body: JSON.stringify({ 
+                                    paymentMethod, 
+                                    addressId: selectedAddressId, 
+                                    status: 'payment-fail' 
+                                })
+                            });
+    
+                            const result = await paymentFailResponse.json();
+    
+                            if (result.success) {
+                                window.location.href = `/payment-failure?orderId=${orderId}&paymentMethod=upi&addressId=${selectedAddressId}`;
+                                console.log('Payment failed, redirecting to failure page...');
+                            }
+                        } catch (error) {
+                            console.error("Error in ondismiss handler:", error);
+                            window.location.href = `/payment-failure?orderId=${orderId}&paymentMethod=upi&addressId=${selectedAddressId}`;
+                        }
+                    }
                 }
+            };
+    
+            const rzp = new Razorpay(options);
+            rzp.open();
+    
+        } catch (error) {
+            console.error("Payment setup error:", error);
+            Swal.fire({
+                title: "Payment Failed!",
+                text: error.message,
+                icon: "error",
+                confirmButtonColor: "#dc3545",
+                confirmButtonText: "Try Again",
+            }).then(() => {
+                // Redirect to payment failure page with available information
+                window.location.href = `/payment-failure?orderId=${orderId || 'unknown'}&paymentMethod=RAZORPAY&addressId=${selectedAddressId}`;
+            });
+        }
             } else if (paymentMethod === 'wallet') {
         
                 const modal = document.getElementById('walletModal');
