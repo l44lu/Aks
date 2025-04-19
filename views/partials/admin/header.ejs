@@ -10,6 +10,17 @@
     <link href="https://cdn.jsdelivr.net/npm/sweetalert2@10.16.6/dist/sweetalert2.min.css" rel="stylesheet">
     <script src="https://kit.fontawesome.com/16d4885483.js" crossorigin="anonymous"></script>
     <style>
+        /* General Styles */
+        body {
+            background-color: #1c1c1c;
+            font-family: 'Arial', sans-serif;
+            color: #e0e0e0;
+            margin: 0;
+            padding: 0;
+            transition: all 0.3s ease;
+        }
+
+        /* Navbar Aside / Sidebar */
         .navbar-aside {
             background-color: #222;
             position: fixed;
@@ -21,6 +32,7 @@
             box-shadow: 0 0 10px rgba(255,255,255,0.1);
             z-index: 1000;
             overflow-y: auto;
+            transition: transform 0.3s ease;
         }
 
         .menu-aside {
@@ -77,33 +89,25 @@
             text-decoration: none;
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
-
         .edit-btn:hover {
             background-color: #4479a1; 
             border-color: #5b9ada;
             transform: scale(1.05);
         }
-
         .ash-grey-btn {
             background-color: #6c757d; 
             border-color: #6c757d;
         }
-
         .ash-grey-btn:hover {
             background-color: #5a6268;
             border-color: #545b62;
         }
-
         .col-md-3 {
             padding: 20px;
             border: 1px solid #ddd;
             border-radius: 10px;
             margin: 10px;
             margin-left: 52px;
-        }
-
-        .form-label {
-        margin-bottom: 8px;
         }
 
         .form-control {
@@ -127,7 +131,6 @@
         padding: 10px 20px;
         cursor: pointer;
         }
-
         .btn-primary:hover {
         background-color: #0056b3;
         border-color: #0056b3;
@@ -142,6 +145,19 @@
             transition: 0.3s;
         }
 
+
+        .form-label {
+        margin-bottom: 8px;
+        }
+
+
+
+        /* Main Content Area */
+        .main-wrap {
+            margin-left: 250px;
+            transition: margin-left 0.3s ease;
+            padding-top: 60px;
+        }
         .pagination {
         display: inline-block;
         }
@@ -163,13 +179,21 @@
         .error-message {
         color: red;
         }
-        /* General Styles */
-        .body {
-            background-color: #1c1c1c;
-            font-family: 'Arial', sans-serif;
-            color: #e0e0e0;
-            margin: 0;
-            padding: 0;
+
+        /* Navbar/Header */
+        .navbar {
+            background-color: #333;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(255,255,255,0.1);
+            position: fixed;
+            top: 0;
+            left: 250px;
+            right: 0;
+            z-index: 999;
+            transition: left 0.3s ease;
         }
 
         /* Header Styling */
@@ -467,9 +491,186 @@
             background-color: #666;
             color: #fff;
         }
+
+        /* Hamburger Menu */
+        .hamburger-menu {
+            display: none;
+            flex-direction: column;
+            justify-content: space-between;
+            width: 30px;
+            height: 21px;
+            cursor: pointer;
+            margin-right: 15px;
+            z-index: 1001;
+        }
+
+        .hamburger-menu span {
+            display: block;
+            height: 3px;
+            width: 100%;
+            background-color: #fff;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+        }
+
+        /* User Dropdown */
+        .nav {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .dropdown-toggle {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            color: #e0e0e0;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.3s;
+        }
+
+        .dropdown-toggle:hover {
+            background-color: #555;
+        }
+
+        .dropdown-toggle img {
+            margin-right: 10px;
+        }
+
+        .img-xs {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+            border: 2px solid #fff;
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #444;
+            border-radius: 4px;
+            box-shadow: 0 5px 15px rgba(255,255,255,0.2);
+            z-index: 1000;
+            min-width: 150px;
+        }
+
+        .dropdown-menu a {
+            color: #e0e0e0;
+            padding: 10px 15px;
+            text-decoration: none;
+            display: block;
+            transition: background 0.3s;
+        }
+
+        .dropdown-menu a:hover {
+            background-color: #666;
+            color: #fff;
+        }
+
+        .nav-item:hover .dropdown-menu {
+            display: block;
+        }
+
+        /* Responsive styles */
+        @media (max-width: 992px) {
+            .navbar-aside {
+                width: 220px;
+            }
+            .main-wrap {
+                margin-left: 220px;
+            }
+            .navbar {
+                left: 220px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar-aside {
+                width: 200px;
+            }
+            .main-wrap {
+                margin-left: 200px;
+            }
+            .navbar {
+                left: 200px;
+            }
+        }
+        
+
+        @media (max-width: 500px) {
+            .hamburger-menu {
+                display: flex;
+            }
+            
+            .navbar-aside {
+                transform: translateX(-100%);
+                width: 250px;
+            }
+            
+            .navbar-aside.active {
+                transform: translateX(0);
+            }
+            
+            .main-wrap {
+                margin-left: 0;
+            }
+            
+            .navbar {
+                left: 0;
+                padding: 10px;
+            }
+            
+            .navbar-brand {
+                margin-left: 40px;
+            }
+            
+            body.sidebar-active {
+                overflow: hidden;
+            }
+            
+            .overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background-color: rgba(0, 0, 0, 0.7);
+                z-index: 999;
+            }
+            
+            .overlay.active {
+                display: block;
+            }
+            
+            /* Hamburger animation */
+            .hamburger-menu.active span:nth-child(1) {
+                transform: translateY(9px) rotate(45deg);
+            }
+            
+            .hamburger-menu.active span:nth-child(2) {
+                opacity: 0;
+            }
+            
+            .hamburger-menu.active span:nth-child(3) {
+                transform: translateY(-9px) rotate(-45deg);
+            }
+        }
     </style>
 </head>
 <body>
+    <div class="overlay"></div>
     <aside class="navbar-aside">
         <div class="aside-top">
             <a href="#" class="brand-wrap">
@@ -491,6 +692,11 @@
     </aside>
     <main class="main-wrap">
         <header class="navbar">
+            <div class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
             <div class="col-nav" style="margin-left: auto;">
                 <ul class="nav">
                     <li class="dropdown nav-item">

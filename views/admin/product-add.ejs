@@ -612,21 +612,20 @@
         const file = event.target.files[0];
         const imgView = document.getElementById(`imgView${index}`);
         
-        // Check file type
-        // const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
-        // if (!validTypes.includes(file.type)) {
-        //     // Clear the file input
-        //     event.target.value = '';
+        const validTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+        if (!validTypes.includes(file.type)) {
+            // Clear the file input
+            event.target.value = '';
             
-        //     // Show error using SweetAlert
-        //     Swal.fire({
-        //         icon: 'error',
-        //         title: 'Invalid File Type',
-        //         text: 'Please upload only JPEG, JPG or PNG image files.',
-        //         confirmButtonColor: '#3085d6'
-        //     });
-        //     return;
-        // }
+            // Show error using SweetAlert
+            Swal.fire({
+                icon: 'error',
+                title: 'Invalid File Type',
+                text: 'Please upload only JPEG, JPG or PNG image files.',
+                confirmButtonColor: '#3085d6'
+            });
+            return;
+        }
         
         // Store the original file for reference
         originalImages[index] = file;

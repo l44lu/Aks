@@ -4,6 +4,9 @@ const Order = require("../../models/orderSchema");
 const mongodb = require("mongodb");
 const mongoose = require('mongoose');
 const { v4: uuidv4 } = require('uuid');
+const Wallet = require("../../models/walletSchema");
+const Coupon = require("../../models/couponSchema");
+const Category = require("../../models/categorySchema");
 
 
 
@@ -107,50 +110,75 @@ const changeOrderStatus = async (req,res)=>{
 
 const handleReturn = async (req, res) => {
     try {
-        const { orderId, productId, status } = req.body;
-        const order = await Order.findOne({ orderId }).populate("userId");
-
-        if (!order) {
-            return res.status(404).json({ success: false, message: "Order not found" });
-        }
-
-        const item = order.orderItems.find(item => item.productId.toString() === productId);
-        if (!item) {
-            return res.status(404).json({ success: false, message: "Product not found in the order" });
-        }
-
-        item.returnRequest.status = status;
-        item.returnRequest.requestDate = new Date();
-
-        if (status === "Approved") {
-            order.status = "Return Accepted";
-
-            const product = await Product.findById(productId);
-            if (product) {
-                product.quantity += item.quantity;
-                if (item.selectedSize) {
-                    const sizeIndex = product.sizes.findIndex(s => s.size === item.selectedSize);
-                    if (sizeIndex !== -1) {
-                        product.sizes[sizeIndex].quantity += item.quantity;
-                    }
-                }
-                await product.save();
+      const { orderId, productId, status } = req.body;
+      const order = await Order.findOne({ orderId }).populate("userId");
+      
+      if (!order) {
+        return res.status(404).json({ success: false, message: "Order not found" });
+      }
+      
+      const item = order.orderItems.find(item => item.productId.toString() === productId);
+      if (!item) {
+        return res.status(404).json({ success: false, message: "Product not found in the order" });
+      }
+      
+      item.returnRequest.status = status;
+      item.returnRequest.requestDate = new Date();
+      
+      if (status === "Approved") {
+        order.status = "Return Accepted";
+        
+        // Update product inventory
+        const product = await Product.findById(productId);
+        if (product) {
+          product.quantity += item.quantity;
+          if (item.selectedSize) {
+            const sizeIndex = product.sizes.findIndex(s => s.size === item.selectedSize);
+            if (sizeIndex !== -1) {
+              product.sizes[sizeIndex].quantity += item.quantity;
             }
-
-            const refundAmount = item.price * item.quantity;
-            
-        } else if (status === "Rejected") {
-            order.status = "Return Rejected";
+          }
+          await product.save();
         }
-
-        await order.save();
-        return res.status(200).json({ success: true, message: `Product return ${status.toLowerCase()}!`, order });
-
+        
+        // Calculate refund amount
+        const refundAmount = item.price * item.quantity;
+        
+        const userWallet = await Wallet.findOne({ user: order.userId });
+        if (userWallet) {
+          userWallet.balance += refundAmount;
+          
+          userWallet.transaction.push({
+            amount: refundAmount,
+            transactionId: order.orderId,
+            productName: item.productName,
+            type: 'credit',
+            method: "refund",
+            reason: "return order"
+          });
+          
+          await userWallet.save();
+          console.log('Refund added to wallet successfully.');
+        } else {
+          console.log('User wallet not found.');
+        }
+        
+      } else if (status === "Rejected") {
+        order.status = "Return Rejected";
+      }
+      
+      await order.save();
+      return res.status(200).json({ 
+        success: true, 
+        message: `Product return ${status.toLowerCase()}!`, 
+        order 
+      });
+      
     } catch (error) {
-        console.error("Error handling the return:", error);
-        return res.status(500).json({ success: false, message: "Internal server Error" });
+      console.error("Error handling the return:", error);
+      return res.status(500).json({ success: false, message: "Internal server Error" });
     }
-};
+  };
 
 
 

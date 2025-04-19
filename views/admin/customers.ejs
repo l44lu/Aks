@@ -1,4 +1,240 @@
 <%- include("../../views/partials/admin/header") %>
+<style>
+    /* Enhanced Responsive Styles for Customers Page with Right Alignment */
+
+/* Overall Layout with Right Alignment */
+.content-header {
+  padding: 20px 30px;
+  margin-bottom: 15px;
+  padding-left: 60px; /* Increased left padding for right shift */
+}
+
+.content-title {
+  font-size: 24px;
+  color: #fff;
+  margin-bottom: 0;
+  padding-left: 15px; /* Additional padding for title */
+}
+
+/* Search Bar with Right Alignment */
+header.card-header {
+  padding: 15px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+  padding-right: 60px; /* Shift search bar to right */
+}
+
+.input-group {
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  margin-left: 260px; /* Increased right shift for search bar */
+  position: relative;
+}
+
+.input-group input, 
+.input-group button {
+  padding: 8px 15px;
+}
+
+/* Table with Right Alignment */
+.right {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 15px;
+  margin-left: 40px; /* Right shift for table */
+  margin-right: 20px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th, 
+.table td {
+  padding: 12px 15px;
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* Pagination with Right Alignment */
+.pagination {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-left: 0;
+  margin: 20px 0;
+  margin-right: 230px !important; /* Increased right margin for pagination */
+}
+
+.pagination .page-item {
+  margin: 2px;
+}
+
+.pagination .page-link {
+  padding: 8px 12px;
+  border-radius: 4px;
+}
+
+/* Button Styling */
+.btn {
+  border-radius: 4px;
+  transition: all 0.3s;
+}
+
+/* Media Queries aligned with navbar responsive design but maintaining right alignment */
+@media (max-width: 992px) {
+  .content-header {
+    padding: 15px 20px 15px 50px; /* Maintain right shift */
+  }
+  
+  .content-title {
+    font-size: 22px;
+  }
+  
+  .input-group {
+    max-width: 450px;
+    margin-left: 230px; /* Adjusted for this breakpoint */
+  }
+  
+  .right {
+    margin-left: 35px; /* Adjusted for this breakpoint */
+  }
+  
+  .pagination {
+    margin-right: 190px !important; /* Adjusted for this breakpoint */
+  }
+}
+
+@media (max-width: 768px) {
+  .content-header {
+    padding: 12px 15px 12px 40px; /* Maintain some right shift */
+  }
+  
+  .content-title {
+    font-size: 20px;
+  }
+  
+  .input-group {
+    max-width: 400px;
+    margin-left: 180px; /* Adjusted for this breakpoint */
+  }
+  
+  header.card-header {
+    padding: 10px;
+    padding-right: 20px;
+  }
+  
+  .right {
+    margin-left: 25px; /* Adjusted for this breakpoint */
+  }
+  
+  .table th, 
+  .table td {
+    padding: 10px 12px;
+  }
+  
+  .pagination {
+    margin-right: 120px !important; /* Adjusted for this breakpoint */
+  }
+}
+
+@media (max-width: 576px) {
+  .content-header {
+    padding: 10px 10px 10px 20px; /* Reduced but still maintaining right shift */
+  }
+  
+  .content-title {
+    font-size: 18px;
+  }
+  
+  .input-group {
+    max-width: 100%;
+    margin-left: 80px; /* Adjusted for this breakpoint */
+  }
+  
+  header.card-header {
+    padding: 8px 5px;
+  }
+  
+  .right {
+    margin-left: 15px; /* Adjusted for this breakpoint */
+  }
+  
+  .pagination {
+    margin-right: 70px !important; /* Adjusted for this breakpoint */
+  }
+  
+  .pagination .page-link {
+    padding: 6px 10px;
+  }
+  
+  .table th, 
+  .table td {
+    padding: 8px 10px;
+  }
+}
+
+/* Special handling for smallest screens while maintaining some alignment */
+@media (max-width: 500px) {
+  .content-header {
+    padding: 8px 5px 8px 10px;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .d-flex {
+    width: 100%;
+    justify-content: center !important;
+  }
+  
+  .content-title {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  
+  header.card-header {
+    padding: 5px;
+  }
+  
+  .input-group {
+    width: 95%;
+    margin-left: 30px; /* Small but visible right shift */
+  }
+  
+  .input-group input {
+    font-size: 14px;
+  }
+  
+  .right {
+    margin-left: 5px;
+    margin-right: 5px;
+  }
+  
+  .table th, 
+  .table td {
+    padding: 6px 8px;
+    font-size: 14px;
+  }
+  
+  .btn {
+    padding: 4px 8px;
+    font-size: 12px;
+  }
+  
+  .pagination {
+    margin-right: 30px !important; /* Small but visible right shift */
+  }
+  
+  .pagination .page-link {
+    padding: 5px 8px;
+    font-size: 14px;
+  }
+}
+</style>
 <div class="content-header row">
     <div class="d-flex justify-content-between align-items-center">
         <h2 class="content-title card-title">Customers</h2>
@@ -9,7 +245,7 @@
         
             <header class="card-header text-center mb-20">
                 <form action="/admin/users/" method="get" class="d-inline">
-                    <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px;">
+                    <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 300px; margin-left: 230px;">
                         <input type="text" class="form-control border-0 rounded-pill" placeholder="Search customers..." name="search">
                         <button class="btn  border-0" type="submit">Search</button>
                     </div>

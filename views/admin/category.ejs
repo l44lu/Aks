@@ -2,6 +2,193 @@
 <head>
 
 </head>
+<style>
+  /* Enhanced Responsive Styles for Category Page */
+
+/* Form & Table Container Responsiveness */
+.card-body .row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -10px;
+}
+.input-group button {
+  background:
+#555;
+  color: #fff;
+  border-radius:
+50px;
+  padding:
+8px 20px;
+  border:
+none;
+  cursor: pointer;
+  transition:
+0.3s;
+  width: 100px;
+}
+
+
+.col-md-3, .col-md-8 {
+    padding: 15px;
+    box-sizing: border-box;
+}
+
+.col-md-3 {
+    width: calc(30% - 20px);
+    margin: 10px;
+    border: 1px solid #444;
+    border-radius: 10px;
+}
+
+.col-md-8 {
+    width: calc(70% - 20px);
+    margin: 10px;
+}
+
+/* Table Responsiveness */
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table th, .table td {
+    padding: 12px 15px;
+    white-space: nowrap;
+}
+
+/* Search Bar Responsiveness */
+.card-header {
+    margin-left: 0;
+    padding: 15px;
+}
+
+.card-header .input-group {
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Form Controls Responsiveness */
+.form-control, .btn {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Media Queries aligned with navbar responsive design */
+@media (max-width: 992px) {
+    .col-md-3, .col-md-8 {
+        padding: 12px;
+    }
+    
+    .table th, .table td {
+        padding: 10px;
+        padding-left: 30px;
+    }
+    
+    .content-main {
+        padding: 25px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+    .col-md-3, .col-md-8 {
+        width: 100%;
+        margin: 10px 0;
+    }
+    
+    .table th, .table td {
+        padding: 8px;
+        padding-left: 15px;
+    }
+    
+    .content-main {
+        padding: 20px;
+    }
+    
+    .content-title {
+        padding-left: 15px;
+    }
+    
+    .card-header {
+        padding: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .table th, .table td {
+        padding: 6px;
+        padding-left: 10px;
+    }
+    
+    .btn {
+        padding: 5px 10px;
+        font-size: 13px;
+    }
+    
+    .pagination a {
+        padding: 6px 10px;
+    }
+    
+    .content-main {
+        padding: 15px;
+    }
+    
+    .input-group input, .input-group button {
+        padding: 6px 12px;
+    }
+}
+
+/* Special handling for smallest screens */
+@media (max-width: 500px) {
+    /* Match with the existing navbar behavior at this breakpoint */
+    .content-main {
+        padding: 15px 10px;
+        margin-top: 10px;
+    }
+    
+    .content-title {
+        font-size: 20px;
+        margin-bottom: 15px;
+        padding-left: 5px;
+    }
+    
+    .card-header {
+        padding: 5px;
+    }
+    
+    .table-responsive {
+        margin-left: -10px;
+        margin-right: -10px;
+        width: calc(100% + 20px);
+    }
+    
+    .input-group {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+    }
+    
+    /* Adjust table cell spacing for small screens */
+    .table th, .table td {
+        padding: 5px;
+    }
+    
+    .btn {
+        padding: 4px 8px;
+        margin: 3px;
+        font-size: 12px;
+        min-width: 60px;
+    }
+    
+    /* Stack buttons in small screens */
+    td .btn {
+        display: block;
+        width: 100%;
+        margin: 3px 0;
+    }
+}
+
+</style>
 <body>
   <section class="content-main">
     <div class="content-header">
@@ -11,7 +198,7 @@
     </div>
     <header class="card-header text-center mb-20">
       <form action="/admin/category/" method="get" class="d-inline">
-        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 500px; margin-left: 230px">
+        <div class="input-group input-group-sm border border-1 border-grey rounded-pill" style="width: 300px; margin-left: 0px">
           <input type="text" class="form-control border-0 rounded-pill mt-3" placeholder="Search categories" name="search"/>
           <button class="btn" type="submit">Search</button>
         </div>
@@ -352,6 +539,8 @@
     });
   }
 }
+
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>

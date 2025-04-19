@@ -205,7 +205,7 @@ const loadOrders = async (req, res) => {
             orderDate: order.createdOn.toISOString().split('T')[0],
             totalAmount: order.totalPrice,
             finalAmount: order.finalAmount,
-            status: order.status,
+            status: order.status === "payment pending" ? "Payment Failed" : order.status,
             paymentMethod: order.paymentMethod,
             couponApplied: order.couponApplied,
             products: order.orderItems
@@ -289,10 +289,8 @@ const addAddressInCheckout = async (req, res) => {
 const orderPlaced = async (req, res) => {
     try {
         const userId = req.session.user;
-        const { paymentMethod, addressId ,snum } = req.body
-        console.log("dd",req.body)
-        console.log(paymentMethod);
-        
+        const { paymentMethod, addressId, snum } = req.body;
+
         const userCart = await Cart.findOne({ userId }).populate('item.productId');
         if (!userCart || userCart.item.length === 0) {
             return res.status(400).json({ success: false, message: "Cart is empty" });
@@ -303,64 +301,51 @@ const orderPlaced = async (req, res) => {
             return res.status(404).json({ success: false, message: "Address not found" });
         }
 
-        const selectedAddress = user.address.id(addressId)
-        if (!selectedAddress) {
-            return res.status(400).json({ error: "Address not found" })
-        }
+        const selectedAddress = user.address.id(addressId);
 
         const orderedItems = userCart.item.map(item => ({
-            productId: item.productId._id, 
-            productName:item.productId.productName,
-            selectedSize:item.selectedSize,
+            productId: item.productId._id,
+            productName: item.productId.productName,
+            selectedSize: item.selectedSize,
             quantity: item.quantity,
             price: item.price,
             productImage: item.productId.productImage
         }));
 
-        let totalPrice = orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0)
+        let totalPrice = orderedItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
         const deliveryCharge = 88;
-        const discount = req.session.offerPrice || 0
-        let finalAmount = totalPrice + deliveryCharge - parseInt(discount)
+        const discount = req.session.offerPrice || 0;
+        const finalAmount = totalPrice + deliveryCharge - parseInt(discount);
 
-        if (snum == 'payment-fail') {
+        const amount = req.session.total
+        const orderId = req.session.orderId
+
+        if (snum === 'payment-fail') {
             const newOrder = new Order({
                 userId,
-                orderItems: orderedItems,  
+                orderItems: orderedItems,
                 totalPrice,
                 discount,
                 finalAmount,
-                address: selectedAddress, 
+                deliveryCharge,
+                address: selectedAddress,
                 paymentMethod,
-                status: "payment pending",
-                couponApplied: discount > 0,
-            })
-            await newOrder.save()
+                status: "payment pending", 
+                couponApplied: discount > 0
+            });
+            await newOrder.save();
 
-            for (const item of orderedItems) {
-                await Product.updateOne(
-                    { _id: item.productId },
-                    { $inc: { quantity: -item.quantity } }
-                )
-                await Product.updateOne(
-                    { _id: item.productId, "sizes.size": item.selectedSize },
-                    { $inc: { "sizes.$.quantity": -item.quantity } }
-                )
-            }
-            
-            await Cart.findOneAndUpdate(
-                { userId },
-                { $set: { item: [] } }
-            )
-
-            req.session.finalAmount = finalAmount
-            req.session.offerPrice = null
-            req.session.appliedCoupon = undefined
-            req.session.orderId = newOrder._id
-            
-            res.json({ success: true, message: '' })
-            return
+            return res.render("payment-failure", {
+                orderId: orderId || 'N/A',
+                amount: finalAmount,
+                paymentMethod: paymentMethod || 'N/A',
+                razorpayKeyId: process.env.RAZORPAY_KEY_ID || '', 
+                addressId: addressId || 'N/A',
+                userEmail: req.user?.email || '',
+                userPhone: req.user?.phone || ''
+            });
         }
-        
+
         const newOrder = new Order({
             userId,
             orderItems: orderedItems,
@@ -370,103 +355,75 @@ const orderPlaced = async (req, res) => {
             deliveryCharge,
             address: selectedAddress,
             paymentMethod,
-            status: "Pending",
+            status: paymentMethod === "Cash on Delivery" ? "Pending" : "Processing", 
             couponApplied: discount > 0
-        })
-        await newOrder.save()
+        });
+        await newOrder.save();
 
         for (const item of orderedItems) {
             await Product.updateOne(
-                { _id: item.productId ,"sizes.size": item.selectedSize},
-                { $inc: { "sizes.$.quantity": -item.quantity } },
-            )
+                { _id: item.productId, "sizes.size": item.selectedSize },
+                { $inc: { "sizes.$.quantity": -item.quantity } }
+            );
         }
-        
-        await Cart.findOneAndUpdate(
-            { userId },
-            { $set: { item: [] } }
-        )
 
-        req.session.finalAmount = finalAmount
-        req.session.offerPrice = null
-        req.session.appliedCoupon = undefined
-        req.session.orderId = newOrder._id
-        req.session.orderOrderId = newOrder.orderId
-        
+        await Cart.findOneAndUpdate({ userId }, { $set: { item: [] } });
+
+        req.session.finalAmount = finalAmount;
+        req.session.offerPrice = null;
+        req.session.appliedCoupon = undefined;
+        req.session.orderId = newOrder._id;
+        req.session.orderOrderId = newOrder.orderId;
+
         if (paymentMethod === "Cash on Delivery") {
-            let wallet = await Wallet.findOne({ user: userId })
-            if (!wallet) {
-                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
-            }
-            
+            let wallet = await Wallet.findOne({ user: userId }) || new Wallet({ user: userId, balance: 0, transaction: [] });
+
             wallet.transaction.push({
                 type: "debit",
                 amount: finalAmount,
-                transactionId:req.session.orderOrderId ,
+                transactionId: req.session.orderOrderId,
                 createdAt: new Date(),
                 productName: orderedItems.map(item => item.productId.toString()),
                 method: "cod",
                 status: "pending"
-            })
-            
-            await wallet.save()
-            return res.json({ success: true, message: "Order placed with COD. Payment pending.", orderId: newOrder._id })
+            });
+
+            await wallet.save();
+
+            return res.json({ success: true, message: "Order placed with COD. Payment pending.", orderId: newOrder._id });
         }
 
-        if (paymentMethod === "upi") {
-            let wallet = await Wallet.findOne({ user: userId })
-            if (!wallet) {
-                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
-            }
-            
+        if (paymentMethod === "upi" || paymentMethod === "wallet") {
+            let wallet = await Wallet.findOne({ user: userId }) || new Wallet({ user: userId, balance: 0, transaction: [] });
+
             wallet.transaction.push({
                 type: "debit",
                 amount: finalAmount,
                 transactionId: `TXN${Date.now()}`,
                 createdAt: new Date(),
                 productName: orderedItems.map(item => item.productId.toString()),
-                method: "upi"
-            })
-            await wallet.save()
+                method: paymentMethod
+            });
 
-            req.session.appliedCoupon = null
-            req.session.orderId = newOrder._id
-            req.session.finalAmount = finalAmount
-            req.session.offerPrice = null
-            req.session.appliedCoupon = undefined
-            return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
-        } else if (paymentMethod === 'wallet') {
-            let wallet = await Wallet.findOne({ user: userId })
-            if (!wallet) {
-                wallet = new Wallet({ user: userId, balance: 0, transaction: [] })
+            if (paymentMethod === "wallet") {
+                wallet.balance -= finalAmount;
             }
-            
-            wallet.transaction.push({
-                type: "debit",
-                amount: finalAmount,
-                transactionId: `TXN${Date.now()}`, 
-                createdAt: new Date(),
-                productName: orderedItems.map(item => item.productId.toString()),
-                method: "wallet"
-            })
-            
-            wallet.balance = !wallet.balance ? 0 : wallet.balance - finalAmount
-            await wallet.save()
 
-            req.session.appliedCoupon = null
-            req.session.orderId = newOrder._id
-            req.session.finalAmount = finalAmount
-            req.session.offerPrice = null
-            req.session.appliedCoupon = undefined
-            
-            return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance })
+            await wallet.save();
+
+            return res.json({ success: true, message: 'Payment Successful!', walletBalance: wallet.balance });
         }
-        return res.json({ success: true, message: "Order placed successfully", orderId: newOrder._id })
+
+        return res.json({ success: true, message: "Order placed successfully", orderId: newOrder._id });
+
     } catch (error) {
-        console.log("Error while placing order:", error)
-        res.status(500).json({ success: false, message: "Server error" })
+        console.log("Error while placing order:", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
-}
+};
+
+
+
 
 const createOrder = async (req, res) => {
     const { amount, currency } = req.body
@@ -700,7 +657,6 @@ const cancelProduct = async (req, res) => {
 }
 
 
-
 const returnOrder = async (req, res) => {
     const { orderId, productId, reason } = req.body;
 
@@ -739,7 +695,7 @@ const returnOrder = async (req, res) => {
         const allProductsReturned = order.orderItems.every(item => item.returnRequest?.status === 'Pending');
 
         if (allProductsReturned) {
-            order.status = 'Return Request';
+            order.status = 'Return Requested';
         }
 
         await order.save();
@@ -751,6 +707,8 @@ const returnOrder = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' })
     }
 };
+
+
 
 
 const downloadInvoice = async (req, res) => {
@@ -919,6 +877,11 @@ const loadPaymentSuccess = async (req, res) => {
         console.log(orderId)
         const order = await Order.findOne({_id: orderId })
         const userId = req.session.user
+        await Order.updateOne(
+            { _id: orderId, status: "payment pending" },
+            { $set: { status: "Processing" } }
+        );
+
         const userWallet = await Wallet.findOne({ user: userId })
         if (userWallet) {
             userWallet.transaction.push({
@@ -951,6 +914,13 @@ const paymentFailure = async (req, res) => {
 
         const finalAmount = amount && !isNaN(amount) ? Math.round(amount) : 'N/A';
 
+        if (orderId) {
+            await Order.updateOne(
+                { _id: orderId },
+                { $set: { status: "payment pending" } }
+            );
+        }
+
         res.render('payment-failure', {
             orderId: orderId || 'N/A',
             amount: finalAmount,
@@ -972,12 +942,8 @@ const retryPayment = async (req, res) => {
         const { orderId, snum } = req.body
         if (snum == 'retry') {
             const updateOrder = await Order.updateOne({ _id: orderId }, { status: 'Pending' })
-            if (updateOrder.modifiedCount > 0) {
-                req.session.orderId = orderId
-                res.status(200).json({ success: true })
-                return
-            }
-            res.status(500).json({ success: false, message: 'Order not updated' })
+            req.session.orderId = orderId
+            res.status(200).json({ success: true })
             return
         }
         const updateOrder = await Order.updateOne({ orderId: orderId }, { status: 'Pending' })

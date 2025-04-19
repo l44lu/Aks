@@ -64,6 +64,7 @@ router.post("/editAddress",userAuth,profileController.postEditAddress);
 
 router.get("/addAddress",userAuth,profileController.addAddress);
 router.post("/addAddress",userAuth,profileController.postAddress);
+router.post("/addAddressCheckout",profileController.addAddressInCheckout);
 router.get("/deleteAddress",userAuth,profileController.deleteAddress);
 
 

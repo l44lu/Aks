@@ -407,7 +407,7 @@
                         </button>
 
                         <!-- Retry Payment Button for Pending Payments -->
-                        <% if (order.status === 'payment pending') { %>
+                        <% if (order.status === 'Payment Failed') { %>
                             <button class="btn btn-warning btn-custom" 
                                     onclick="retryPayment('<%= order.orderId %>', '<%= order.address._id %>', 'upi', '<%= order.finalAmount %>')">
                                 <i class="fas fa-redo"></i> Retry Payment
@@ -668,105 +668,100 @@ async function initiateReturn(orderId, productId) {
 
 
 async function retryPayment(orderId, addressId, paymentMethod, amount) {
-
-console.log('Retry payment data:', orderId, paymentMethod, amount);
-
-try {
-
-    console.log('Order datas: ', orderId, amount);
-    
-
+  console.log('Retry payment data:', orderId, paymentMethod, amount);
+  try {
+    console.log('Order data: ', orderId, amount);
     const responseOfRazorpay = await fetch("/create-retry-order", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ amount: amount, currency: "INR", orderId: orderId }),  
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ amount: amount, currency: "INR", orderId: orderId }),
     });
-
+    
     const data = await responseOfRazorpay.json();
-
-
     console.log('data from the razorpay: ', data);
     
     if (!data.success) throw new Error("Failed to create order");
-
+    
     const options = {
-        key: "rzp_test_Qg11WlEkiWMukc",
-        amount: data.order.amount,  
-        currency: data.order.currency,
-        order_id: data.order.id,
-        name: "Trendy Threads",
-        description: "Payment Retry",
-        handler: async function (response) {
-
-            Swal.fire({
-                title: "Payment Successful!",
-                text: "Payment ID: " + response.razorpay_payment_id,
-                icon: "success",
-                confirmButtonColor: "#28a745",
-                confirmButtonText: "OK",
-            }).then(async () => {
-
-                console.log('helloo heyyy');
-
-                const response = await fetch('/retryPaymentSuccess', {
-                    method: 'POST',
-                    headers: {
-                        'Content-type': 'application/json'
-                    },
-                    body: JSON.stringify({ orderId })
-                })
-
-
-                const result = await response.json()
-
-
-                if (result.success) {
-                    window.location.href = '/payment-success'
-                    return;
-                }
-
-                Swal.fire({
-                    title: "Payment Failed!",
-                    text: 'Error while retrying payment',
-                    icon: "error",
-                    confirmButtonColor: "#dc3545",
-                    confirmButtonText: "Try Again",
-                })
-
+      key: "rzp_test_EH4759FSU8ENsk",
+      amount: data.order.amount,
+      currency: data.order.currency,
+      order_id: data.order.id,
+      name: "Aks-Fashion",
+      description: "Payment Retry",
+      handler: async function (response) {
+        Swal.fire({
+          title: "Payment Successful!",
+          text: "Payment ID: " + response.razorpay_payment_id,
+          icon: "success",
+          confirmButtonColor: "#28a745",
+          confirmButtonText: "OK",
+        }).then(async () => {
+          console.log('Processing payment confirmation');
+          try {
+            const response = await fetch('/retryPaymentSuccess', {
+              method: 'POST',
+              headers: {
+                'Content-type': 'application/json'
+              },
+              body: JSON.stringify({ orderId })
             });
-        },
-        prefill: {
-            email: "test@example.com",
-            contact: "9999999999",
-        },
-        theme: { color: "#3399cc" },
-        modal: {
-            ondismiss: async function () {
-                    window.location.href = `/payment-failure?orderId=${data.order.id}&amount=${amount}&paymentMethod=upi&addressId=${addressId}`;
-                    return;
-                
+            
+            const result = await response.json();
+            
+            if (!result.success) {
+              throw new Error(result.message || 'Error processing payment confirmation');
             }
+            
+            // Redirect to success page or perform additional actions if needed
+            window.location.href = `/myOrders`;
+            
+          } catch (error) {
+            console.error("Error confirming payment:", error);
+            Swal.fire({
+              title: "Payment Processing Error",
+              text: error.message || 'Error while processing payment',
+              icon: "error",
+              confirmButtonColor: "#dc3545",
+              confirmButtonText: "Try Again",
+            });
+          }
+        });
+      },
+      prefill: {
+        email: "test@example.com",
+        contact: "9999999999",
+      },
+      theme: { color: "#3399cc" },
+      modal: {
+        ondismiss: async function () {
+          window.location.href = `/payment-failure?orderId=${data.order.id}&amount=${amount}&paymentMethod=upi&addressId=${addressId}`;
         }
+      }
     };
-
+    
     const rzp = new Razorpay(options);
     rzp.open();
-
-} catch (error) {
+    
+  } catch (error) {
     console.error("Error in retryPayment:", error);
+    
+    // Store the orderId safely before redirecting
+    const failureOrderId = orderId || "unknown"; 
+    
     Swal.fire({
-        title: "Payment Failed!",
-        text: error.message,
-        icon: "error",
-        confirmButtonColor: "#dc3545",
-        confirmButtonText: "Try Again",
+      title: "Payment Failed!",
+      text: error.message || "An error occurred during payment processing",
+      icon: "error",
+      confirmButtonColor: "#dc3545",
+      confirmButtonText: "Try Again",
     }).then(() => {
-        console.log('Selected address ID:', addressId);
-        window.location.href = `/payment-failure?orderId=${data.order.id}&amount=${amount}&paymentMethod=RAZORPAY&addressId=${addressId}`;
+      console.log('Selected address ID:', addressId);
+      window.location.href = `/payment-failure?orderId=${failureOrderId}&amount=${amount}&paymentMethod=RAZORPAY&addressId=${addressId}`;
     });
-}
+  }
 }
 </script>
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
