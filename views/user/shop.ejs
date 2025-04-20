@@ -13,22 +13,23 @@
   .main-container {
     max-width: 1400px;
     margin: 0 auto;
-    padding: 0 40px;
+    padding: 0 20px;
   }
 
   .brand-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 30px 0;
+    padding: 20px 0;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
     margin-bottom: 0;
+    flex-wrap: wrap;
   }
 
   .brand-logo {
-    font-size: 36px;
+    font-size: 28px;
     font-weight: 300;
-    letter-spacing: 8px;
+    letter-spacing: 6px;
     color: #000000;
     text-transform: uppercase;
     flex: 1;
@@ -43,7 +44,7 @@
 
   .header-icons {
     display: flex;
-    gap: 30px;
+    gap: 20px;
     align-items: center;
   }
 
@@ -74,8 +75,9 @@
   }
 
   .search-popup {
-    width: 60%;
+    width: 90%;
     max-width: 800px;
+    padding: 0 15px;
   }
 
   .search-form {
@@ -87,12 +89,13 @@
   .search-input {
     flex: 1;
     padding: 15px 0;
-    font-size: 24px;
+    font-size: 20px;
     border: none;
     outline: none;
     background: transparent;
     letter-spacing: 2px;
     color: #ffffff;
+    width: 100%;
   }
 
   .search-input::placeholder {
@@ -106,7 +109,7 @@
     color: #ffffff;
     border: none;
     cursor: pointer;
-    font-size: 24px;
+    font-size: 20px;
     transition: 0.3s;
   }
 
@@ -117,15 +120,15 @@
 
   .close-search {
     position: absolute;
-    top: 40px;
-    right: 40px;
-    font-size: 30px;
+    top: 20px;
+    right: 20px;
+    font-size: 24px;
   }
 
   .collection-banner {
     position: relative;
-    height: 500px;
-    margin-bottom: 60px;
+    height: 400px;
+    margin-bottom: 40px;
     background-color: #0f0f0f;
     display: flex;
     align-items: center;
@@ -149,19 +152,20 @@
     text-align: center;
     color: #ffffff;
     z-index: 1;
+    padding: 0 20px;
   }
 
   .collection-subtitle {
-    font-size: 18px;
+    font-size: 16px;
     text-transform: uppercase;
-    letter-spacing: 6px;
-    margin-bottom: 20px;
+    letter-spacing: 4px;
+    margin-bottom: 15px;
     font-weight: 300;
   }
 
   .collection-title {
-    font-size: 72px;
-    letter-spacing: 8px;
+    font-size: 42px;
+    letter-spacing: 4px;
     text-transform: uppercase;
     margin: 0;
     color: aliceblue;
@@ -172,9 +176,10 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 20px 0;
-    margin-bottom: 30px;
+    padding: 15px 0;
+    margin-bottom: 20px;
     border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    flex-wrap: wrap;
   }
 
   .sort-options label {
@@ -182,7 +187,7 @@
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 1px;
-    margin-right: 15px;
+    margin-right: 10px;
     color: #333;
   }
 
@@ -191,7 +196,7 @@
     font-size: 14px;
     border: none;
     background: transparent;
-    padding: 10px 30px 10px 15px;
+    padding: 8px 25px 8px 10px;
     cursor: pointer;
     appearance: none;
     background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
@@ -200,6 +205,7 @@
     background-size: 15px;
     border-bottom: 1px solid #ddd;
     transition: all 0.3s;
+    max-width: 100%;
   }
 
   #sortSelect:focus {
@@ -209,12 +215,13 @@
 
   .product-list-container {
     display: flex;
-    gap: 60px;
+    gap: 30px;
+    flex-direction: row;
   }
 
   .sidebar {
     width: 260px;
-    padding-right: 40px;
+    padding-right: 20px;
     font-family: 'Montserrat', sans-serif;
   }
 
@@ -222,11 +229,11 @@
     font-size: 14px;
     text-transform: uppercase;
     letter-spacing: 2px;
-    margin: 0 0 25px;
+    margin: 0 0 20px;
     color: #000000;
     font-weight: 500;
     position: relative;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
   }
 
   .sidebar h3::after {
@@ -242,11 +249,11 @@
   .sidebar ul {
     list-style: none;
     padding: 0;
-    margin: 0 0 30px;
+    margin: 0 0 25px;
   }
 
   .sidebar ul li {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
   }
 
   .sidebar ul li a {
@@ -270,7 +277,7 @@
     border: none;
     border-bottom: 1px solid #eee;
     color: #555;
-    padding: 12px 0;
+    padding: 10px 0;
     margin-bottom: 8px;
     cursor: pointer;
     font-size: 14px;
@@ -291,7 +298,7 @@
     font-size: 10px;
     font-weight: 500;
     cursor: pointer;
-    margin: 5px 0 30px;
+    margin: 5px 0 25px;
     transition: all 0.3s;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -307,7 +314,7 @@
   .product-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 30px;
+    gap: 20px;
     flex-grow: 1;
   }
 
@@ -327,7 +334,7 @@
 
   .product-card img {
     width: 100%;
-    height: 400px;
+    height: 350px;
     object-fit: cover;
     transition: all 0.8s;
   }
@@ -343,11 +350,11 @@
   }
 
   .product-info {
-    padding: 15px 5px;
+    padding: 12px 5px;
   }
 
   .product-card h4 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 400;
     margin: 0 0 8px;
     color: #000000;
@@ -371,15 +378,15 @@
 
   .wishlist-btn {
     position: absolute;
-    top: 20px;
-    right: 20px;
-    font-size: 16px;
+    top: 15px;
+    right: 15px;
+    font-size: 14px;
     cursor: pointer;
     color: #ffffff;
     background: rgba(0, 0, 0, 0.6);
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 35px;
+    height: 35px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -405,10 +412,10 @@
     background-color: rgba(255, 255, 255, 0.95);
     transform: translateY(100%);
     transition: transform 0.4s ease;
-    padding: 20px;
+    padding: 15px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     z-index: 5;
   }
 
@@ -421,11 +428,11 @@
     background-color: transparent;
     color: #000000;
     border: 1px solid #000000;
-    padding: 12px 15px;
+    padding: 10px;
     cursor: pointer;
     font-size: 11px;
     text-transform: uppercase;
-    letter-spacing: 2px;
+    letter-spacing: 1px;
     width: 100%;
     transition: all 0.3s;
     font-family: 'Montserrat', sans-serif;
@@ -439,7 +446,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
+    gap: 6px;
   }
 
   .quick-view-btn:hover {
@@ -453,9 +460,9 @@
   }
 
   .pagination-container {
-    padding: 60px 0 40px;
+    padding: 40px 0 30px;
     border-top: 1px solid rgba(0, 0, 0, 0.05);
-    margin-top: 60px;
+    margin-top: 40px;
   }
 
   .pagination {
@@ -463,10 +470,11 @@
     justify-content: center;
     gap: 5px;
     font-family: 'Montserrat', sans-serif;
+    flex-wrap: wrap;
   }
 
   .pagination a {
-    padding: 8px 15px;
+    padding: 8px 12px;
     background-color: transparent;
     color: #000000;
     text-decoration: none;
@@ -474,6 +482,7 @@
     font-size: 13px;
     font-weight: 400;
     border: 1px solid transparent;
+    margin: 2px;
   }
 
   .pagination .active {
@@ -488,7 +497,7 @@
   /* Global search styles - improved */
   .global-search-container {
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 25px;
   }
   
   .global-search-form {
@@ -504,19 +513,20 @@
   
   .global-search-input {
     flex: 1;
-    padding: 12px 15px;
+    padding: 10px 12px;
     font-size: 13px;
     border: none;
     outline: none;
     background: #fff;
     font-family: 'Montserrat', sans-serif;
+    width: 100%;
   }
   
   .global-search-button {
     background-color: #000000;
     color: #ffffff;
     border: none;
-    padding: 0 15px;
+    padding: 0 12px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.3s;
@@ -526,17 +536,82 @@
     background-color: #a11826;
   }
 
+  /* Mobile filter trigger button */
+  .mobile-filter-toggle {
+    display: none;
+    width: 100%;
+    background-color: #000;
+    color: #fff;
+    border: none;
+    padding: 12px 15px;
+    font-size: 14px;
+    font-family: 'Montserrat', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+
+  .mobile-filter-toggle i {
+    font-size: 16px;
+  }
+
+  /* Touch-friendly improvements */
+  @media (hover: none) {
+    .wishlist-btn {
+      opacity: 1;
+      width: 40px;
+      height: 40px;
+    }
+    
+    .product-hover-overlay {
+      transform: translateY(0);
+      opacity: 0.95;
+    }
+  }
+
+  /* Media Queries - Enhanced */
   @media (max-width: 1200px) {
     .product-grid {
       grid-template-columns: repeat(2, 1fr);
     }
     
     .main-container {
-      padding: 0 30px;
+      padding: 0 20px;
+    }
+    
+    .collection-title {
+      font-size: 36px;
+    }
+    
+    .product-card img {
+      height: 320px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .product-list-container {
+      gap: 20px;
+    }
+    
+    .sidebar {
+      width: 220px;
+      padding-right: 15px;
+    }
+    
+    .collection-banner {
+      height: 350px;
     }
   }
 
   @media (max-width: 768px) {
+    .mobile-filter-toggle {
+      display: flex;
+    }
+    
     .product-list-container {
       flex-direction: column;
     }
@@ -545,21 +620,106 @@
       width: 100%;
       border-right: none;
       padding-right: 0;
-      padding-bottom: 30px;
+      padding-bottom: 20px;
       border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      display: none;
+    }
+    
+    .sidebar.active {
+      display: block;
     }
 
     .product-grid {
-      grid-template-columns: repeat(1, 1fr);
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
     }
 
     .collection-title {
-      font-size: 40px;
+      font-size: 32px;
+      letter-spacing: 3px;
+    }
+    
+    .collection-subtitle {
+      font-size: 14px;
+      letter-spacing: 3px;
+    }
+    
+    .collection-banner {
+      height: 300px;
+      margin-bottom: 30px;
+    }
+    
+    .brand-logo {
+      font-size: 24px;
+      letter-spacing: 4px;
+    }
+    
+    .header-icons {
+      gap: 15px;
+    }
+    
+    .sort-options {
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+    
+    .product-card img {
+      height: 280px;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .product-grid {
+      grid-template-columns: repeat(1, 1fr);
+    }
+    
+    .collection-title {
+      font-size: 28px;
+      letter-spacing: 2px;
+    }
+    
+    .collection-subtitle {
+      font-size: 12px;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+    
+    .collection-banner {
+      height: 250px;
+      margin-bottom: 25px;
     }
     
     .main-container {
-      padding: 0 20px;
+      padding: 0 15px;
+    }
+    
+    .brand-logo {
+      font-size: 20px;
+      letter-spacing: 3px;
+    }
+    
+    .product-card img {
+      height: 350px;
+    }
+    
+    .product-hover-overlay {
+      padding: 12px;
+    }
+    
+    .pagination a {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+    
+    .close-search {
+      top: 15px;
+      right: 15px;
+      font-size: 20px;
+    }
+    
+    .search-input {
+      font-size: 16px;
     }
   }
 </style>
@@ -591,15 +751,20 @@
     <label for="sortSelect">Sort By:</label>
     <select id="sortSelect" onchange="applySort()">
       <option value="newest" <%= sort === 'newest' ? 'selected' : '' %>>Newest Arrivals</option>
-      <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: High to Low</option>
-      <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: Low to High</option>
-  </select>
+      <option value="low" <%= sort === 'low' ? 'selected' : '' %>>Price: Low to High</option>
+      <option value="high" <%= sort === 'high' ? 'selected' : '' %>>Price: High to Low</option>
+    </select>
   </div>
+
+  <!-- Mobile filter toggle button -->
+  <button class="mobile-filter-toggle" id="toggleFilters">
+    <i class="fas fa-filter"></i> Show Filters
+  </button>
 
   <section class="shop-page">
     <div class="product-list-container">
       
-      <aside class="sidebar">
+      <aside class="sidebar" id="filterSidebar">
         <!-- Global Search Feature -->
         <div class="global-search-container">
           <form action="/search" method="post" class="global-search-form">
@@ -643,7 +808,7 @@
                 <i class="fas fa-heart"></i>
               </button>           
                 <a href="/productDetails?id=<%= product[i]._id %>">
-                    <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" />
+                    <img src="<%= product[i].productImage[0].replace('_', '_/') %>" alt="<%= product[i].productName %>" loading="lazy" />
                     <div class="product-hover-overlay">
                         <button class="quick-view-btn">Quick View</button>
                         <button class="add-to-cart-btn" onclick="addToCart('<%=product[i]._id%>')">
@@ -891,6 +1056,65 @@
   
   document.getElementById('close-search').addEventListener('click', function() {
     document.getElementById('search-popup').style.display = 'none';
+  });
+  
+  // Mobile filter toggle functionality
+  document.getElementById('toggleFilters').addEventListener('click', function() {
+    const sidebar = document.getElementById('filterSidebar');
+    sidebar.classList.toggle('active');
+    
+    // Update button text based on sidebar visibility
+    if (sidebar.classList.contains('active')) {
+      this.innerHTML = '<i class="fas fa-times"></i> Hide Filters';
+    } else {
+      this.innerHTML = '<i class="fas fa-filter"></i> Show Filters';
+    }
+  });
+  
+  // Handle quick view and add to cart on touch devices
+  if ('ontouchstart' in window) {
+    document.querySelectorAll('.product-card').forEach(card => {
+      const overlay = card.querySelector('.product-hover-overlay');
+      const link = card.querySelector('a');
+      
+      card.addEventListener('click', function(e) {
+        if (e.target.closest('.wishlist-btn') || 
+            e.target.closest('.quick-view-btn') || 
+            e.target.closest('.add-to-cart-btn')) {
+          e.preventDefault(); // Allow button clicks to work
+        }
+      });
+    });
+  }
+  
+  // Add lazy loading for images
+  document.addEventListener('DOMContentLoaded', function() {
+    // Check if browser supports IntersectionObserver
+    if ('IntersectionObserver' in window) {
+      const imageObserver = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const img = entry.target;
+            const src = img.getAttribute('data-src');
+            if (src) {
+              img.src = src;
+              img.removeAttribute('data-src');
+            }
+            imageObserver.unobserve(img);
+          }
+        });
+      });
+      
+      // Target all product images with data-src
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        imageObserver.observe(img);
+      });
+    } else {
+      // Fallback for browsers that don't support IntersectionObserver
+      document.querySelectorAll('img[data-src]').forEach(img => {
+        img.src = img.getAttribute('data-src');
+      });
+    }
   });
 </script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>

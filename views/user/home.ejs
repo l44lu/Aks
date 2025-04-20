@@ -67,7 +67,7 @@ body {
     max-width: 600px;
     padding: 60px;
     border-left: 1px solid var(--light-gold);
-    animation: fadeInLeft 1.2sease;
+    animation: fadeInLeft 1.2s ease; /* Fixed animation syntax */
     margin-top: -150px;
 }
 
@@ -392,7 +392,8 @@ body {
   }
   
   .hero__text {
-    padding: 40px;
+        max-width: 520px;
+        margin-top: -100px;
   }
 }
 
@@ -405,9 +406,18 @@ body {
   .hero__text h2 {
     font-size: 32px;
   }
+  .hero__social {
+    margin-top: 30px;
+    gap: 20px;
+  }
+
+  .primary-btn {
+    padding: 12px 35px;
+  }
   
   .hero__text {
-    padding: 30px;
+    max-width: 450px;
+    margin-top: -80px;
   }
 }
 
@@ -418,8 +428,19 @@ body {
   }
   
   .hero__text {
-    padding: 25px;
-    max-width: 450px;
+    margin-top: -50px;
+    animation: fadeInUp 1.2s ease; /* Change animation for mobile */
+    border-left: none;
+    border-top: 1px solid var(--light-gold);
+  }
+  .hero__social {
+    margin-top: 25px;
+    gap: 15px;
+  }
+  .primary-btn {
+    padding: 10px 30px;
+    font-size: 11px;
+    letter-spacing: 2px;
   }
   
   .hero__text h2 {
@@ -434,6 +455,10 @@ body {
     margin-right: 30px;
     font-size: 12px;
   }
+  .hero__slider.owl-carousel .owl-nav button {
+    left: 15px;
+    top: 87%;
+  }
 }
 
 @media (max-width: 575px) {
@@ -443,10 +468,45 @@ body {
   
   .hero__text {
     padding: 20px;
+    margin-top: 0;
+    max-width: 100%;
+    background: rgba(10, 10, 10, 0.5); /* Add semi-transparent background for better readability */
+    animation-duration: 1s;
   }
   
   .hero__text h2 {
     font-size: 24px;
+    margin-bottom: 20px;
+  }
+
+  .hero__text h6 {
+    margin-bottom: 15px;
+    letter-spacing: 4px;
+  }
+  .hero__text p {
+    margin-bottom: 25px;
+    font-size: 13px;
+  }
+  .hero__social {
+    margin-top: 20px;
+    gap: 10px;
+  }
+  .hero__social a {
+    font-size: 14px;
+  }
+  .hero__social a:hover {
+    color: var(--primary-color);
+  }
+  .owl-carousel .owl-nav button {
+    width: 40px;
+    height: 40px;
+    font-size: 16px;
+  }
+  .owl-carousel .owl-nav button.owl-prev {
+    left: 10px;
+  }
+  .owl-carousel .owl-nav button.owl-next {
+    right: 100px;
   }
   
   .primary-btn {
@@ -532,55 +592,96 @@ body {
   background: var(--primary-color);
   transform: rotate(45deg);
 }
+
+
+@media (max-width: 480px) {
+    .hero__items {
+        min-height: 450px;
+        height: 90vh;
+    }
+    
+    .hero__text h2 {
+        font-size: 22px;
+    }
+    
+    .hero__text h6 {
+        font-size: 10px;
+    }
+    
+    .owl-carousel .owl-dots {
+        bottom: 15px;
+    }
+    
+    /* Center the hero text on very small screens */
+    .hero__text {
+        text-align: center;
+        border-top: none;
+        margin-top:-165px;
+    }
+    
+    .hero__social {
+        justify-content: center;
+    }
+}
+@supports (-webkit-touch-callout: none) {
+    .hero__items {
+        background-attachment: scroll;
+    }
+    
+    .set-bg {
+        background-attachment: scroll;
+    }
+}
 </style>
 
     <!-- Hero Section Begin -->
-    <section class="hero">
-        <div class="hero__slider owl-carousel">
-            <div class="hero__items set-bg" data-setbg="img/hero/hero-1.jpg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-5 col-lg-7 col-md-8">
-                            <div class="hero__text">
-                                <h6>Summer Collection</h6>
-                                <h2>Fall - Winter Collections 2030</h2>
-                                <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
-                                <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                                <div class="hero__social">
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-pinterest"></i></a>
-                                    <a href="#"><i class="fa fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="hero__items set-bg" data-setbg="img/hero/hero-2.jpg">
-                <div class="container">
-                    <div class="row">
-                        <div class="col-xl-5 col-lg-7 col-md-8">
-                            <div class="hero__text">
-                                <h6>Summer Collection</h6>
-                                <h2>Fall - Winter Collections 2030</h2>
-                                <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
-                                commitment to exceptional quality.</p>
-                                <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
-                                <div class="hero__social">
-                                    <a href="#"><i class="fa fa-facebook"></i></a>
-                                    <a href="#"><i class="fa fa-twitter"></i></a>
-                                    <a href="#"><i class="fa fa-pinterest"></i></a>
-                                    <a href="#"><i class="fa fa-instagram"></i></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
+<!-- Hero Section Begin -->
+<section class="hero">
+  <div class="hero__slider owl-carousel">
+      <div class="hero__items set-bg" data-setbg="img/hero/hero-1.jpg">
+          <div class="container">
+              <div class="row">
+                  <div class="col-xl-5 col-lg-7 col-md-8 col-sm-10 col-12">
+                      <div class="hero__text">
+                          <h6>Summer Collection</h6>
+                          <h2>Fall - Winter Collections 2030</h2>
+                          <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
+                              commitment to exceptional quality.</p>
+                          <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
+                          <div class="hero__social">
+                              <a href="#"><i class="fa fa-facebook"></i></a>
+                              <a href="#"><i class="fa fa-twitter"></i></a>
+                              <a href="#"><i class="fa fa-pinterest"></i></a>
+                              <a href="#"><i class="fa fa-instagram"></i></a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+      <div class="hero__items set-bg" data-setbg="img/hero/hero-2.jpg">
+          <div class="container">
+              <div class="row">
+                  <div class="col-xl-5 col-lg-7 col-md-8 col-sm-10 col-12">
+                      <div class="hero__text">
+                          <h6>Summer Collection</h6>
+                          <h2>Fall - Winter Collections 2030</h2>
+                          <p>A specialist label creating luxury essentials. Ethically crafted with an unwavering
+                              commitment to exceptional quality.</p>
+                          <a href="#" class="primary-btn">Shop now <span class="arrow_right"></span></a>
+                          <div class="hero__social">
+                              <a href="#"><i class="fa fa-facebook"></i></a>
+                              <a href="#"><i class="fa fa-twitter"></i></a>
+                              <a href="#"><i class="fa fa-pinterest"></i></a>
+                              <a href="#"><i class="fa fa-instagram"></i></a>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+</section>
     <!-- Hero Section End -->
 
     <!-- Product Section Begin -->

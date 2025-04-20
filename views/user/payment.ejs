@@ -545,6 +545,327 @@ h1, h2, h3, h4, h5 {
         padding: 1rem;
     }
 }
+/* Additional responsive styles to enhance the payment page */
+
+/* Improve general responsiveness */
+
+
+/* Enhanced responsive design */
+@media (max-width: 1200px) {
+    .payment-container {
+        max-width: 95%;
+        padding: 2rem 1.5rem;
+    }
+}
+
+@media (max-width: 992px) {
+    .payment-container {
+        grid-template-columns: 1.5fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .payment-option {
+        padding: 1.2rem;
+    }
+    
+    .order-summary {
+        padding: 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .payment-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        padding: 1.5rem 1rem;
+    }
+    
+    .payment-section {
+        padding-right: 0;
+    }
+    
+    .payment-title {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+    
+    .payment-methods, .order-summary {
+        border-radius: 8px;
+    }
+    
+    .checkout-header {
+        padding: 1.5rem 1rem;
+    }
+    
+    .steps-container {
+        width: 100%;
+    }
+    
+    .step-label {
+        font-size: 0.65rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .payment-container {
+        padding: 1rem 0.75rem;
+    }
+    
+    .payment-option {
+        padding: 1rem;
+    }
+    
+    .payment-icon {
+        margin-right: 1rem;
+    }
+    
+    .payment-label {
+        font-size: 0.8rem;
+    }
+    
+    .cod-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .pay-button {
+        padding: 1rem;
+    }
+    
+    .cod-info {
+        font-size: 0.8rem;
+    }
+    
+    .divider {
+        margin: 1.5rem 0;
+    }
+    
+    .order-summary {
+        padding: 1.5rem 1rem;
+    }
+    
+    .delivery-header {
+        padding: 1rem;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .delivery-tag {
+        margin-top: 0.5rem;
+    }
+    
+    .price-row {
+        font-size: 0.8rem;
+    }
+    
+    .trust-badges {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .trust-badge {
+        padding: 0.5rem 0;
+    }
+    
+    /* Adjust checkout progress steps */
+    .step-circle {
+        width: 28px;
+        height: 28px;
+        font-size: 0.8rem;
+    }
+    
+    .step-label {
+        display: none;
+    }
+    
+    /* Show labels only for active step */
+    .step.active .step-label {
+        display: block;
+        position: absolute;
+        top: 40px;
+        width: max-content;
+        left: 50%;
+        transform: translateX(-50%);
+    }
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 100%;
+        height: 100vh;
+        margin: 0;
+        border-radius: 0;
+        max-width: none;
+    }
+    
+    .modal-header {
+        padding: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .wallet-info > div {
+        margin-bottom: 1rem;
+        padding-bottom: 1rem;
+    }
+    
+    .confirm-payment-btn {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0;
+        border-radius: 0;
+    }
+    
+    /* Fix wallet modal on small screens */
+    #walletModal .modal-body {
+        padding-bottom: 5rem;
+    }
+    
+    /* Mobile-friendly payment options */
+    .payment-option {
+        flex-direction: row;
+        align-items: center;
+    }
+    
+    /* Optimize the price summary section */
+    .price-row {
+        padding: 0.3rem 0;
+    }
+}
+
+/* Handle extremely small screens */
+@media (max-width: 320px) {
+    .payment-title {
+        font-size: 1.2rem;
+    }
+    
+    .payment-option {
+        padding: 0.8rem;
+    }
+    
+    .payment-icon {
+        margin-right: 0.7rem;
+    }
+    
+    .step-circle {
+        width: 24px;
+        height: 24px;
+    }
+}
+
+/* Support for tall/narrow mobile devices */
+@media (max-height: 700px) {
+    .checkout-header {
+        padding: 1rem 0.5rem;
+    }
+    
+    .payment-container {
+        padding-top: 0.5rem;
+    }
+}
+
+/* Support for landscape orientation on mobile */
+@media (max-height: 500px) {
+    .checkout-header {
+        padding: 0.5rem;
+    }
+    
+    .step-circle {
+        width: 24px;
+        height: 24px;
+    }
+    
+    .modal-content {
+        max-height: 100vh;
+        overflow-y: auto;
+    }
+}
+
+/* Accessibility improvements */
+@media (prefers-reduced-motion: reduce) {
+    .progress-bar-fill, 
+    .modal-content {
+        transition: none;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: more) {
+    :root {
+        --text-secondary: #444;
+        --border-color: #666;
+    }
+    
+    .step-label {
+        font-weight: 600;
+    }
+}
+
+/* Fix for devices with notches */
+@supports (padding: max(0px)) {
+    .modal-content,
+    .confirm-payment-btn {
+        padding-left: max(1rem, env(safe-area-inset-left));
+        padding-right: max(1rem, env(safe-area-inset-right));
+        padding-bottom: max(1rem, env(safe-area-inset-bottom));
+    }
+}
+
+/* Add touch-friendly sizes for clickable elements */
+.payment-option,
+.pay-button,
+.close-modal,
+.confirm-payment-btn {
+    min-height: 44px;
+}
+
+/* Ensure the wallet modal is usable on mobile */
+.wallet-info .label,
+.wallet-info .amount {
+    font-size: clamp(0.8rem, 3vw, 1rem);
+}
+
+/* Use viewport units for some font sizes */
+.payment-title {
+    font-size: clamp(1.2rem, 5vw, 2rem);
+}
+
+/* Fix for iOS input styling */
+input[type="radio"] {
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #fff;
+    margin: 0;
+    width: 1.2em;
+    height: 1.2em;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: grid;
+    place-content: center;
+}
+
+input[type="radio"]::before {
+    content: "";
+    width: 0.65em;
+    height: 0.65em;
+    border-radius: 50%;
+    transform: scale(0);
+    transition: transform 0.1s ease-in-out;
+    box-shadow: inset 1em 1em var(--secondary);
+}
+
+input[type="radio"]:checked::before {
+    transform: scale(1);
+}
+
+/* Fix layout shifts when switching between payment methods */
+.payment-methods {
+    min-height: 320px;
+}
+
 </style>
     <!-- header section -->
     <div class="checkout-header">
