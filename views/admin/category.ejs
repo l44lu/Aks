@@ -380,8 +380,8 @@ none;
       }).catch(error => {
           Swal.fire({
               icon: "error",
-              title: "Oops",
-              text: error.message === "Category already exists" ? "Category already exists" : "An error occurred"
+              title: "An occured while adding new Category",
+              text: error.message === "Category already exists" ? "Category already exists" : "May be the category already exist"
           });
       });
   }

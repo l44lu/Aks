@@ -62,45 +62,97 @@ const createCoupon = async (req, res) => {
     }
 }
 
-// const getCouponDetails = async (req, res) => {
-//     try {
-//         const { couponName } = req.params
-        
-//         const coupon = await Coupon.findOne({ name: couponName })
-//         if (!coupon) {
-//             return res.status(404).json({ success: false, message: "Coupon not found." })
-//         }
-//         res.status(200).json(coupon)
-//     } catch (error) {
-//         console.error("Error fetching coupon details:", error)
-//         res.status(500).json({ success: false, message: "Internal server error." })
-//     }
-// }
-
-
-const deleteCoupon = async(req,res)=>{
+const getCouponDetails = async (req, res) => {
     try {
-        const{couponName}=req.body;
-        if(!couponName){
-            return res.status(400).json({success:false,message:"Coupon name is required."})
-        }
-        const deletedCoupon =  await Coupon.findOneAndDelete({name:couponName});
-
-        if(!deletedCoupon){
-            return res.status(404).json({success:false,message:"Coupon cannot be deleted "});
-        }
-        res.status(200).json({success:false,message:"the"})
-    } catch (error) {
+        const { couponName } = req.params
         
+        const coupon = await Coupon.findOne({ name: couponName })
+        if (!coupon) {
+            return res.status(404).json({ success: false, message: "Coupon not found." })
+        }
+        res.status(200).json(coupon)
+    } catch (error) {
+        console.error("Error fetching coupon details:", error)
+        res.status(500).json({ success: false, message: "Internal server error." })
     }
 }
 
 
 
+
+const editCoupon = async(req, res) => {
+    try {
+        console.log("Edit coupon request body:", req.body);
+        const { couponName, startDate, expiryDate, offerPrice, minimumPrice } = req.body;
+        
+        // Validate inputs
+        if (!couponName) {
+            return res.status(400).json({ success: false, message: "Coupon name is required." });
+        }
+        
+        // Create update object with only the fields that should be updated
+        const updateData = {};
+        
+        if (startDate) {
+            updateData.createdOn = new Date(startDate);
+        }
+        
+        if (expiryDate) {
+            updateData.expireOn = new Date(expiryDate);
+        }
+        
+        if (offerPrice !== undefined) {
+            updateData.offerPrice = Number(offerPrice);
+        }
+        
+        if (minimumPrice !== undefined) {
+            updateData.minimumPrice = Number(minimumPrice);
+        }
+        
+        const updatedCoupon = await Coupon.findOneAndUpdate(
+            { name: couponName },
+            updateData,
+            { new: true }
+        );
+        
+        if (!updatedCoupon) {
+            return res.status(404).json({ success: false, message: "Coupon not found." });
+        }
+        
+        return res.status(200).json({ success: true, message: "Coupon updated successfully." });
+    } catch (error) {
+        console.error("Error updating coupon:", error);
+        return res.status(500).json({ success: false, message: "Internal server error." });
+    }
+};
+
+const deleteCoupon = async (req, res) => {
+    try {
+      const { couponName } = req.body;
+      
+      if (!couponName) {
+        return res.status(400).json({ success: false, message: "Coupon name is required." });
+      }
+      
+      const deletedCoupon = await Coupon.findOneAndDelete({ name: couponName });
+      
+      if (!deletedCoupon) {
+        return res.status(404).json({ success: false, message: "Coupon not found or cannot be deleted." });
+      }
+      
+      return res.status(200).json({ success: true, message: "Coupon deleted successfully." });
+      
+    } catch (error) {
+      console.error("Error deleting coupon:", error);
+      return res.status(500).json({ success: false, message: "An error occurred while deleting the coupon." });
+    }
+}
+
+
 module.exports  ={
     loadCoupon,
     createCoupon,
-    // getCouponDetails,
+    getCouponDetails,
     deleteCoupon,
-    
+    editCoupon,
 }

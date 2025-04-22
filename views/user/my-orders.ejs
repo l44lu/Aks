@@ -66,7 +66,6 @@
   .status-badge {
     display: inline-block;
     padding: 6px 15px;
-    border-radius: 2px;
     font-size: 12px;
     text-transform: uppercase;
     letter-spacing: 1px;
@@ -385,7 +384,7 @@
                                                 <option value="quality_issues">Quality Issues</option>
                                                 <option value="other">Other</option>
                                             </select>
-                                            <button class="btn btn-warning mt-2" 
+                                            <button class="btn btn-warning  mt-2 " style="border-radius: 0px;" 
                                                 onclick="initiateReturn('<%= order.orderId %>', '<%= product.id %>')">
                                                 <i class="fas fa-undo"></i> Request Return
                                             </button>

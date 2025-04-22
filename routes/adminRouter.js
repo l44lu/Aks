@@ -77,7 +77,7 @@ router.get("/blockProduct",adminAuth,productController.blockProduct);
 router.get("/unblockProduct",adminAuth,productController.unblockProduct);
 router.get("/editProduct", adminAuth, productController.getEditProduct); 
 router.post("/editProduct/:id", adminAuth, uploadFields, productController.editProduct);
-router.post("/delete-image", productController.deleteSingleImage)
+router.post("/delete-image", productController.deleteSingleImage);
 
 
 router.get("/orderList",adminAuth,orderController.getOrderListPageAdmin);
@@ -88,7 +88,9 @@ router.post("/handleReturn",adminAuth,orderController.handleReturn)
 
 router.get("/coupon",adminAuth,couponController.loadCoupon);
 router.post("/createCoupon",adminAuth,couponController.createCoupon)
-router.delete("deleteCoupon",adminAuth,couponController.deleteCoupon);
+router.delete("/deleteCoupon",adminAuth,couponController.deleteCoupon);
+router.get("/get-coupon/:couponName",adminAuth,couponController.getCouponDetails);
+router.put("/editCoupon",adminAuth,couponController.editCoupon);
 
 
 router.get("/orders/filter",adminAuth,dashboardController.filterOrder);
@@ -100,7 +102,6 @@ router.get("/orders/download/pdf",adminAuth,dashboardController.downloadPdfRepor
 router.get('/transactions',adminAuth,walletAdminController.renderTransactionsPage);
 router.get('/transaction/:transactionId',adminAuth,walletAdminController.renderTransactionDetailsPage)
 router.get('/wallet/:userId',adminAuth, walletAdminController.renderWalletPage)
-
 
 
 

@@ -16,79 +16,101 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_KEY_SECRET,
 })
 
+
+
 const getCheckoutPage = async (req, res) => {
     try {
-        const userId = req.session.user;
-        const userData = await User.findOne({ _id: userId });
-        const cart = await Cart.findOne({ userId }).populate("item.productId");
-        const userAddresses = await Address.find({ userId });
-        const coupons = await Coupon.find();
-        const unavailableItems = [];
-        
-        const validCartItems = cart.item.filter(item => {
-            if (!item.productId || item.productId.isBlocked || item.productId.stock < item.quantity) {
-                unavailableItems.push({
-                    id: item._id,
-                    name: item.productId ? item.productId.productName : 'Unknown Product',
-                    reason: !item.productId ? 'Product no longer exists' : 
-                            item.productId.isBlocked ? 'Product is unavailable' : 
-                            'Insufficient stock'
-                });
-                return false;
-            }
-            return true;
-        });
-        
-
-        if (unavailableItems.length > 0) {
-            for (const item of unavailableItems) {
-                await Cart.updateOne(
-                    { userId }, 
-                    { $pull: { item: { _id: item.id } } }
-                );
-            }
-            
-            req.session.unavailableItems = unavailableItems;
-            
-            return res.redirect('/cart?unavailable=true');
+      const userId = req.session.user;
+      const userData = await User.findOne({ _id: userId });
+      const cart = await Cart.findOne({ userId }).populate("item.productId");
+      const userAddresses = await Address.find({ userId });
+      const coupons = await Coupon.find();
+      const unavailableItems = [];
+  
+      // Check if cart exists and has items
+      if (!cart || !cart.item || cart.item.length === 0) {
+        return res.redirect('/cart?empty=true');
+      }
+  
+      // Validate each cart item
+      const validCartItems = cart.item.filter(item => {
+        // Check if product exists and is not blocked
+        if (!item.productId || item.productId.isBlocked) {
+          unavailableItems.push({
+            id: item._id,
+            name: item.productId ? item.productId.productName : 'Unknown Product',
+            reason: !item.productId ? 'Product no longer exists' : 'Product is unavailable'
+          });
+          return false;
         }
-
-        // Process valid items
-        let products = [];
-        let subtotal = 0;
-        let delivery = 88;
-        let total = 0;
+  
+        // Find the selected size in product sizes array
+        const sizeStock = item.productId.sizes.find(s => s.size === item.selectedSize);
         
-        products = validCartItems.map(item => ({
-            productName: item.productId.productName,
-            salePrice: item.productId.salePrice,
-            quantity: item.quantity,
-            productImage: item.productId.productImage[0],
-            totalPrice: item.totalPrice
-        }));
-
-        subtotal = products.reduce((acc, product) => acc + (product.totalPrice || 0), 0);
-        total = subtotal + delivery;
-
-        const appliedCoupon = req.session.appliedCoupon;
-        res.render("checkout", {
-            user: userData,
-            addresses: userAddresses,
-            products,
-            subtotal,
-            delivery,
-            total,
-            coupons,
-            appliedCoupon
-        });
+        // Check if size exists and has enough stock
+        if (!sizeStock || sizeStock.quantity < item.quantity) {
+          unavailableItems.push({
+            id: item._id,
+            name: item.productId.productName,
+            reason: !sizeStock ? `Size ${item.selectedSize} is no longer available` : 
+                                `Insufficient stock for size ${item.selectedSize}`
+          });
+          return false;
+        }
+        
+        return true;
+      });
+  
+      // Handle unavailable items
+      if (unavailableItems.length > 0) {
+        // Remove unavailable items from cart
+        for (const item of unavailableItems) {
+          await Cart.updateOne(
+            { userId },
+            { $pull: { item: { _id: item.id } } }
+          );
+        }
+        
+        // Store unavailable items in session for displaying in SweetAlert
+        req.session.unavailableItems = unavailableItems;
+        return res.redirect('/cart?unavailable=true');
+      }
+  
+      // Process valid items
+      let products = [];
+      let subtotal = 0;
+      let delivery = 88;
+      let total = 0;
+  
+      products = validCartItems.map(item => ({
+        productName: item.productId.productName,
+        salePrice: item.productId.salePrice,
+        quantity: item.quantity,
+        productImage: item.productId.productImage[0],
+        totalPrice: item.totalPrice,
+        selectedSize: item.selectedSize
+      }));
+  
+      subtotal = products.reduce((acc, product) => acc + (product.totalPrice || 0), 0);
+      total = subtotal + delivery;
+  
+      const appliedCoupon = req.session.appliedCoupon;
+  
+      res.render("checkout", {
+        user: userData,
+        addresses: userAddresses,
+        products,
+        subtotal,
+        delivery,
+        total,
+        coupons,
+        appliedCoupon
+      });
     } catch (error) {
-        console.error("Error loading checkout page:", error);
-        res.status(500).send("Internal Server Error");
+      console.error("Error loading checkout page:", error);
+      res.status(500).send("Internal Server Error");
     }
 };
-
-
-
 
 
 const loadPayment = async(req,res)=>{

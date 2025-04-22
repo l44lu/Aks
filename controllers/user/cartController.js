@@ -5,6 +5,7 @@ const Cart = require("../../models/cartSchema")
 const mongoose = require("mongoose");
 
 
+
 const getCartPage = async (req, res) => {
   try {
     if (!req.session || !req.session.user) {
@@ -74,7 +75,8 @@ const getCartPage = async (req, res) => {
   }
 };
 
-  
+
+
 
 const addToCart = async (req, res) => {
   try {
@@ -150,6 +152,8 @@ const addToCart = async (req, res) => {
       res.status(500).json({ message: 'Internal Server Error' });
   }
 };
+
+
 
 const changeQuantity = async (req, res) => {
     try {

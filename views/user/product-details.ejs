@@ -1421,6 +1421,201 @@ body {
         font-size: 1.4rem;
     }
 }
+/* Related Products Section Styling */
+.related-products {
+  padding: 5rem 0;
+  background-color: #f8f8f8;
+  font-family: 'Cormorant Garamond', 'Playfair Display', serif;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-title {
+  font-size: 2.5rem;
+  font-weight: 300;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  margin-bottom: 3rem;
+  color: #222;
+  position: relative;
+}
+
+.section-title:after {
+  content: '';
+  display: block;
+  width: 50px;
+  height: 1px;
+  background-color: #b8a171;
+  margin: 1rem auto 0;
+}
+
+.product-slider {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+}
+
+.product-card {
+  background-color: #fff;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.product-card a {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.product-image {
+  position: relative;
+  overflow: hidden;
+  padding-top: 125%; /* 4:5 aspect ratio */
+}
+
+.product-image img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.05);
+}
+
+.product-details {
+  padding: 1.5rem;
+  text-align: center;
+  background-color: #fff;
+}
+
+.product-name {
+  font-size: 1.2rem;
+  font-weight: 400;
+  margin-bottom: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #333;
+}
+
+.product-pricing {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.sale-price {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: #b8a171; /* Luxury gold color */
+}
+
+.regular-price {
+  font-size: 0.9rem;
+  color: #999;
+  text-decoration: line-through;
+}
+
+.offer-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background-color: #b8a171;
+  color: #fff;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.no-related-products {
+  grid-column: 1 / -1;
+  text-align: center;
+  font-size: 1.1rem;
+  color: #666;
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+/* Responsive Styles */
+
+@media (max-width: 1199px) {
+  .product-slider {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 991px) {
+  .related-products {
+    padding: 4rem 0;
+  }
+  
+  .section-title {
+    font-size: 2.2rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .product-slider {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .product-details {
+    padding: 1.25rem;
+  }
+  
+  .product-name {
+    font-size: 1.1rem;
+  }
+}
+
+@media (max-width: 575px) {
+  .related-products {
+    padding: 3rem 0;
+  }
+  
+  .product-slider {
+    grid-template-columns: repeat(1, 1fr);
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  
+  .section-title {
+    font-size: 1.8rem;
+  }
+  
+  .product-name {
+    font-size: 1rem;
+  }
+}
+
+/* Add font imports in your main CSS or HTML */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Playfair+Display:wght@400;500&display=swap');
 </style>
 
 
