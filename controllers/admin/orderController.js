@@ -142,7 +142,7 @@ const handleReturn = async (req, res) => {
         }
         
         // Calculate refund amount
-        const refundAmount = item.price * item.quantity;
+        const refundAmount = order.finalAmount * item.quantity;
         
         const userWallet = await Wallet.findOne({ user: order.userId });
         if (userWallet) {
